@@ -16,7 +16,8 @@
     "test": "node --test",
     "package": "serverless package",
     "deploy": "serverless deploy",
-    "check": "node --check src/handler.mjs"
+    "check": "node --check src/handler.mjs",
+    "check:aws:tables": "node scripts/check-aws-tables.mjs"
   },
   "devDependencies": {
     "serverless": "3.40.0",

@@ -25,6 +25,11 @@ provider:
   stage: ${opt:stage, 'dev'}
   memorySize: 1024
   timeout: 28
+  logRetentionInDays: 30
+  stackTags:
+    Service: ${self:service}
+    Stage: ${sls:stage}
+    ManagedBy: ServerlessFramework
   httpApi:
     payload: '2.0'
     cors:
@@ -52,8 +57,10 @@ provider:
     APP_ONBOARDING_MAX_FLOWS: ${env:APP_ONBOARDING_MAX_FLOWS, '1'}
     APP_ONBOARDING_MAX_CHANNELS: ${env:APP_ONBOARDING_MAX_CHANNELS, '1'}
     PORTAL_BOOTSTRAP_OWNER_EMAIL: ${env:PORTAL_BOOTSTRAP_OWNER_EMAIL, ''}
+    APP_WHATSAPP_META_API_VERSION: ${env:APP_WHATSAPP_META_API_VERSION, 'v23.0'}
   iam:
     role:
+      name: ${self:service}-${sls:stage}-lambda-role
       statements:
         - Effect: Allow
           Action:
@@ -66,11 +73,16 @@ provider:
             - dynamodb:ConditionCheckItem
           Resource:
             - Fn::Sub: arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${env:APP_DYNAMODB_TABLE_PREFIX, ''}flow_bff_*
+            - Fn::Sub: arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${env:APP_DYNAMODB_TABLE_PREFIX, ''}flow_bff_*/index/*
             - Fn::Sub: arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${env:APP_ENGINE_DYNAMODB_SESSIONS_TABLE, 'flow_engine_sessions'}
+            - Fn::Sub: arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${env:APP_ENGINE_DYNAMODB_SESSIONS_TABLE, 'flow_engine_sessions'}/index/*
             - Fn::Sub: arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${env:APP_ENGINE_DYNAMODB_CONTACTS_TABLE, 'flow_engine_contacts'}
+            - Fn::Sub: arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${env:APP_ENGINE_DYNAMODB_CONTACTS_TABLE, 'flow_engine_contacts'}/index/*
             - Fn::Sub: arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${env:APP_ENGINE_DYNAMODB_MESSAGES_TABLE, 'flow_engine_messages'}
+            - Fn::Sub: arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${env:APP_ENGINE_DYNAMODB_MESSAGES_TABLE, 'flow_engine_messages'}/index/*
         - Effect: Allow
-          Action: lambda:InvokeFunction
+          Action:
+            - lambda:InvokeFunction
           Resource:
             - Fn::Sub: arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${self:service}-${sls:stage}-worker
 
@@ -86,28 +98,14 @@ functions:
     events:
       - httpApi:
           path: /commands
-            method: POST
+          method: POST
 
-resources:
-  Resources:
-    JobsTable:
-      Type: AWS::DynamoDB::Table
-      Properties:
-        TableName: ${env:APP_DYNAMODB_TABLE_PREFIX, ''}flow_bff_jobs
-        BillingMode: PAY_PER_REQUEST
-        AttributeDefinitions:
-          - AttributeName: id
-            AttributeType: S
-        KeySchema:
-          - AttributeName: id
-            KeyType: HASH
-        TimeToLiveSpecification:
-          AttributeName: expires_at
-          Enabled: true
 
 package:
   patterns:
     - '!test/**'
     - '!scripts/**'
+    - '!infra/**'
+    - '!.github/**'
     - '!.env*'
     - '!README.md'

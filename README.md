@@ -1,5 +1,8 @@
 # Portal BFF
 
+> **AWS/DynamoDB:** em PRD as tabelas sao tratadas como recursos existentes e nao sao criadas pela stack principal do `portal-bff`. Veja `DEPLOYMENT.md`.
+
+
 Projeto em construção para Node.js 20 e Serverless Framework 3.
 Ainda não está pronto para substituir o backend em produção.
 

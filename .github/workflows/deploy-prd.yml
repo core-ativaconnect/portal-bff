@@ -1,0 +1,101 @@
+name: Deploy portal-bff - PRD
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: portal-bff-prd
+  cancel-in-progress: false
+
+env:
+  AWS_REGION: us-east-1
+  STAGE: prd
+  SLS_AWS_SDK: '3'
+  APP_JWT_EXPIRATION_MILLIS: '86400000'
+  APP_DYNAMODB_TABLE_PREFIX: ''
+  APP_ENGINE_DYNAMODB_SESSIONS_TABLE: flow_engine_sessions
+  APP_ENGINE_DYNAMODB_CONTACTS_TABLE: flow_engine_contacts
+  APP_ENGINE_DYNAMODB_MESSAGES_TABLE: flow_engine_messages
+  APP_ONBOARDING_DURATION_DAYS: '30'
+  APP_ONBOARDING_MAX_FLOWS: '1'
+  APP_ONBOARDING_MAX_CHANNELS: '1'
+  APP_WHATSAPP_META_API_VERSION: v23.0
+
+jobs:
+  validate:
+    name: Testes e validacao
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Validar sintaxe
+        run: npm run check
+
+      - name: Executar testes
+        run: npm test
+
+  deploy:
+    name: Deploy AWS
+    needs: validate
+    runs-on: ubuntu-latest
+    environment: prd
+    timeout-minutes: 45
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Autenticar na AWS via OIDC
+        uses: aws-actions/configure-aws-credentials@v6.2.3
+        with:
+          role-to-assume: ${{ vars.AWS_DEPLOY_ROLE_ARN }}
+          role-session-name: portal-bff-github-actions
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Confirmar identidade AWS
+        run: aws sts get-caller-identity
+
+      - name: Validar tabelas DynamoDB existentes
+        run: npm run check:aws:tables
+
+      - name: Deploy CloudFormation via Serverless Framework
+        env:
+          APP_JWT_SECRET: ${{ secrets.APP_JWT_SECRET }}
+        run: npx serverless deploy --stage "$STAGE" --region "$AWS_REGION" --verbose
+
+      - name: Mostrar endpoints e stack
+        env:
+          APP_JWT_SECRET: ${{ secrets.APP_JWT_SECRET }}
+        run: |
+          npx serverless info --stage "$STAGE" --region "$AWS_REGION" --verbose | tee deploy-info.txt
+          {
+            echo '## portal-bff PRD'
+            echo '```text'
+            cat deploy-info.txt
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"

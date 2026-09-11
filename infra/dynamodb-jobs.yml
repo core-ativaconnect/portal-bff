@@ -1,0 +1,37 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: >-
+  Tabela flow_bff_jobs do portal-bff. Use esta stack SOMENTE se a tabela ainda nao existir.
+
+Parameters:
+  TablePrefix:
+    Type: String
+    Default: ''
+
+Resources:
+  JobsTable:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      TableName: !Sub '${TablePrefix}flow_bff_jobs'
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      TimeToLiveSpecification:
+        AttributeName: expires_at
+        Enabled: true
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      Tags:
+        - Key: Service
+          Value: portal-bff
+        - Key: ManagedBy
+          Value: CloudFormation
+
+Outputs:
+  JobsTableName:
+    Value: !Ref JobsTable

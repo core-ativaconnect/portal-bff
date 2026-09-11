@@ -1,0 +1,160 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: >-
+  Bootstrap de CI/CD do portal-bff. Cria (opcionalmente) o provider OIDC do GitHub
+  e a role assumida pelo GitHub Actions para fazer deploy do stack Serverless/CloudFormation.
+
+Parameters:
+  CreateGitHubOidcProvider:
+    Type: String
+    Default: 'true'
+    AllowedValues:
+      - 'true'
+      - 'false'
+    Description: Use false se token.actions.githubusercontent.com ja existir em IAM > Identity providers.
+
+Conditions:
+  ShouldCreateGitHubOidcProvider: !Equals [!Ref CreateGitHubOidcProvider, 'true']
+
+Resources:
+  GitHubOidcProvider:
+    Type: AWS::IAM::OIDCProvider
+    Condition: ShouldCreateGitHubOidcProvider
+    Properties:
+      Url: https://token.actions.githubusercontent.com
+      ClientIdList:
+        - sts.amazonaws.com
+      Tags:
+        - Key: Service
+          Value: portal-bff
+        - Key: ManagedBy
+          Value: CloudFormation
+
+  GitHubActionsDeployRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: portal-bff-github-actions-deploy
+      Description: Deploy do portal-bff a partir do environment prd do GitHub Actions.
+      MaxSessionDuration: 3600
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Federated: !If
+                - ShouldCreateGitHubOidcProvider
+                - !Ref GitHubOidcProvider
+                - !Sub arn:${AWS::Partition}:iam::${AWS::AccountId}:oidc-provider/token.actions.githubusercontent.com
+            Action: sts:AssumeRoleWithWebIdentity
+            Condition:
+              StringEquals:
+                token.actions.githubusercontent.com:aud: sts.amazonaws.com
+                # Repo criado depois de 15/07/2026: o subject OIDC usa IDs imutaveis.
+                token.actions.githubusercontent.com:sub: repo:core-ativaconnect@316522101/portal-bff@1365161545:environment:prd
+      Policies:
+        - PolicyName: portal-bff-deploy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Sid: CloudFormation
+                Effect: Allow
+                Action:
+                  - cloudformation:*
+                Resource: '*'
+
+              - Sid: ServerlessDeploymentS3
+                Effect: Allow
+                Action:
+                  - s3:CreateBucket
+                  - s3:GetBucketLocation
+                  - s3:GetBucketVersioning
+                  - s3:PutBucketVersioning
+                  - s3:GetEncryptionConfiguration
+                  - s3:PutEncryptionConfiguration
+                  - s3:GetBucketPolicy
+                  - s3:PutBucketPolicy
+                  - s3:DeleteBucketPolicy
+                  - s3:GetBucketPublicAccessBlock
+                  - s3:PutBucketPublicAccessBlock
+                  - s3:ListBucket
+                  - s3:GetObject
+                  - s3:PutObject
+                  - s3:DeleteObject
+                  - s3:GetObjectVersion
+                Resource: '*'
+
+              - Sid: PortalLambda
+                Effect: Allow
+                Action:
+                  - lambda:*
+                Resource:
+                  - !Sub arn:${AWS::Partition}:lambda:*:${AWS::AccountId}:function:portal-bff-*
+
+              - Sid: LambdaAccountRead
+                Effect: Allow
+                Action:
+                  - lambda:GetAccountSettings
+                  - lambda:ListFunctions
+                Resource: '*'
+
+              - Sid: DynamoDbPreflightRead
+                Effect: Allow
+                Action:
+                  - dynamodb:DescribeTable
+                Resource: '*'
+
+              - Sid: PortalApiGateway
+                Effect: Allow
+                Action:
+                  - apigateway:*
+                Resource: '*'
+
+              - Sid: PortalCloudWatchLogs
+                Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:DeleteLogGroup
+                  - logs:DescribeLogGroups
+                  - logs:PutRetentionPolicy
+                  - logs:DeleteRetentionPolicy
+                  - logs:TagResource
+                  - logs:UntagResource
+                  - logs:ListTagsForResource
+                Resource: '*'
+
+              - Sid: PortalLambdaIamRoles
+                Effect: Allow
+                Action:
+                  - iam:CreateRole
+                  - iam:DeleteRole
+                  - iam:GetRole
+                  - iam:PassRole
+                  - iam:TagRole
+                  - iam:UntagRole
+                  - iam:UpdateAssumeRolePolicy
+                  - iam:PutRolePolicy
+                  - iam:GetRolePolicy
+                  - iam:DeleteRolePolicy
+                  - iam:AttachRolePolicy
+                  - iam:DetachRolePolicy
+                  - iam:ListRolePolicies
+                  - iam:ListAttachedRolePolicies
+                Resource:
+                  - !Sub arn:${AWS::Partition}:iam::${AWS::AccountId}:role/portal-bff-*
+
+              - Sid: ServerlessStateSsm
+                Effect: Allow
+                Action:
+                  - ssm:GetParameter
+                  - ssm:GetParameters
+                  - ssm:PutParameter
+                  - ssm:DeleteParameter
+                Resource:
+                  - !Sub arn:${AWS::Partition}:ssm:*:${AWS::AccountId}:parameter/serverless-framework/*
+
+Outputs:
+  GitHubActionsDeployRoleArn:
+    Description: Cadastre este ARN como GitHub Environment Variable AWS_DEPLOY_ROLE_ARN no environment prd.
+    Value: !GetAtt GitHubActionsDeployRole.Arn
+  ExpectedGitHubOidcSubject:
+    Description: Subject OIDC permitido pela trust policy.
+    Value: repo:core-ativaconnect@316522101/portal-bff@1365161545:environment:prd

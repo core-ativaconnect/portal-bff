@@ -1,0 +1,1231 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Todas as 26 tabelas do portal-bff. Recursos retidos na exclusao da stack.
+Parameters:
+  TablePrefix:
+    Type: String
+    Default: prd_
+  SessionsTableName:
+    Type: String
+    Default: flow_engine_sessions
+  ContactsTableName:
+    Type: String
+    Default: flow_engine_contacts
+  MessagesTableName:
+    Type: String
+    Default: flow_engine_messages
+  Stage:
+    Type: String
+    Default: prd
+Resources:
+  FlowBffBlogPostsTable:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      TableName:
+        Fn::Sub: ${TablePrefix}flow_bff_blog_posts
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: admin_sort
+          AttributeType: S
+        - AttributeName: all_key
+          AttributeType: S
+        - AttributeName: public_sort
+          AttributeType: S
+        - AttributeName: slug
+          AttributeType: S
+        - AttributeName: status_key
+          AttributeType: S
+      KeySchema:
+        - AttributeName: slug
+          KeyType: HASH
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      Tags:
+        - Key: ef_apllication
+          Value: broker
+        - Key: Service
+          Value: portal-bff
+        - Key: Stage
+          Value:
+            Ref: Stage
+        - Key: ManagedBy
+          Value: CloudFormation
+      GlobalSecondaryIndexes:
+        - IndexName: all_admin-index
+          KeySchema:
+            - AttributeName: all_key
+              KeyType: HASH
+            - AttributeName: admin_sort
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+        - IndexName: status_public-index
+          KeySchema:
+            - AttributeName: status_key
+              KeyType: HASH
+            - AttributeName: public_sort
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+  FlowBffBlogSettingsTable:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      TableName:
+        Fn::Sub: ${TablePrefix}flow_bff_blog_settings
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      Tags:
+        - Key: ef_apllication
+          Value: broker
+        - Key: Service
+          Value: portal-bff
+        - Key: Stage
+          Value:
+            Ref: Stage
+        - Key: ManagedBy
+          Value: CloudFormation
+  FlowBffContractAccessTable:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      TableName:
+        Fn::Sub: ${TablePrefix}flow_bff_contract_access
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: added_at_sort
+          AttributeType: S
+        - AttributeName: contract_key
+          AttributeType: S
+        - AttributeName: id
+          AttributeType: S
+        - AttributeName: user_key
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      Tags:
+        - Key: ef_apllication
+          Value: broker
+        - Key: Service
+          Value: portal-bff
+        - Key: Stage
+          Value:
+            Ref: Stage
+        - Key: ManagedBy
+          Value: CloudFormation
+      GlobalSecondaryIndexes:
+        - IndexName: contract_time-index
+          KeySchema:
+            - AttributeName: contract_key
+              KeyType: HASH
+            - AttributeName: added_at_sort
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+        - IndexName: user-index
+          KeySchema:
+            - AttributeName: user_key
+              KeyType: HASH
+            - AttributeName: added_at_sort
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+    DependsOn: FlowBffBlogPostsTable
+  FlowBffContractAiProviderConfigsTable:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      TableName:
+        Fn::Sub: ${TablePrefix}flow_bff_contract_ai_provider_configs
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: contract_key
+          AttributeType: S
+        - AttributeName: id
+          AttributeType: S
+        - AttributeName: name_sort
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      Tags:
+        - Key: ef_apllication
+          Value: broker
+        - Key: Service
+          Value: portal-bff
+        - Key: Stage
+          Value:
+            Ref: Stage
+        - Key: ManagedBy
+          Value: CloudFormation
+      GlobalSecondaryIndexes:
+        - IndexName: contract_name-index
+          KeySchema:
+            - AttributeName: contract_key
+              KeyType: HASH
+            - AttributeName: name_sort
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+    DependsOn: FlowBffContractAccessTable
+  FlowBffContractChannelFlowsTable:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      TableName:
+        Fn::Sub: ${TablePrefix}flow_bff_contract_channel_flows
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: channel_key
+          AttributeType: S
+        - AttributeName: created_at_sort
+          AttributeType: S
+        - AttributeName: id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      Tags:
+        - Key: ef_apllication
+          Value: broker
+        - Key: Service
+          Value: portal-bff
+        - Key: Stage
+          Value:
+            Ref: Stage
+        - Key: ManagedBy
+          Value: CloudFormation
+      GlobalSecondaryIndexes:
+        - IndexName: channel-index
+          KeySchema:
+            - AttributeName: channel_key
+              KeyType: HASH
+            - AttributeName: created_at_sort
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+    DependsOn: FlowBffContractAiProviderConfigsTable
+  FlowBffContractChannelsTable:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      TableName:
+        Fn::Sub: ${TablePrefix}flow_bff_contract_channels
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: contract_key
+          AttributeType: S
+        - AttributeName: contract_slug_key
+          AttributeType: S
+        - AttributeName: id
+          AttributeType: S
+        - AttributeName: name_sort
+          AttributeType: S
+        - AttributeName: phone_key
+          AttributeType: S
+        - AttributeName: webchat_agent_key
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      Tags:
+        - Key: ef_apllication
+          Value: broker
+        - Key: Service
+          Value: portal-bff
+        - Key: Stage
+          Value:
+            Ref: Stage
+        - Key: ManagedBy
+          Value: CloudFormation
+      GlobalSecondaryIndexes:
+        - IndexName: contract_name-index
+          KeySchema:
+            - AttributeName: contract_key
+              KeyType: HASH
+            - AttributeName: name_sort
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+        - IndexName: contract_slug-index
+          KeySchema:
+            - AttributeName: contract_slug_key
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+        - IndexName: phone-index
+          KeySchema:
+            - AttributeName: phone_key
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+        - IndexName: webchat_agent-index
+          KeySchema:
+            - AttributeName: webchat_agent_key
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+    DependsOn: FlowBffContractChannelFlowsTable
+  FlowBffContractEmailConnectionsTable:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      TableName:
+        Fn::Sub: ${TablePrefix}flow_bff_contract_email_connections
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: contract_key
+          AttributeType: S
+        - AttributeName: id
+          AttributeType: S
+        - AttributeName: name_sort
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      Tags:
+        - Key: ef_apllication
+          Value: broker
+        - Key: Service
+          Value: portal-bff
+        - Key: Stage
+          Value:
+            Ref: Stage
+        - Key: ManagedBy
+          Value: CloudFormation
+      GlobalSecondaryIndexes:
+        - IndexName: contract_name-index
+          KeySchema:
+            - AttributeName: contract_key
+              KeyType: HASH
+            - AttributeName: name_sort
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+    DependsOn: FlowBffContractChannelsTable
+  FlowBffContractHelpDeskAttendantsTable:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      TableName:
+        Fn::Sub: ${TablePrefix}flow_bff_contract_help_desk_attendants
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: contract_key
+          AttributeType: S
+        - AttributeName: id
+          AttributeType: S
+        - AttributeName: name_sort
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      Tags:
+        - Key: ef_apllication
+          Value: broker
+        - Key: Service
+          Value: portal-bff
+        - Key: Stage
+          Value:
+            Ref: Stage
+        - Key: ManagedBy
+          Value: CloudFormation
+      GlobalSecondaryIndexes:
+        - IndexName: contract_name-index
+          KeySchema:
+            - AttributeName: contract_key
+              KeyType: HASH
+            - AttributeName: name_sort
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+    DependsOn: FlowBffContractEmailConnectionsTable
+  FlowBffContractHelpDeskCloseIntentsTable:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      TableName:
+        Fn::Sub: ${TablePrefix}flow_bff_contract_help_desk_close_intents
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: contract_key
+          AttributeType: S
+        - AttributeName: id
+          AttributeType: S
+        - AttributeName: name_sort
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      Tags:
+        - Key: ef_apllication
+          Value: broker
+        - Key: Service
+          Value: portal-bff
+        - Key: Stage
+          Value:
+            Ref: Stage
+        - Key: ManagedBy
+          Value: CloudFormation
+      GlobalSecondaryIndexes:
+        - IndexName: contract_name-index
+          KeySchema:
+            - AttributeName: contract_key
+              KeyType: HASH
+            - AttributeName: name_sort
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+    DependsOn: FlowBffContractHelpDeskAttendantsTable
+  FlowBffContractHelpDeskQueuesTable:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      TableName:
+        Fn::Sub: ${TablePrefix}flow_bff_contract_help_desk_queues
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: contract_key
+          AttributeType: S
+        - AttributeName: id
+          AttributeType: S
+        - AttributeName: name_sort
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      Tags:
+        - Key: ef_apllication
+          Value: broker
+        - Key: Service
+          Value: portal-bff
+        - Key: Stage
+          Value:
+            Ref: Stage
+        - Key: ManagedBy
+          Value: CloudFormation
+      GlobalSecondaryIndexes:
+        - IndexName: contract_name-index
+          KeySchema:
+            - AttributeName: contract_key
+              KeyType: HASH
+            - AttributeName: name_sort
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+    DependsOn: FlowBffContractHelpDeskCloseIntentsTable
+  FlowBffContractsTable:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      TableName:
+        Fn::Sub: ${TablePrefix}flow_bff_contracts
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: all_key
+          AttributeType: S
+        - AttributeName: company_name_sort
+          AttributeType: S
+        - AttributeName: id
+          AttributeType: S
+        - AttributeName: slug_key
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      Tags:
+        - Key: ef_apllication
+          Value: broker
+        - Key: Service
+          Value: portal-bff
+        - Key: Stage
+          Value:
+            Ref: Stage
+        - Key: ManagedBy
+          Value: CloudFormation
+      GlobalSecondaryIndexes:
+        - IndexName: all_name-index
+          KeySchema:
+            - AttributeName: all_key
+              KeyType: HASH
+            - AttributeName: company_name_sort
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+        - IndexName: slug-index
+          KeySchema:
+            - AttributeName: slug_key
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+    DependsOn: FlowBffContractHelpDeskQueuesTable
+  FlowBffContractWhatsappWabasTable:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      TableName:
+        Fn::Sub: ${TablePrefix}flow_bff_contract_whatsapp_wabas
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: all_key
+          AttributeType: S
+        - AttributeName: contract_key
+          AttributeType: S
+        - AttributeName: created_at_sort
+          AttributeType: S
+        - AttributeName: id
+          AttributeType: S
+        - AttributeName: waba_key
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      Tags:
+        - Key: ef_apllication
+          Value: broker
+        - Key: Service
+          Value: portal-bff
+        - Key: Stage
+          Value:
+            Ref: Stage
+        - Key: ManagedBy
+          Value: CloudFormation
+      GlobalSecondaryIndexes:
+        - IndexName: contract-index
+          KeySchema:
+            - AttributeName: contract_key
+              KeyType: HASH
+            - AttributeName: created_at_sort
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+        - IndexName: waba-index
+          KeySchema:
+            - AttributeName: waba_key
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+        - IndexName: all-index
+          KeySchema:
+            - AttributeName: all_key
+              KeyType: HASH
+            - AttributeName: created_at_sort
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+    DependsOn: FlowBffContractsTable
+  FlowBffFlowsTable:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      TableName:
+        Fn::Sub: ${TablePrefix}flow_bff_flows
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: contract_key
+          AttributeType: S
+        - AttributeName: contract_slug_key
+          AttributeType: S
+        - AttributeName: id
+          AttributeType: S
+        - AttributeName: name_sort
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      Tags:
+        - Key: ef_apllication
+          Value: broker
+        - Key: Service
+          Value: portal-bff
+        - Key: Stage
+          Value:
+            Ref: Stage
+        - Key: ManagedBy
+          Value: CloudFormation
+      GlobalSecondaryIndexes:
+        - IndexName: contract_name-index
+          KeySchema:
+            - AttributeName: contract_key
+              KeyType: HASH
+            - AttributeName: name_sort
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+        - IndexName: contract_slug-index
+          KeySchema:
+            - AttributeName: contract_slug_key
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+    DependsOn: FlowBffContractWhatsappWabasTable
+  FlowBffFlowVersionsTable:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      TableName:
+        Fn::Sub: ${TablePrefix}flow_bff_flow_versions
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: flow_key
+          AttributeType: S
+        - AttributeName: flow_status_current_key
+          AttributeType: S
+        - AttributeName: id
+          AttributeType: S
+        - AttributeName: version_sort
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      Tags:
+        - Key: ef_apllication
+          Value: broker
+        - Key: Service
+          Value: portal-bff
+        - Key: Stage
+          Value:
+            Ref: Stage
+        - Key: ManagedBy
+          Value: CloudFormation
+      GlobalSecondaryIndexes:
+        - IndexName: flow_version-index
+          KeySchema:
+            - AttributeName: flow_key
+              KeyType: HASH
+            - AttributeName: version_sort
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+        - IndexName: flow_status_current-index
+          KeySchema:
+            - AttributeName: flow_status_current_key
+              KeyType: HASH
+            - AttributeName: version_sort
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+    DependsOn: FlowBffFlowsTable
+  FlowBffHelpdeskTicketsTable:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      TableName:
+        Fn::Sub: ${TablePrefix}flow_bff_helpdesk_tickets
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: assigned_user_id
+          AttributeType: S
+        - AttributeName: channel_contact_key
+          AttributeType: S
+        - AttributeName: contract_id
+          AttributeType: S
+        - AttributeName: id
+          AttributeType: S
+        - AttributeName: updated_at
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      Tags:
+        - Key: ef_apllication
+          Value: broker
+        - Key: Service
+          Value: portal-bff
+        - Key: Stage
+          Value:
+            Ref: Stage
+        - Key: ManagedBy
+          Value: CloudFormation
+      GlobalSecondaryIndexes:
+        - IndexName: contract_id-updated_at-index
+          KeySchema:
+            - AttributeName: contract_id
+              KeyType: HASH
+            - AttributeName: updated_at
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+        - IndexName: channel_contact_key-updated_at-index
+          KeySchema:
+            - AttributeName: channel_contact_key
+              KeyType: HASH
+            - AttributeName: updated_at
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+        - IndexName: assigned_user_id-updated_at-index
+          KeySchema:
+            - AttributeName: assigned_user_id
+              KeyType: HASH
+            - AttributeName: updated_at
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+    DependsOn: FlowBffFlowVersionsTable
+  FlowBffStaticPagesTable:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      TableName:
+        Fn::Sub: ${TablePrefix}flow_bff_static_pages
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: all_key
+          AttributeType: S
+        - AttributeName: path
+          AttributeType: S
+        - AttributeName: path_sort
+          AttributeType: S
+      KeySchema:
+        - AttributeName: path
+          KeyType: HASH
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      Tags:
+        - Key: ef_apllication
+          Value: broker
+        - Key: Service
+          Value: portal-bff
+        - Key: Stage
+          Value:
+            Ref: Stage
+        - Key: ManagedBy
+          Value: CloudFormation
+      GlobalSecondaryIndexes:
+        - IndexName: all_path-index
+          KeySchema:
+            - AttributeName: all_key
+              KeyType: HASH
+            - AttributeName: path_sort
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+    DependsOn: FlowBffHelpdeskTicketsTable
+  FlowBffUsersTable:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      TableName:
+        Fn::Sub: ${TablePrefix}flow_bff_users
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: active_key
+          AttributeType: S
+        - AttributeName: all_users_key
+          AttributeType: S
+        - AttributeName: email
+          AttributeType: S
+        - AttributeName: id_key
+          AttributeType: S
+        - AttributeName: name_sort
+          AttributeType: S
+        - AttributeName: role_key
+          AttributeType: S
+      KeySchema:
+        - AttributeName: email
+          KeyType: HASH
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      Tags:
+        - Key: ef_apllication
+          Value: broker
+        - Key: Service
+          Value: portal-bff
+        - Key: Stage
+          Value:
+            Ref: Stage
+        - Key: ManagedBy
+          Value: CloudFormation
+      GlobalSecondaryIndexes:
+        - IndexName: id-index
+          KeySchema:
+            - AttributeName: id_key
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+        - IndexName: active_name-index
+          KeySchema:
+            - AttributeName: active_key
+              KeyType: HASH
+            - AttributeName: name_sort
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+        - IndexName: role-index
+          KeySchema:
+            - AttributeName: role_key
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+        - IndexName: all_name-index
+          KeySchema:
+            - AttributeName: all_users_key
+              KeyType: HASH
+            - AttributeName: name_sort
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+    DependsOn: FlowBffStaticPagesTable
+  FlowBffWhatsappAppsTable:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      TableName:
+        Fn::Sub: ${TablePrefix}flow_bff_whatsapp_apps
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: all_key
+          AttributeType: S
+        - AttributeName: app_id_key
+          AttributeType: S
+        - AttributeName: id
+          AttributeType: S
+        - AttributeName: name_sort
+          AttributeType: S
+        - AttributeName: verify_token_key
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      Tags:
+        - Key: ef_apllication
+          Value: broker
+        - Key: Service
+          Value: portal-bff
+        - Key: Stage
+          Value:
+            Ref: Stage
+        - Key: ManagedBy
+          Value: CloudFormation
+      GlobalSecondaryIndexes:
+        - IndexName: all_name-index
+          KeySchema:
+            - AttributeName: all_key
+              KeyType: HASH
+            - AttributeName: name_sort
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+        - IndexName: app_id-index
+          KeySchema:
+            - AttributeName: app_id_key
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+        - IndexName: verify_token-index
+          KeySchema:
+            - AttributeName: verify_token_key
+              KeyType: HASH
+            - AttributeName: name_sort
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+    DependsOn: FlowBffUsersTable
+  FlowBffWhatsappPhoneChannelLinkHistoryTable:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      TableName:
+        Fn::Sub: ${TablePrefix}flow_bff_whatsapp_phone_channel_link_history
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      Tags:
+        - Key: ef_apllication
+          Value: broker
+        - Key: Service
+          Value: portal-bff
+        - Key: Stage
+          Value:
+            Ref: Stage
+        - Key: ManagedBy
+          Value: CloudFormation
+  FlowBffWhatsappPhoneNumbersTable:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      TableName:
+        Fn::Sub: ${TablePrefix}flow_bff_whatsapp_phone_numbers
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: display_sort
+          AttributeType: S
+        - AttributeName: id
+          AttributeType: S
+        - AttributeName: meta_phone_key
+          AttributeType: S
+        - AttributeName: waba_key
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      Tags:
+        - Key: ef_apllication
+          Value: broker
+        - Key: Service
+          Value: portal-bff
+        - Key: Stage
+          Value:
+            Ref: Stage
+        - Key: ManagedBy
+          Value: CloudFormation
+      GlobalSecondaryIndexes:
+        - IndexName: waba_display-index
+          KeySchema:
+            - AttributeName: waba_key
+              KeyType: HASH
+            - AttributeName: display_sort
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+        - IndexName: meta_phone-index
+          KeySchema:
+            - AttributeName: meta_phone_key
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+    DependsOn: FlowBffWhatsappAppsTable
+  FlowBffWhatsappPhoneTransferRequestsTable:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      TableName:
+        Fn::Sub: ${TablePrefix}flow_bff_whatsapp_phone_transfer_requests
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+        - AttributeName: phone_status_key
+          AttributeType: S
+        - AttributeName: requested_at_sort
+          AttributeType: S
+        - AttributeName: source_channel_status_key
+          AttributeType: S
+        - AttributeName: source_contract_key
+          AttributeType: S
+        - AttributeName: target_channel_status_key
+          AttributeType: S
+        - AttributeName: target_contract_key
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      Tags:
+        - Key: ef_apllication
+          Value: broker
+        - Key: Service
+          Value: portal-bff
+        - Key: Stage
+          Value:
+            Ref: Stage
+        - Key: ManagedBy
+          Value: CloudFormation
+      GlobalSecondaryIndexes:
+        - IndexName: source_contract-index
+          KeySchema:
+            - AttributeName: source_contract_key
+              KeyType: HASH
+            - AttributeName: requested_at_sort
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+        - IndexName: target_contract-index
+          KeySchema:
+            - AttributeName: target_contract_key
+              KeyType: HASH
+            - AttributeName: requested_at_sort
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+        - IndexName: target_channel_status-index
+          KeySchema:
+            - AttributeName: target_channel_status_key
+              KeyType: HASH
+            - AttributeName: requested_at_sort
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+        - IndexName: phone_status-index
+          KeySchema:
+            - AttributeName: phone_status_key
+              KeyType: HASH
+            - AttributeName: requested_at_sort
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+        - IndexName: source_channel_status-index
+          KeySchema:
+            - AttributeName: source_channel_status_key
+              KeyType: HASH
+            - AttributeName: requested_at_sort
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+    DependsOn: FlowBffWhatsappPhoneNumbersTable
+  FlowBffWhatsappWabasTable:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      TableName:
+        Fn::Sub: ${TablePrefix}flow_bff_whatsapp_wabas
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: all_key
+          AttributeType: S
+        - AttributeName: app_key
+          AttributeType: S
+        - AttributeName: id
+          AttributeType: S
+        - AttributeName: name_sort
+          AttributeType: S
+        - AttributeName: waba_id_key
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      Tags:
+        - Key: ef_apllication
+          Value: broker
+        - Key: Service
+          Value: portal-bff
+        - Key: Stage
+          Value:
+            Ref: Stage
+        - Key: ManagedBy
+          Value: CloudFormation
+      GlobalSecondaryIndexes:
+        - IndexName: all_name-index
+          KeySchema:
+            - AttributeName: all_key
+              KeyType: HASH
+            - AttributeName: name_sort
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+        - IndexName: waba_id-index
+          KeySchema:
+            - AttributeName: waba_id_key
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+        - IndexName: app-index
+          KeySchema:
+            - AttributeName: app_key
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+    DependsOn: FlowBffWhatsappPhoneTransferRequestsTable
+  FlowEngineSessionsTable:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      TableName:
+        Ref: SessionsTableName
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: session_key
+          AttributeType: S
+      KeySchema:
+        - AttributeName: session_key
+          KeyType: HASH
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      Tags:
+        - Key: ef_apllication
+          Value: broker
+        - Key: Service
+          Value: portal-bff
+        - Key: Stage
+          Value:
+            Ref: Stage
+        - Key: ManagedBy
+          Value: CloudFormation
+  FlowEngineContactsTable:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      TableName:
+        Ref: ContactsTableName
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: contact_id
+          AttributeType: S
+        - AttributeName: user_id
+          AttributeType: S
+        - AttributeName: wa_id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: contact_id
+          KeyType: HASH
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      Tags:
+        - Key: ef_apllication
+          Value: broker
+        - Key: Service
+          Value: portal-bff
+        - Key: Stage
+          Value:
+            Ref: Stage
+        - Key: ManagedBy
+          Value: CloudFormation
+      GlobalSecondaryIndexes:
+        - IndexName: user_id-index
+          KeySchema:
+            - AttributeName: user_id
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+        - IndexName: wa_id-index
+          KeySchema:
+            - AttributeName: wa_id
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+    DependsOn: FlowBffWhatsappWabasTable
+  FlowEngineMessagesTable:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      TableName:
+        Ref: MessagesTableName
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: channel_id
+          AttributeType: S
+        - AttributeName: contact_id
+          AttributeType: S
+        - AttributeName: message_id
+          AttributeType: S
+        - AttributeName: occurred_at
+          AttributeType: S
+      KeySchema:
+        - AttributeName: contact_id
+          KeyType: HASH
+        - AttributeName: message_id
+          KeyType: RANGE
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      Tags:
+        - Key: ef_apllication
+          Value: broker
+        - Key: Service
+          Value: portal-bff
+        - Key: Stage
+          Value:
+            Ref: Stage
+        - Key: ManagedBy
+          Value: CloudFormation
+      GlobalSecondaryIndexes:
+        - IndexName: channel_id-occurred_at-index
+          KeySchema:
+            - AttributeName: channel_id
+              KeyType: HASH
+            - AttributeName: occurred_at
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+    DependsOn: FlowEngineContactsTable
+  FlowBffJobsTable:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      TableName:
+        Fn::Sub: ${TablePrefix}flow_bff_jobs
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      Tags:
+        - Key: ef_apllication
+          Value: broker
+        - Key: Service
+          Value: portal-bff
+        - Key: Stage
+          Value:
+            Ref: Stage
+        - Key: ManagedBy
+          Value: CloudFormation
+      TimeToLiveSpecification:
+        AttributeName: expires_at
+        Enabled: true

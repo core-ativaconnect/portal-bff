@@ -1,0 +1,176 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Cinco tabelas ausentes no preflight PRD do portal-bff. Criar na conta 500888846090 em us-east-1.
+Resources:
+  FlowBffBlogSettingsTable:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      TableName: prd_flow_bff_blog_settings
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      Tags:
+        - Key: ef_apllication
+          Value: broker
+        - Key: Service
+          Value: portal-bff
+        - Key: Stage
+          Value: prd
+        - Key: ManagedBy
+          Value: CloudFormation
+  FlowEngineSessionsTable:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      TableName: flow_engine_sessions
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: session_key
+          AttributeType: S
+      KeySchema:
+        - AttributeName: session_key
+          KeyType: HASH
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      Tags:
+        - Key: ef_apllication
+          Value: broker
+        - Key: Service
+          Value: portal-bff
+        - Key: Stage
+          Value: prd
+        - Key: ManagedBy
+          Value: CloudFormation
+  FlowEngineContactsTable:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      TableName: flow_engine_contacts
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: contact_id
+          AttributeType: S
+        - AttributeName: user_id
+          AttributeType: S
+        - AttributeName: wa_id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: contact_id
+          KeyType: HASH
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      Tags:
+        - Key: ef_apllication
+          Value: broker
+        - Key: Service
+          Value: portal-bff
+        - Key: Stage
+          Value: prd
+        - Key: ManagedBy
+          Value: CloudFormation
+      GlobalSecondaryIndexes:
+        - IndexName: user_id-index
+          KeySchema:
+            - AttributeName: user_id
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+        - IndexName: wa_id-index
+          KeySchema:
+            - AttributeName: wa_id
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+  FlowEngineMessagesTable:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      TableName: flow_engine_messages
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: channel_id
+          AttributeType: S
+        - AttributeName: contact_id
+          AttributeType: S
+        - AttributeName: message_id
+          AttributeType: S
+        - AttributeName: occurred_at
+          AttributeType: S
+      KeySchema:
+        - AttributeName: contact_id
+          KeyType: HASH
+        - AttributeName: message_id
+          KeyType: RANGE
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      Tags:
+        - Key: ef_apllication
+          Value: broker
+        - Key: Service
+          Value: portal-bff
+        - Key: Stage
+          Value: prd
+        - Key: ManagedBy
+          Value: CloudFormation
+      GlobalSecondaryIndexes:
+        - IndexName: channel_id-occurred_at-index
+          KeySchema:
+            - AttributeName: channel_id
+              KeyType: HASH
+            - AttributeName: occurred_at
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+  FlowBffJobsTable:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      TableName: prd_flow_bff_jobs
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      Tags:
+        - Key: ef_apllication
+          Value: broker
+        - Key: Service
+          Value: portal-bff
+        - Key: Stage
+          Value: prd
+        - Key: ManagedBy
+          Value: CloudFormation
+      TimeToLiveSpecification:
+        AttributeName: expires_at
+        Enabled: true
+Outputs:
+  FlowBffBlogSettingsTableName:
+    Value:
+      Ref: FlowBffBlogSettingsTable
+  FlowEngineSessionsTableName:
+    Value:
+      Ref: FlowEngineSessionsTable
+  FlowEngineContactsTableName:
+    Value:
+      Ref: FlowEngineContactsTable
+  FlowEngineMessagesTableName:
+    Value:
+      Ref: FlowEngineMessagesTable
+  FlowBffJobsTableName:
+    Value:
+      Ref: FlowBffJobsTable

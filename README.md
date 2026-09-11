@@ -1,6 +1,6 @@
 # Portal BFF
 
-> **AWS/DynamoDB:** em PRD as tabelas sao tratadas como recursos existentes e nao sao criadas pela stack principal do `portal-bff`. Veja `DEPLOYMENT.md`.
+> **AWS/DynamoDB:** o workflow cria as 26 tabelas na stack `portal-bff-data-prd` antes de publicar a aplicacao. Veja `DEPLOYMENT.md`.
 
 
 Projeto em construção para Node.js 20 e Serverless Framework 3.

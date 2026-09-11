@@ -94,7 +94,21 @@ jobs:
       - name: Confirmar identidade AWS
         run: aws sts get-caller-identity
 
-      - name: Validar tabelas DynamoDB existentes
+      - name: Criar ou atualizar tabelas DynamoDB
+        run: |
+          aws cloudformation deploy \
+            --stack-name "portal-bff-data-$STAGE" \
+            --template-file infra/dynamodb-data.yml \
+            --region "$AWS_REGION" \
+            --no-fail-on-empty-changeset \
+            --parameter-overrides \
+              "TablePrefix=$APP_DYNAMODB_TABLE_PREFIX" \
+              "SessionsTableName=$APP_ENGINE_DYNAMODB_SESSIONS_TABLE" \
+              "ContactsTableName=$APP_ENGINE_DYNAMODB_CONTACTS_TABLE" \
+              "MessagesTableName=$APP_ENGINE_DYNAMODB_MESSAGES_TABLE" \
+              "Stage=$STAGE"
+
+      - name: Validar tabelas DynamoDB provisionadas
         run: npm run check:aws:tables
 
       - name: Deploy CloudFormation via Serverless Framework

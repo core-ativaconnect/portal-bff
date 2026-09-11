@@ -102,6 +102,26 @@ Resources:
                   - dynamodb:DescribeTable
                 Resource: '*'
 
+              - Sid: PortalDynamoDbProvisioning
+                Effect: Allow
+                Action:
+                  - dynamodb:CreateTable
+                  - dynamodb:UpdateTable
+                  - dynamodb:DeleteTable
+                  - dynamodb:DescribeTable
+                  - dynamodb:DescribeContinuousBackups
+                  - dynamodb:UpdateContinuousBackups
+                  - dynamodb:DescribeTimeToLive
+                  - dynamodb:UpdateTimeToLive
+                  - dynamodb:ListTagsOfResource
+                  - dynamodb:TagResource
+                  - dynamodb:UntagResource
+                Resource:
+                  - !Sub arn:${AWS::Partition}:dynamodb:us-east-1:${AWS::AccountId}:table/prd_flow_bff_*
+                  - !Sub arn:${AWS::Partition}:dynamodb:us-east-1:${AWS::AccountId}:table/flow_engine_sessions
+                  - !Sub arn:${AWS::Partition}:dynamodb:us-east-1:${AWS::AccountId}:table/flow_engine_contacts
+                  - !Sub arn:${AWS::Partition}:dynamodb:us-east-1:${AWS::AccountId}:table/flow_engine_messages
+
               - Sid: PortalApiGateway
                 Effect: Allow
                 Action:

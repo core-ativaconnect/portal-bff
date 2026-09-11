@@ -27,6 +27,8 @@ Resources:
       PointInTimeRecoverySpecification:
         PointInTimeRecoveryEnabled: true
       Tags:
+        - Key: ef_apllication
+          Value: broker
         - Key: Service
           Value: portal-bff
         - Key: ManagedBy

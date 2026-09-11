@@ -46,6 +46,23 @@ Environment secret:
 
 Nao crie `AWS_ACCESS_KEY_ID` ou `AWS_SECRET_ACCESS_KEY` para o workflow. O acesso e via OIDC.
 
+### Erro: Could not load credentials from any providers
+
+O workflow le `${{ vars.AWS_DEPLOY_ROLE_ARN }}`. Se essa variable estiver ausente
+ou vazia, a action nao recebe `role-to-assume` para autenticar via OIDC.
+Um secret com o mesmo nome nao preenche o contexto `vars`.
+
+1. Na AWS, abra CloudFormation > `portal-bff-github-bootstrap` > Outputs e copie
+   `GitHubActionsDeployRoleArn`. Se a stack ainda nao existir, execute o bootstrap acima.
+2. No repositorio GitHub, abra Settings > Environments > `prd` > Environment variables.
+3. Cadastre `AWS_DEPLOY_ROLE_ARN` com o ARN completo copiado, sem aspas ou espacos.
+4. Execute novamente o workflow de deploy.
+
+O deploy valida essa variable antes de instalar dependencias. A permissao
+`id-token: write` e o environment `prd` ja estao declarados no workflow.
+Se o erro passar a ser `Not authorized to perform sts:AssumeRoleWithWebIdentity`,
+confira a trust policy da role e o output `ExpectedGitHubOidcSubject` do bootstrap.
+
 ## Preflight DynamoDB local
 
 Se voce ja tiver uma sessao AWS configurada no computador, pode verificar antes do primeiro push:
@@ -65,6 +82,21 @@ npm run check:aws:tables
 ```
 
 O mesmo conjunto de variaveis existe no workflow de PRD.
+
+No workflow de PRD, `APP_DYNAMODB_TABLE_PREFIX` esta definido como `prd_`,
+conforme os nomes existentes na AWS (por exemplo, `prd_flow_bff_blog_posts`).
+Esse prefixo e usado na verificacao das tabelas, nas Lambdas e nas permissoes IAM.
+Para executar a verificacao local contra essas tabelas, defina tambem:
+
+```powershell
+$env:APP_DYNAMODB_TABLE_PREFIX="prd_"
+```
+
+As tres tabelas `flow_engine_*` usam os nomes completos das variaveis
+`APP_ENGINE_DYNAMODB_*_TABLE`; o prefixo acima nao e aplicado a elas.
+Confira seus nomes na AWS antes de alterar essas variaveis.
+Se precisar criar a tabela de jobs pela stack opcional abaixo em PRD,
+informe o parametro `TablePrefix=prd_` para criar `prd_flow_bff_jobs`.
 
 ## Se alguma tabela estiver faltando
 

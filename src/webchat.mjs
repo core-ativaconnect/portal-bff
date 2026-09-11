@@ -4,6 +4,8 @@ import { HttpError } from './command.mjs';
 import { must, now, required } from './store.mjs';
 import { processFlow, resolveDefinition } from './engine.mjs';
 import { writable } from './contracts.mjs';
+import { customerHandoff } from './channel-runtime.mjs';
+import { sendText } from './messages.mjs';
 
 function key(store){return Buffer.from(store.settings.secret);}
 export async function webchatOperation(store,body){
@@ -30,13 +32,17 @@ export async function webchatOperation(store,body){
   let target;
   if(contact.active_flow_id&&!contact.active_flow_completed)target=await resolveDefinition(store,{flowId:contact.active_flow_id,versionId:contact.active_flow_version_id,versionMode:'PUBLISHED'},contract.id);
   else if(links[0])target=await resolveDefinition(store,{flowId:links[0].flow_id,versionMode:'PUBLISHED'},contract.id);
-  const session=target?await store.get('engine_sessions',{session_key:`${contact.contact_id}#${target.flow.id}#${target.versionId}`}):null;
+  const session=target?(await store.get('engine_sessions',{session_key:`${contact.contact_id}#${target.flow.id}#${target.versionId}`})??(await store.list('engine_sessions',s=>s.simulator_user_id===contact.contact_id&&s.flow_id===target.flow.id&&s.version_id===target.versionId&&s.contract_id===contract.id))[0]):null;
   const ticket=(await store.list('helpdesk_tickets',t=>t.channel_id===channel.id&&t.contact_id===contact.contact_id&&t.status!=='CLOSED'))[0];
   if(body.type==='message'){
     const timestamp=now(),id=randomUUID(),text=required(body.text,'Mensagem',20000);
     await store.transaction([store.guard(contract.id),store.putOperation('engine_messages',{contact_id:contact.contact_id,message_id:id,contract_id:contract.id,contract_slug:contract.slug,channel_id:channel.id,channel_slug:channel.slug,direction:'INBOUND',message_kind:'USER',message_type:'webchat_text',message_text:text,contact_name:contact.username,contact_user_id:contact.user_id,status:'RECEIVED',occurred_at:timestamp,updated_at:timestamp},'attribute_not_exists(message_id)')]);
   }
   let response;
+  if(ticket&&body.type==='message'){
+    const resumed=await customerHandoff(store,contract,channel,contact,body.text,ticket);
+    for(const message of resumed?.messages.filter(m=>m.kind==='BUSINESS')??[])if(message.text)await sendText(store,contract,channel,contact,message.text,'BUSINESS',message);
+  }
   if(target&&!ticket&&body.type!=='poll'&&(body.type==='message'||!session)){
     response=await processFlow(store,{flowId:target.flow.id,versionId:target.versionId,simulatorUserId:contact.contact_id,start:!session||session.completed===true,input:body.text},null,{contractId:contract.id});
     const updated={...contact,active_flow_id:response.flowId,active_flow_version_id:response.resolvedVersionId,active_flow_completed:response.completed,updated_at:now()};

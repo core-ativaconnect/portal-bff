@@ -1,0 +1,76 @@
+Resources:
+  MetaDeadLetterQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: ${self:service}-${sls:stage}-meta-dlq.fifo
+      FifoQueue: true
+      MessageRetentionPeriod: 1209600
+      SqsManagedSseEnabled: true
+  MetaQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: ${self:service}-${sls:stage}-meta.fifo
+      FifoQueue: true
+      VisibilityTimeout: 720
+      MessageRetentionPeriod: 1209600
+      SqsManagedSseEnabled: true
+      RedrivePolicy:
+        deadLetterTargetArn:
+          Fn::GetAtt: [MetaDeadLetterQueue, Arn]
+        maxReceiveCount: 5
+  ChatPathFunction:
+    Type: AWS::CloudFront::Function
+    Properties:
+      Name: ${self:service}-${sls:stage}-chat-path
+      AutoPublish: true
+      FunctionConfig:
+        Comment: Maps the public WebSocket path to the API Gateway stage
+        Runtime: cloudfront-js-2.0
+      FunctionCode: |
+        function handler(event) {
+          var request = event.request;
+          if (request.uri !== '/ws/webchat') return {statusCode: 404, statusDescription: 'Not Found'};
+          request.uri = '/${sls:stage}';
+          return request;
+        }
+  ChatDistribution:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Enabled: true
+        Comment: ${self:service}-${sls:stage} WebSocket /ws/webchat
+        HttpVersion: http2
+        Origins:
+          - Id: websocket
+            DomainName:
+              Fn::Sub: ${WebsocketsApi}.execute-api.${AWS::Region}.amazonaws.com
+            CustomOriginConfig:
+              OriginProtocolPolicy: https-only
+              OriginSSLProtocols: [TLSv1.2]
+        DefaultCacheBehavior:
+          TargetOriginId: websocket
+          ViewerProtocolPolicy: https-only
+          AllowedMethods: [GET, HEAD]
+          CachedMethods: [GET, HEAD]
+          # AWS managed CachingDisabled and AllViewerExceptHostHeader policies.
+          CachePolicyId: 413f160d-6e73-4c48-85e2-63bfb566060e
+          OriginRequestPolicyId: b689b0a8-53d0-40ab-baf2-68738e2966ac
+          FunctionAssociations:
+            - EventType: viewer-request
+              FunctionARN:
+                Fn::GetAtt: [ChatPathFunction, FunctionARN]
+        ViewerCertificate:
+          CloudFrontDefaultCertificate: true
+Outputs:
+  ChatWebSocketUrl:
+    Value:
+      Fn::Sub: wss://${ChatDistribution.DomainName}/ws/webchat
+  MetaWebhookUrl:
+    Value:
+      Fn::Sub: https://${HttpApi}.execute-api.${AWS::Region}.amazonaws.com/v1/webhook/meta
+  FlowDeskApiUrl:
+    Value:
+      Fn::Sub: https://${HttpApi}.execute-api.${AWS::Region}.amazonaws.com/flow-desk/api/v1
+  MetaDeadLetterQueueUrl:
+    Value:
+      Ref: MetaDeadLetterQueue

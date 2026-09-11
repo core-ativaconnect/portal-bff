@@ -82,6 +82,15 @@ Resources:
                   - s3:GetObjectVersion
                 Resource: '*'
 
+              - Sid: PortalDeploymentBucketLifecycle
+                Effect: Allow
+                Action:
+                  - s3:GetBucketTagging
+                  - s3:PutBucketTagging
+                  - s3:DeleteBucket
+                Resource:
+                  - !Sub arn:${AWS::Partition}:s3:::portal-bff-prd-serverlessdeploymentbucket-*
+
               - Sid: PortalLambda
                 Effect: Allow
                 Action:
@@ -121,6 +130,40 @@ Resources:
                   - !Sub arn:${AWS::Partition}:dynamodb:us-east-1:${AWS::AccountId}:table/flow_engine_sessions
                   - !Sub arn:${AWS::Partition}:dynamodb:us-east-1:${AWS::AccountId}:table/flow_engine_contacts
                   - !Sub arn:${AWS::Partition}:dynamodb:us-east-1:${AWS::AccountId}:table/flow_engine_messages
+
+              - Sid: PortalMetaQueues
+                Effect: Allow
+                Action:
+                  - sqs:CreateQueue
+                  - sqs:DeleteQueue
+                  - sqs:GetQueueAttributes
+                  - sqs:GetQueueUrl
+                  - sqs:SetQueueAttributes
+                  - sqs:TagQueue
+                  - sqs:UntagQueue
+                  - sqs:ListQueueTags
+                Resource:
+                  - !Sub arn:${AWS::Partition}:sqs:*:${AWS::AccountId}:portal-bff-*
+
+              - Sid: PortalChatCloudFront
+                Effect: Allow
+                Action:
+                  - cloudfront:CreateDistribution
+                  - cloudfront:CreateDistributionWithTags
+                  - cloudfront:GetDistribution
+                  - cloudfront:GetDistributionConfig
+                  - cloudfront:UpdateDistribution
+                  - cloudfront:DeleteDistribution
+                  - cloudfront:CreateFunction
+                  - cloudfront:DescribeFunction
+                  - cloudfront:GetFunction
+                  - cloudfront:UpdateFunction
+                  - cloudfront:PublishFunction
+                  - cloudfront:DeleteFunction
+                  - cloudfront:TagResource
+                  - cloudfront:UntagResource
+                  - cloudfront:ListTagsForResource
+                Resource: '*'
 
               - Sid: PortalApiGateway
                 Effect: Allow

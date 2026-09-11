@@ -32,6 +32,15 @@ jobs:
   validate:
     name: Testes e validacao
     runs-on: ubuntu-latest
+    services:
+      dynamodb:
+        image: amazon/dynamodb-local:latest
+        ports:
+          - 8000:8000
+    env:
+      APP_STAGE: local
+      APP_DYNAMODB_ENDPOINT: http://localhost:8000
+      RUN_DYNAMODB_TESTS: '1'
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -48,7 +57,20 @@ jobs:
       - name: Validar sintaxe
         run: npm run check
 
+      - name: Iniciar DynamoDB e Offline
+        run: |
+          npm run init:local
+          npm run start:local > /tmp/portal-offline.log 2>&1 &
+          for attempt in $(seq 1 30); do
+            if curl -fsS -X POST http://localhost:3001/commands -H 'Content-Type: application/json' -d '{"path":"/actuator/health","method":"GET"}' >/dev/null; then exit 0; fi
+            sleep 1
+          done
+          cat /tmp/portal-offline.log
+          exit 1
+
       - name: Executar testes
+        env:
+          RUN_OFFLINE_TESTS: '1'
         run: npm test
 
   deploy:
@@ -114,11 +136,15 @@ jobs:
       - name: Deploy CloudFormation via Serverless Framework
         env:
           APP_JWT_SECRET: ${{ secrets.APP_JWT_SECRET }}
+          APP_WHATSAPP_META_APP_SECRETS: ${{ secrets.APP_WHATSAPP_META_APP_SECRETS }}
+          PORTAL_DESK_ORIGIN: ${{ vars.PORTAL_DESK_ORIGIN || 'http://localhost:4174' }}
         run: npx serverless deploy --stage "$STAGE" --region "$AWS_REGION" --verbose
 
       - name: Mostrar endpoints e stack
         env:
           APP_JWT_SECRET: ${{ secrets.APP_JWT_SECRET }}
+          APP_WHATSAPP_META_APP_SECRETS: ${{ secrets.APP_WHATSAPP_META_APP_SECRETS }}
+          PORTAL_DESK_ORIGIN: ${{ vars.PORTAL_DESK_ORIGIN || 'http://localhost:4174' }}
         run: |
           npx serverless info --stage "$STAGE" --region "$AWS_REGION" --verbose | tee deploy-info.txt
           {

@@ -1,0 +1,2925 @@
+{
+  "schemas": {
+    "BlogPostSummaryResponse": {
+      "type": "object",
+      "properties": {
+        "slug": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "excerpt": {
+          "type": "string"
+        },
+        "coverImage": {
+          "type": "string"
+        },
+        "pillar": {
+          "type": "string"
+        },
+        "audience": {
+          "type": "string"
+        },
+        "author": {
+          "type": "string"
+        },
+        "published": {
+          "type": "boolean"
+        },
+        "review": {
+          "type": "boolean"
+        },
+        "readingMinutes": {
+          "type": "integer"
+        },
+        "publishedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "BlogPostRequest": {
+      "type": "object",
+      "properties": {
+        "slug": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "excerpt": {
+          "type": "string"
+        },
+        "content": {
+          "type": "string"
+        },
+        "coverImage": {
+          "type": "string"
+        },
+        "pillar": {
+          "type": "string"
+        },
+        "audience": {
+          "type": "string"
+        },
+        "author": {
+          "type": "string"
+        },
+        "published": {
+          "type": "boolean"
+        },
+        "review": {
+          "type": "boolean"
+        },
+        "publishedAt": {
+          "type": "string"
+        }
+      }
+    },
+    "BlogPostResponse": {
+      "type": "object",
+      "properties": {
+        "slug": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "excerpt": {
+          "type": "string"
+        },
+        "content": {
+          "type": "string"
+        },
+        "coverImage": {
+          "type": "string"
+        },
+        "pillar": {
+          "type": "string"
+        },
+        "audience": {
+          "type": "string"
+        },
+        "author": {
+          "type": "string"
+        },
+        "published": {
+          "type": "boolean"
+        },
+        "review": {
+          "type": "boolean"
+        },
+        "readingMinutes": {
+          "type": "integer"
+        },
+        "publishedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "BlogImportRequest": {
+      "type": "object",
+      "properties": {
+        "posts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/BlogPostRequest"
+          }
+        }
+      }
+    },
+    "BlogImportResponse": {
+      "type": "object",
+      "properties": {
+        "importedCount": {
+          "type": "integer"
+        },
+        "slugs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "BlogSettingsResponse": {
+      "type": "object",
+      "properties": {
+        "navigation": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/BlogMenuItem"
+          }
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "BlogMenuItem": {
+      "type": "object",
+      "properties": {
+        "label": {
+          "type": "string"
+        },
+        "href": {
+          "type": "string"
+        }
+      }
+    },
+    "BlogSettingsRequest": {
+      "type": "object",
+      "properties": {
+        "navigation": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/BlogMenuItemRequest"
+          }
+        }
+      }
+    },
+    "BlogMenuItemRequest": {
+      "type": "object",
+      "properties": {
+        "label": {
+          "type": "string"
+        },
+        "href": {
+          "type": "string"
+        }
+      }
+    },
+    "StaticPageResponse": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "content": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "StaticPageRequest": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "content": {
+          "type": "string"
+        }
+      }
+    },
+    "WhatsAppAppResponse": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "name": {
+          "type": "string"
+        },
+        "appId": {
+          "type": "string"
+        },
+        "accessToken": {
+          "type": "string"
+        },
+        "verifyToken": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "WhatsAppAppRequest": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "appId": {
+          "type": "string"
+        },
+        "accessToken": {
+          "type": "string"
+        },
+        "verifyToken": {
+          "type": "string"
+        }
+      }
+    },
+    "WhatsAppWabaResponse": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "name": {
+          "type": "string"
+        },
+        "wabaId": {
+          "type": "string"
+        },
+        "appConfigId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "appName": {
+          "type": "string"
+        },
+        "appId": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "WhatsAppWabaRequest": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "wabaId": {
+          "type": "string"
+        },
+        "appConfigId": {
+          "type": "string",
+          "format": "uuid"
+        }
+      }
+    },
+    "WhatsAppPhoneNumberResponse": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "wabaConfigId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "metaPhoneNumberId": {
+          "type": "string"
+        },
+        "verifiedName": {
+          "type": "string"
+        },
+        "displayPhoneNumber": {
+          "type": "string"
+        },
+        "qualityRating": {
+          "type": "string"
+        },
+        "codeVerificationStatus": {
+          "type": "string"
+        },
+        "nameStatus": {
+          "type": "string"
+        },
+        "platformType": {
+          "type": "string"
+        },
+        "throughput": {
+          "type": "string"
+        },
+        "lastSyncedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "WhatsAppPhoneNumberImportResponse": {
+      "type": "object",
+      "properties": {
+        "wabaId": {
+          "type": "string"
+        },
+        "wabaName": {
+          "type": "string"
+        },
+        "appId": {
+          "type": "string"
+        },
+        "appName": {
+          "type": "string"
+        },
+        "importedCount": {
+          "type": "integer"
+        },
+        "updatedCount": {
+          "type": "integer"
+        },
+        "totalSynced": {
+          "type": "integer"
+        },
+        "syncedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "phoneNumbers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/WhatsAppPhoneNumberResponse"
+          }
+        }
+      }
+    },
+    "LoginRequest": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      }
+    },
+    "AuthResponse": {
+      "type": "object",
+      "properties": {
+        "accessToken": {
+          "type": "string"
+        },
+        "tokenType": {
+          "type": "string"
+        },
+        "subject": {
+          "type": "string"
+        },
+        "user": {
+          "$ref": "#/components/schemas/UserProfileResponse"
+        }
+      }
+    },
+    "UserProfileResponse": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "name": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "role": {
+          "type": "string"
+        },
+        "active": {
+          "type": "boolean"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "RegisterRequest": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      }
+    },
+    "ChannelResponse": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "contractId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "contractSlug": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "slug": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        },
+        "flowsPath": {
+          "type": "string"
+        },
+        "agentName": {
+          "type": "string"
+        },
+        "whatsAppPhoneNumber": {
+          "$ref": "#/components/schemas/ChannelPhoneResponse"
+        },
+        "pendingTransferRequest": {
+          "$ref": "#/components/schemas/ChannelTransferRequestResponse"
+        },
+        "linkedFlowCount": {
+          "type": "integer"
+        },
+        "primaryFlow": {
+          "$ref": "#/components/schemas/ChannelLinkedFlowResponse"
+        },
+        "flows": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/ChannelLinkedFlowResponse"
+          }
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "ChannelPhoneResponse": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "wabaConfigId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "wabaName": {
+          "type": "string"
+        },
+        "wabaId": {
+          "type": "string"
+        },
+        "appConfigId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "appName": {
+          "type": "string"
+        },
+        "appId": {
+          "type": "string"
+        },
+        "metaPhoneNumberId": {
+          "type": "string"
+        },
+        "verifiedName": {
+          "type": "string"
+        },
+        "displayPhoneNumber": {
+          "type": "string"
+        },
+        "qualityRating": {
+          "type": "string"
+        },
+        "codeVerificationStatus": {
+          "type": "string"
+        },
+        "nameStatus": {
+          "type": "string"
+        },
+        "platformType": {
+          "type": "string"
+        },
+        "throughput": {
+          "type": "string"
+        },
+        "assigned": {
+          "type": "boolean"
+        },
+        "assignedChannelId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "assignedChannelName": {
+          "type": "string"
+        },
+        "assignedChannelSlug": {
+          "type": "string"
+        },
+        "assignedContractId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "assignedContractName": {
+          "type": "string"
+        },
+        "assignedContractSlug": {
+          "type": "string"
+        },
+        "hasPendingTransfer": {
+          "type": "boolean"
+        },
+        "lastSyncedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "ChannelTransferRequestResponse": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "status": {
+          "type": "string"
+        },
+        "phoneNumberId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "displayPhoneNumber": {
+          "type": "string"
+        },
+        "verifiedName": {
+          "type": "string"
+        },
+        "metaPhoneNumberId": {
+          "type": "string"
+        },
+        "sourceContractId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "sourceContractName": {
+          "type": "string"
+        },
+        "sourceContractSlug": {
+          "type": "string"
+        },
+        "sourceChannelId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "sourceChannelName": {
+          "type": "string"
+        },
+        "sourceChannelSlug": {
+          "type": "string"
+        },
+        "targetContractId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "targetContractName": {
+          "type": "string"
+        },
+        "targetContractSlug": {
+          "type": "string"
+        },
+        "targetChannelId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "targetChannelName": {
+          "type": "string"
+        },
+        "targetChannelSlug": {
+          "type": "string"
+        },
+        "requestedByEmail": {
+          "type": "string"
+        },
+        "resolvedByEmail": {
+          "type": "string"
+        },
+        "requestedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "resolvedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "ChannelLinkedFlowResponse": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "flowId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "name": {
+          "type": "string"
+        },
+        "slug": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        },
+        "primary": {
+          "type": "boolean"
+        },
+        "linkedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "ChannelRequest": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "whatsAppPhoneNumberId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "agentName": {
+          "type": "string"
+        }
+      }
+    },
+    "ChannelFlowBindingsRequest": {
+      "type": "object",
+      "properties": {
+        "primaryFlowId": {
+          "type": "string",
+          "format": "uuid"
+        }
+      }
+    },
+    "ContractResponse": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "companyName": {
+          "type": "string"
+        },
+        "slug": {
+          "type": "string"
+        },
+        "cnpj": {
+          "type": "string"
+        },
+        "contactEmail": {
+          "type": "string"
+        },
+        "contactPhone": {
+          "type": "string"
+        },
+        "address": {
+          "type": "string"
+        },
+        "neighborhood": {
+          "type": "string"
+        },
+        "city": {
+          "type": "string"
+        },
+        "state": {
+          "type": "string"
+        },
+        "zipCode": {
+          "type": "string"
+        },
+        "startDate": {
+          "type": "string",
+          "format": "date"
+        },
+        "endDate": {
+          "type": "string",
+          "format": "date"
+        },
+        "maxFlowCount": {
+          "type": "integer"
+        },
+        "maxChannelCount": {
+          "type": "integer"
+        },
+        "status": {
+          "type": "string"
+        },
+        "linkedUsers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/ContractAccessUserResponse"
+          }
+        },
+        "flows": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/FlowResponse"
+          }
+        },
+        "channels": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/ChannelResponse"
+          }
+        },
+        "aiProviders": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/ContractAiProviderResponse"
+          }
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "registrationSource": {
+          "type": "string"
+        },
+        "deletionInProgress": {
+          "type": "boolean"
+        }
+      }
+    },
+    "ContractAccessUserResponse": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "name": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "active": {
+          "type": "boolean"
+        },
+        "addedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "FlowResponse": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "contractId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "name": {
+          "type": "string"
+        },
+        "slug": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "definitionJson": {
+          "type": "string"
+        },
+        "draftVersion": {
+          "$ref": "#/components/schemas/FlowVersionResponse"
+        },
+        "publishedVersion": {
+          "$ref": "#/components/schemas/FlowVersionResponse"
+        },
+        "versions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/FlowVersionResponse"
+          }
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "FlowVersionResponse": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "versionNumber": {
+          "type": "integer"
+        },
+        "status": {
+          "type": "string"
+        },
+        "current": {
+          "type": "boolean"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "createdByUserId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "createdByName": {
+          "type": "string"
+        },
+        "createdByEmail": {
+          "type": "string"
+        }
+      }
+    },
+    "ContractAiProviderResponse": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "contractId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "name": {
+          "type": "string"
+        },
+        "providerType": {
+          "$ref": "#/components/schemas/AiProviderType"
+        },
+        "model": {
+          "type": "string"
+        },
+        "apiKey": {
+          "type": "string"
+        },
+        "maskedApiKey": {
+          "type": "string"
+        },
+        "baseUrl": {
+          "type": "string"
+        },
+        "maxInputTokens": {
+          "type": "integer"
+        },
+        "maxOutputTokens": {
+          "type": "integer"
+        },
+        "temperature": {
+          "type": "number"
+        },
+        "enabled": {
+          "type": "boolean"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "AiProviderType": {
+      "type": "string",
+      "enum": [
+        "OPENAI",
+        "ANTHROPIC",
+        "GEMINI"
+      ]
+    },
+    "ContractRequest": {
+      "type": "object",
+      "properties": {
+        "companyName": {
+          "type": "string"
+        },
+        "cnpj": {
+          "type": "string"
+        },
+        "contactEmail": {
+          "type": "string"
+        },
+        "contactPhone": {
+          "type": "string"
+        },
+        "address": {
+          "type": "string"
+        },
+        "neighborhood": {
+          "type": "string"
+        },
+        "city": {
+          "type": "string"
+        },
+        "state": {
+          "type": "string"
+        },
+        "zipCode": {
+          "type": "string"
+        },
+        "startDate": {
+          "type": "string",
+          "format": "date"
+        },
+        "endDate": {
+          "type": "string",
+          "format": "date"
+        },
+        "maxFlowCount": {
+          "type": "integer"
+        },
+        "maxChannelCount": {
+          "type": "integer"
+        }
+      }
+    },
+    "ContractAccessRequest": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string"
+        }
+      }
+    },
+    "ContractAiProviderRequest": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "providerType": {
+          "$ref": "#/components/schemas/AiProviderType"
+        },
+        "model": {
+          "type": "string"
+        },
+        "apiKey": {
+          "type": "string"
+        },
+        "baseUrl": {
+          "type": "string"
+        },
+        "maxInputTokens": {
+          "type": "integer"
+        },
+        "maxOutputTokens": {
+          "type": "integer"
+        },
+        "temperature": {
+          "type": "number"
+        },
+        "enabled": {
+          "type": "boolean"
+        }
+      }
+    },
+    "ContractEmailConnectionResponse": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "contractId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "name": {
+          "type": "string"
+        },
+        "providerType": {
+          "$ref": "#/components/schemas/EmailConnectionProviderType"
+        },
+        "fromEmail": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        },
+        "maskedSecret": {
+          "type": "string"
+        },
+        "host": {
+          "type": "string"
+        },
+        "port": {
+          "type": "integer"
+        },
+        "security": {
+          "$ref": "#/components/schemas/EmailConnectionSecurity"
+        },
+        "enabled": {
+          "type": "boolean"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "EmailConnectionProviderType": {
+      "type": "string",
+      "enum": [
+        "GMAIL",
+        "OUTLOOK",
+        "SMTP"
+      ]
+    },
+    "EmailConnectionSecurity": {
+      "type": "string",
+      "enum": [
+        "STARTTLS",
+        "SSL_TLS",
+        "NONE"
+      ]
+    },
+    "ContractEmailConnectionRequest": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "providerType": {
+          "$ref": "#/components/schemas/EmailConnectionProviderType"
+        },
+        "fromEmail": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        },
+        "secret": {
+          "type": "string"
+        },
+        "host": {
+          "type": "string"
+        },
+        "port": {
+          "type": "integer"
+        },
+        "security": {
+          "$ref": "#/components/schemas/EmailConnectionSecurity"
+        },
+        "enabled": {
+          "type": "boolean"
+        }
+      }
+    },
+    "ContractEmailConnectionTestRequest": {
+      "type": "object",
+      "properties": {
+        "targetEmail": {
+          "type": "string"
+        }
+      }
+    },
+    "ContractEmailConnectionTestResponse": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "boolean"
+        },
+        "message": {
+          "type": "string"
+        }
+      }
+    },
+    "FlowRequest": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "slug": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "definitionJson": {
+          "type": "string"
+        }
+      }
+    },
+    "ContractSlugRequest": {
+      "type": "object",
+      "properties": {
+        "slug": {
+          "type": "string"
+        }
+      }
+    },
+    "ContractWhatsAppWabaResponse": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "contractId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "wabaConfigId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "name": {
+          "type": "string"
+        },
+        "wabaId": {
+          "type": "string"
+        },
+        "appConfigId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "appName": {
+          "type": "string"
+        },
+        "appId": {
+          "type": "string"
+        },
+        "phonesPath": {
+          "type": "string"
+        },
+        "linkedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "ContractWhatsAppWabaLinkRequest": {
+      "type": "object",
+      "properties": {
+        "wabaConfigId": {
+          "type": "string",
+          "format": "uuid"
+        }
+      }
+    },
+    "FlowProcessingRequest": {
+      "type": "object",
+      "properties": {
+        "flowId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "versionId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "versionMode": {
+          "$ref": "#/components/schemas/FlowProcessingVersionMode"
+        },
+        "simulatorUserId": {
+          "type": "string"
+        },
+        "input": {
+          "type": "string"
+        },
+        "start": {
+          "type": "boolean"
+        }
+      }
+    },
+    "FlowProcessingVersionMode": {
+      "type": "string",
+      "enum": [
+        "DRAFT",
+        "PUBLISHED",
+        "ARCHIVED"
+      ]
+    },
+    "FlowProcessingResponse": {
+      "type": "object",
+      "properties": {
+        "flowId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "resolvedVersionId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "resolvedVersionStatus": {
+          "type": "string"
+        },
+        "sessionId": {
+          "type": "string"
+        },
+        "simulatorUserId": {
+          "type": "string"
+        },
+        "started": {
+          "type": "boolean"
+        },
+        "completed": {
+          "type": "boolean"
+        },
+        "waitingState": {
+          "type": "string"
+        },
+        "waitingActionId": {
+          "type": "string"
+        },
+        "messages": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/FlowProcessingMessage"
+          }
+        },
+        "trace": {
+          "$ref": "#/components/schemas/FlowProcessingTrace"
+        }
+      }
+    },
+    "FlowProcessingMessage": {
+      "type": "object",
+      "properties": {
+        "author": {
+          "type": "string"
+        },
+        "kind": {
+          "$ref": "#/components/schemas/FlowProcessingMessageKind"
+        },
+        "text": {
+          "type": "string"
+        },
+        "choices": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "list": {
+          "$ref": "#/components/schemas/FlowProcessingListPayload"
+        },
+        "actionId": {
+          "type": "string"
+        }
+      }
+    },
+    "FlowProcessingMessageKind": {
+      "type": "string",
+      "enum": [
+        "USER",
+        "BUSINESS",
+        "DEBUG"
+      ]
+    },
+    "FlowProcessingListPayload": {
+      "type": "object",
+      "properties": {
+        "buttonText": {
+          "type": "string"
+        },
+        "sections": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/FlowProcessingListSection"
+          }
+        }
+      }
+    },
+    "FlowProcessingListSection": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "rows": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/FlowProcessingListRow"
+          }
+        }
+      }
+    },
+    "FlowProcessingListRow": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        }
+      }
+    },
+    "FlowProcessingTrace": {
+      "type": "object",
+      "properties": {
+        "actionIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "connectionKeys": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "activeActionId": {
+          "type": "string"
+        }
+      }
+    },
+    "ChannelUpdateRequest": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "whatsAppPhoneNumberId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "agentName": {
+          "type": "string"
+        }
+      }
+    },
+    "ChannelConversationContactResponse": {
+      "type": "object",
+      "properties": {
+        "contactId": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "userId": {
+          "type": "string"
+        },
+        "waId": {
+          "type": "string"
+        },
+        "lastDirection": {
+          "type": "string"
+        },
+        "lastMessagePreview": {
+          "type": "string"
+        },
+        "lastStatus": {
+          "type": "string"
+        },
+        "lastOccurredAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "conversationPath": {
+          "type": "string"
+        }
+      }
+    },
+    "ChannelConversationMessageResponse": {
+      "type": "object",
+      "properties": {
+        "messageId": {
+          "type": "string"
+        },
+        "direction": {
+          "type": "string"
+        },
+        "messageKind": {
+          "type": "string"
+        },
+        "messageType": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        },
+        "messagePayloadJson": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "contactId": {
+          "type": "string"
+        },
+        "contactName": {
+          "type": "string"
+        },
+        "contactUserId": {
+          "type": "string"
+        },
+        "contactWaId": {
+          "type": "string"
+        },
+        "occurredAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "ChannelPhoneBindingRequest": {
+      "type": "object",
+      "properties": {
+        "whatsAppPhoneNumberId": {
+          "type": "string",
+          "format": "uuid"
+        }
+      }
+    },
+    "FlowAiDraftRequest": {
+      "type": "object",
+      "properties": {
+        "providerConfigId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "goal": {
+          "type": "string"
+        },
+        "instructions": {
+          "type": "string"
+        }
+      }
+    },
+    "FlowAiDraftResponse": {
+      "type": "object",
+      "properties": {
+        "flow": {
+          "$ref": "#/components/schemas/FlowResponse"
+        },
+        "inputTokens": {
+          "type": "integer"
+        },
+        "outputTokens": {
+          "type": "integer"
+        },
+        "totalTokens": {
+          "type": "integer"
+        }
+      }
+    },
+    "ContractHelpDeskAttendantResponse": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "contractId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "userId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "name": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "active": {
+          "type": "boolean"
+        },
+        "enabled": {
+          "type": "boolean"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "ContractHelpDeskAttendantsUpdateRequest": {
+      "type": "object",
+      "properties": {
+        "userIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      }
+    },
+    "ContractHelpDeskCloseIntentResponse": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "contractId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "name": {
+          "type": "string"
+        },
+        "intentKey": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "enabled": {
+          "type": "boolean"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "ContractHelpDeskCloseIntentRequest": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "intentKey": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "enabled": {
+          "type": "boolean"
+        }
+      }
+    },
+    "ContractHelpDeskQueueResponse": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "contractId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "attendantUserIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "tagKeys": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "enabled": {
+          "type": "boolean"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "ContractHelpDeskQueueRequest": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "attendantUserIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "tagKeys": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "enabled": {
+          "type": "boolean"
+        }
+      }
+    },
+    "HelpDeskTicketResponse": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "contractId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "contractSlug": {
+          "type": "string"
+        },
+        "ticketNumber": {
+          "type": "integer"
+        },
+        "queueId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "queueName": {
+          "type": "string"
+        },
+        "channelId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "channelSlug": {
+          "type": "string"
+        },
+        "channelName": {
+          "type": "string"
+        },
+        "channelType": {
+          "type": "string"
+        },
+        "contactId": {
+          "type": "string"
+        },
+        "contactName": {
+          "type": "string"
+        },
+        "contactUserId": {
+          "type": "string"
+        },
+        "contactWaId": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "assignedUserId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "assignedUserName": {
+          "type": "string"
+        },
+        "assignedUserEmail": {
+          "type": "string"
+        },
+        "closeReason": {
+          "type": "string"
+        },
+        "closeIntent": {
+          "type": "string"
+        },
+        "openedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "assignedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "closedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "messages": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/ChannelConversationMessageResponse"
+          }
+        }
+      }
+    },
+    "HelpDeskTicketCloseRequest": {
+      "type": "object",
+      "properties": {
+        "intent": {
+          "type": "string"
+        }
+      }
+    },
+    "HelpDeskTicketMessageRequest": {
+      "type": "object",
+      "properties": {
+        "text": {
+          "type": "string"
+        }
+      }
+    },
+    "HelpDeskTicketTransferRequest": {
+      "type": "object",
+      "properties": {
+        "targetUserId": {
+          "type": "string",
+          "format": "uuid"
+        }
+      }
+    },
+    "StartCompanyRequest": {
+      "type": "object",
+      "properties": {
+        "companyName": {
+          "type": "string"
+        },
+        "cnpj": {
+          "type": "string"
+        },
+        "contactEmail": {
+          "type": "string"
+        },
+        "contactPhone": {
+          "type": "string"
+        },
+        "address": {
+          "type": "string"
+        },
+        "neighborhood": {
+          "type": "string"
+        },
+        "city": {
+          "type": "string"
+        },
+        "state": {
+          "type": "string"
+        },
+        "zipCode": {
+          "type": "string"
+        },
+        "slug": {
+          "type": "string"
+        }
+      }
+    },
+    "StartResult": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "slug": {
+          "type": "string"
+        }
+      }
+    },
+    "SlugResult": {
+      "type": "object",
+      "properties": {
+        "slug": {
+          "type": "string"
+        },
+        "available": {
+          "type": "boolean"
+        },
+        "suggestion": {
+          "type": "string"
+        }
+      }
+    },
+    "UserRoleUpdateRequest": {
+      "type": "object",
+      "properties": {
+        "role": {
+          "type": "string"
+        }
+      }
+    },
+    "UserStatusUpdateRequest": {
+      "type": "object",
+      "properties": {
+        "active": {
+          "type": "boolean"
+        }
+      }
+    }
+  },
+  "operations": {
+    "AdminBlogController.listPosts": {
+      "request": null,
+      "response": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/BlogPostSummaryResponse"
+        }
+      },
+      "query": []
+    },
+    "AdminBlogController.savePost": {
+      "request": "BlogPostRequest",
+      "response": {
+        "$ref": "#/components/schemas/BlogPostResponse"
+      },
+      "query": []
+    },
+    "AdminBlogController.importPosts": {
+      "request": "BlogImportRequest",
+      "response": {
+        "$ref": "#/components/schemas/BlogImportResponse"
+      },
+      "query": []
+    },
+    "AdminBlogController.deletePost": {
+      "request": null,
+      "response": null,
+      "query": []
+    },
+    "AdminBlogController.getPost": {
+      "request": null,
+      "response": {
+        "$ref": "#/components/schemas/BlogPostResponse"
+      },
+      "query": []
+    },
+    "AdminBlogController.getSettings": {
+      "request": null,
+      "response": {
+        "$ref": "#/components/schemas/BlogSettingsResponse"
+      },
+      "query": []
+    },
+    "AdminBlogController.saveSettings": {
+      "request": "BlogSettingsRequest",
+      "response": {
+        "$ref": "#/components/schemas/BlogSettingsResponse"
+      },
+      "query": []
+    },
+    "AdminStaticPageController.delete": {
+      "request": null,
+      "response": null,
+      "query": [
+        {
+          "name": "path",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    "AdminStaticPageController.list": {
+      "request": null,
+      "response": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/StaticPageResponse"
+        }
+      },
+      "query": []
+    },
+    "AdminStaticPageController.save": {
+      "request": "StaticPageRequest",
+      "response": {
+        "$ref": "#/components/schemas/StaticPageResponse"
+      },
+      "query": []
+    },
+    "AdminStaticPageController.resolve": {
+      "request": null,
+      "response": {
+        "$ref": "#/components/schemas/StaticPageResponse"
+      },
+      "query": [
+        {
+          "name": "path",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    "WhatsAppAdminController.listApps": {
+      "request": null,
+      "response": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/WhatsAppAppResponse"
+        }
+      },
+      "query": []
+    },
+    "WhatsAppAdminController.createApp": {
+      "request": "WhatsAppAppRequest",
+      "response": {
+        "$ref": "#/components/schemas/WhatsAppAppResponse"
+      },
+      "query": []
+    },
+    "WhatsAppAdminController.deleteApp": {
+      "request": null,
+      "response": null,
+      "query": []
+    },
+    "WhatsAppAdminController.updateApp": {
+      "request": "WhatsAppAppRequest",
+      "response": {
+        "$ref": "#/components/schemas/WhatsAppAppResponse"
+      },
+      "query": []
+    },
+    "WhatsAppAdminController.listWabas": {
+      "request": null,
+      "response": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/WhatsAppWabaResponse"
+        }
+      },
+      "query": []
+    },
+    "WhatsAppAdminController.createWaba": {
+      "request": "WhatsAppWabaRequest",
+      "response": {
+        "$ref": "#/components/schemas/WhatsAppWabaResponse"
+      },
+      "query": []
+    },
+    "WhatsAppAdminController.deleteWaba": {
+      "request": null,
+      "response": null,
+      "query": []
+    },
+    "WhatsAppAdminController.updateWaba": {
+      "request": "WhatsAppWabaRequest",
+      "response": {
+        "$ref": "#/components/schemas/WhatsAppWabaResponse"
+      },
+      "query": []
+    },
+    "WhatsAppAdminController.listPhoneNumbers": {
+      "request": null,
+      "response": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/WhatsAppPhoneNumberResponse"
+        }
+      },
+      "query": []
+    },
+    "WhatsAppAdminController.importPhoneNumbers": {
+      "request": null,
+      "response": {
+        "$ref": "#/components/schemas/WhatsAppPhoneNumberImportResponse"
+      },
+      "query": []
+    },
+    "AuthController.login": {
+      "request": "LoginRequest",
+      "response": {
+        "$ref": "#/components/schemas/AuthResponse"
+      },
+      "query": []
+    },
+    "AuthController.currentUser": {
+      "request": null,
+      "response": {
+        "$ref": "#/components/schemas/UserProfileResponse"
+      },
+      "query": []
+    },
+    "AuthController.register": {
+      "request": "RegisterRequest",
+      "response": {
+        "$ref": "#/components/schemas/AuthResponse"
+      },
+      "query": []
+    },
+    "ChannelController.listByContract": {
+      "request": null,
+      "response": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/ChannelResponse"
+        }
+      },
+      "query": []
+    },
+    "ChannelController.create": {
+      "request": "ChannelRequest",
+      "response": {
+        "$ref": "#/components/schemas/ChannelResponse"
+      },
+      "query": []
+    },
+    "ChannelController.find": {
+      "request": null,
+      "response": {
+        "$ref": "#/components/schemas/ChannelResponse"
+      },
+      "query": []
+    },
+    "ChannelController.updateFlows": {
+      "request": "ChannelFlowBindingsRequest",
+      "response": {
+        "$ref": "#/components/schemas/ChannelResponse"
+      },
+      "query": []
+    },
+    "ContractController.list": {
+      "request": null,
+      "response": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/ContractResponse"
+        }
+      },
+      "query": []
+    },
+    "ContractController.create": {
+      "request": "ContractRequest",
+      "response": {
+        "$ref": "#/components/schemas/ContractResponse"
+      },
+      "query": []
+    },
+    "ContractController.findBySlug": {
+      "request": null,
+      "response": {
+        "$ref": "#/components/schemas/ContractResponse"
+      },
+      "query": []
+    },
+    "ContractDeleteController.delete": {
+      "request": null,
+      "response": null,
+      "query": [
+        {
+          "name": "confirmation",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    "ContractController.update": {
+      "request": "ContractRequest",
+      "response": {
+        "$ref": "#/components/schemas/ContractResponse"
+      },
+      "query": []
+    },
+    "ContractController.listAccessUsers": {
+      "request": null,
+      "response": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/ContractAccessUserResponse"
+        }
+      },
+      "query": []
+    },
+    "ContractController.addAccessUser": {
+      "request": "ContractAccessRequest",
+      "response": {
+        "$ref": "#/components/schemas/ContractAccessUserResponse"
+      },
+      "query": []
+    },
+    "ContractController.removeAccessUser": {
+      "request": null,
+      "response": null,
+      "query": []
+    },
+    "ContractController.listAiProviders": {
+      "request": null,
+      "response": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/ContractAiProviderResponse"
+        }
+      },
+      "query": []
+    },
+    "ContractController.createAiProvider": {
+      "request": "ContractAiProviderRequest",
+      "response": {
+        "$ref": "#/components/schemas/ContractAiProviderResponse"
+      },
+      "query": []
+    },
+    "ContractController.deleteAiProvider": {
+      "request": null,
+      "response": null,
+      "query": []
+    },
+    "ContractController.updateAiProvider": {
+      "request": "ContractAiProviderRequest",
+      "response": {
+        "$ref": "#/components/schemas/ContractAiProviderResponse"
+      },
+      "query": []
+    },
+    "ContractController.block": {
+      "request": null,
+      "response": {
+        "$ref": "#/components/schemas/ContractResponse"
+      },
+      "query": []
+    },
+    "ContractController.listEmailConnections": {
+      "request": null,
+      "response": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/ContractEmailConnectionResponse"
+        }
+      },
+      "query": []
+    },
+    "ContractController.createEmailConnection": {
+      "request": "ContractEmailConnectionRequest",
+      "response": {
+        "$ref": "#/components/schemas/ContractEmailConnectionResponse"
+      },
+      "query": []
+    },
+    "ContractController.deleteEmailConnection": {
+      "request": null,
+      "response": null,
+      "query": []
+    },
+    "ContractController.updateEmailConnection": {
+      "request": "ContractEmailConnectionRequest",
+      "response": {
+        "$ref": "#/components/schemas/ContractEmailConnectionResponse"
+      },
+      "query": []
+    },
+    "ContractController.testEmailConnection": {
+      "request": "ContractEmailConnectionTestRequest",
+      "response": {
+        "$ref": "#/components/schemas/ContractEmailConnectionTestResponse"
+      },
+      "query": []
+    },
+    "ContractController.listFlows": {
+      "request": null,
+      "response": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/FlowResponse"
+        }
+      },
+      "query": []
+    },
+    "ContractController.createFlow": {
+      "request": "FlowRequest",
+      "response": {
+        "$ref": "#/components/schemas/FlowResponse"
+      },
+      "query": []
+    },
+    "ContractController.updateSlug": {
+      "request": "ContractSlugRequest",
+      "response": {
+        "$ref": "#/components/schemas/ContractResponse"
+      },
+      "query": []
+    },
+    "ContractController.unblock": {
+      "request": null,
+      "response": {
+        "$ref": "#/components/schemas/ContractResponse"
+      },
+      "query": []
+    },
+    "ContractController.listLinkedWabas": {
+      "request": null,
+      "response": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/ContractWhatsAppWabaResponse"
+        }
+      },
+      "query": []
+    },
+    "ContractController.addLinkedWaba": {
+      "request": "ContractWhatsAppWabaLinkRequest",
+      "response": {
+        "$ref": "#/components/schemas/ContractWhatsAppWabaResponse"
+      },
+      "query": []
+    },
+    "ContractController.listAvailableWabas": {
+      "request": null,
+      "response": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/ContractWhatsAppWabaResponse"
+        }
+      },
+      "query": []
+    },
+    "ContractController.removeLinkedWaba": {
+      "request": null,
+      "response": null,
+      "query": []
+    },
+    "FlowProcessingController.process": {
+      "request": "FlowProcessingRequest",
+      "response": {
+        "$ref": "#/components/schemas/FlowProcessingResponse"
+      },
+      "query": []
+    },
+    "FlowController.delete": {
+      "request": null,
+      "response": null,
+      "query": []
+    },
+    "FlowController.find": {
+      "request": null,
+      "response": {
+        "$ref": "#/components/schemas/FlowResponse"
+      },
+      "query": []
+    },
+    "FlowController.update": {
+      "request": "FlowRequest",
+      "response": {
+        "$ref": "#/components/schemas/FlowResponse"
+      },
+      "query": []
+    },
+    "FlowController.publish": {
+      "request": null,
+      "response": {
+        "$ref": "#/components/schemas/FlowResponse"
+      },
+      "query": []
+    },
+    "FlowController.listVersions": {
+      "request": null,
+      "response": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/FlowVersionResponse"
+        }
+      },
+      "query": []
+    },
+    "FlowController.restoreVersion": {
+      "request": null,
+      "response": {
+        "$ref": "#/components/schemas/FlowResponse"
+      },
+      "query": []
+    },
+    "PlatformController.listContracts": {
+      "request": null,
+      "response": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/ContractResponse"
+        }
+      },
+      "query": []
+    },
+    "PlatformController.getContract": {
+      "request": null,
+      "response": {
+        "$ref": "#/components/schemas/ContractResponse"
+      },
+      "query": []
+    },
+    "PlatformController.listAiProviders": {
+      "request": null,
+      "response": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/ContractAiProviderResponse"
+        }
+      },
+      "query": []
+    },
+    "PlatformChannelController.list": {
+      "request": null,
+      "response": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/ChannelResponse"
+        }
+      },
+      "query": []
+    },
+    "PlatformChannelController.create": {
+      "request": "ChannelRequest",
+      "response": {
+        "$ref": "#/components/schemas/ChannelResponse"
+      },
+      "query": []
+    },
+    "PlatformChannelController.listPhoneOptions": {
+      "request": null,
+      "response": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/ChannelPhoneResponse"
+        }
+      },
+      "query": []
+    },
+    "PlatformChannelController.listTransferRequests": {
+      "request": null,
+      "response": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/ChannelTransferRequestResponse"
+        }
+      },
+      "query": []
+    },
+    "PlatformChannelController.approveTransfer": {
+      "request": null,
+      "response": {
+        "$ref": "#/components/schemas/ChannelTransferRequestResponse"
+      },
+      "query": []
+    },
+    "PlatformChannelController.rejectTransfer": {
+      "request": null,
+      "response": {
+        "$ref": "#/components/schemas/ChannelTransferRequestResponse"
+      },
+      "query": []
+    },
+    "PlatformChannelController.deleteChannel": {
+      "request": null,
+      "response": null,
+      "query": []
+    },
+    "PlatformChannelController.find": {
+      "request": null,
+      "response": {
+        "$ref": "#/components/schemas/ChannelResponse"
+      },
+      "query": []
+    },
+    "PlatformChannelController.updateChannel": {
+      "request": "ChannelUpdateRequest",
+      "response": {
+        "$ref": "#/components/schemas/ChannelResponse"
+      },
+      "query": []
+    },
+    "PlatformChannelController.listContacts": {
+      "request": null,
+      "response": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/ChannelConversationContactResponse"
+        }
+      },
+      "query": []
+    },
+    "PlatformChannelController.listConversation": {
+      "request": null,
+      "response": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/ChannelConversationMessageResponse"
+        }
+      },
+      "query": []
+    },
+    "PlatformChannelController.updateFlows": {
+      "request": "ChannelFlowBindingsRequest",
+      "response": {
+        "$ref": "#/components/schemas/ChannelResponse"
+      },
+      "query": []
+    },
+    "PlatformChannelController.updatePhone": {
+      "request": "ChannelPhoneBindingRequest",
+      "response": {
+        "$ref": "#/components/schemas/ChannelResponse"
+      },
+      "query": []
+    },
+    "PlatformController.listEmailConnections": {
+      "request": null,
+      "response": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/ContractEmailConnectionResponse"
+        }
+      },
+      "query": []
+    },
+    "PlatformController.createEmailConnection": {
+      "request": "ContractEmailConnectionRequest",
+      "response": {
+        "$ref": "#/components/schemas/ContractEmailConnectionResponse"
+      },
+      "query": []
+    },
+    "PlatformController.deleteEmailConnection": {
+      "request": null,
+      "response": null,
+      "query": []
+    },
+    "PlatformController.updateEmailConnection": {
+      "request": "ContractEmailConnectionRequest",
+      "response": {
+        "$ref": "#/components/schemas/ContractEmailConnectionResponse"
+      },
+      "query": []
+    },
+    "PlatformController.testEmailConnection": {
+      "request": "ContractEmailConnectionTestRequest",
+      "response": {
+        "$ref": "#/components/schemas/ContractEmailConnectionTestResponse"
+      },
+      "query": []
+    },
+    "PlatformController.createFlow": {
+      "request": "FlowRequest",
+      "response": {
+        "$ref": "#/components/schemas/FlowResponse"
+      },
+      "query": []
+    },
+    "PlatformController.getFlow": {
+      "request": null,
+      "response": {
+        "$ref": "#/components/schemas/FlowResponse"
+      },
+      "query": []
+    },
+    "PlatformController.generateAiDraft": {
+      "request": "FlowAiDraftRequest",
+      "response": {
+        "$ref": "#/components/schemas/FlowAiDraftResponse"
+      },
+      "query": []
+    },
+    "PlatformController.saveDraft": {
+      "request": "FlowRequest",
+      "response": {
+        "$ref": "#/components/schemas/FlowResponse"
+      },
+      "query": []
+    },
+    "PlatformController.publishFlow": {
+      "request": null,
+      "response": {
+        "$ref": "#/components/schemas/FlowResponse"
+      },
+      "query": []
+    },
+    "PlatformController.listVersions": {
+      "request": null,
+      "response": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/FlowVersionResponse"
+        }
+      },
+      "query": []
+    },
+    "PlatformController.restoreVersion": {
+      "request": null,
+      "response": {
+        "$ref": "#/components/schemas/FlowResponse"
+      },
+      "query": []
+    },
+    "PlatformHelpDeskController.listAttendants": {
+      "request": null,
+      "response": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/ContractHelpDeskAttendantResponse"
+        }
+      },
+      "query": []
+    },
+    "PlatformHelpDeskController.replaceAttendants": {
+      "request": "ContractHelpDeskAttendantsUpdateRequest",
+      "response": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/ContractHelpDeskAttendantResponse"
+        }
+      },
+      "query": []
+    },
+    "PlatformHelpDeskController.listCloseIntents": {
+      "request": null,
+      "response": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/ContractHelpDeskCloseIntentResponse"
+        }
+      },
+      "query": []
+    },
+    "PlatformHelpDeskController.createCloseIntent": {
+      "request": "ContractHelpDeskCloseIntentRequest",
+      "response": {
+        "$ref": "#/components/schemas/ContractHelpDeskCloseIntentResponse"
+      },
+      "query": []
+    },
+    "PlatformHelpDeskController.deleteCloseIntent": {
+      "request": null,
+      "response": null,
+      "query": []
+    },
+    "PlatformHelpDeskController.updateCloseIntent": {
+      "request": "ContractHelpDeskCloseIntentRequest",
+      "response": {
+        "$ref": "#/components/schemas/ContractHelpDeskCloseIntentResponse"
+      },
+      "query": []
+    },
+    "PlatformHelpDeskController.listQueues": {
+      "request": null,
+      "response": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/ContractHelpDeskQueueResponse"
+        }
+      },
+      "query": []
+    },
+    "PlatformHelpDeskController.createQueue": {
+      "request": "ContractHelpDeskQueueRequest",
+      "response": {
+        "$ref": "#/components/schemas/ContractHelpDeskQueueResponse"
+      },
+      "query": []
+    },
+    "PlatformHelpDeskController.deleteQueue": {
+      "request": null,
+      "response": null,
+      "query": []
+    },
+    "PlatformHelpDeskController.updateQueue": {
+      "request": "ContractHelpDeskQueueRequest",
+      "response": {
+        "$ref": "#/components/schemas/ContractHelpDeskQueueResponse"
+      },
+      "query": []
+    },
+    "PlatformHelpDeskController.listTickets": {
+      "request": null,
+      "response": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/HelpDeskTicketResponse"
+        }
+      },
+      "query": []
+    },
+    "PlatformHelpDeskController.findTicket": {
+      "request": null,
+      "response": {
+        "$ref": "#/components/schemas/HelpDeskTicketResponse"
+      },
+      "query": []
+    },
+    "PlatformHelpDeskController.assign": {
+      "request": null,
+      "response": {
+        "$ref": "#/components/schemas/HelpDeskTicketResponse"
+      },
+      "query": []
+    },
+    "PlatformHelpDeskController.close": {
+      "request": "HelpDeskTicketCloseRequest",
+      "response": {
+        "$ref": "#/components/schemas/HelpDeskTicketResponse"
+      },
+      "query": []
+    },
+    "PlatformHelpDeskController.listMessages": {
+      "request": null,
+      "response": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/ChannelConversationMessageResponse"
+        }
+      },
+      "query": []
+    },
+    "PlatformHelpDeskController.sendMessage": {
+      "request": "HelpDeskTicketMessageRequest",
+      "response": {
+        "$ref": "#/components/schemas/HelpDeskTicketResponse"
+      },
+      "query": []
+    },
+    "PlatformHelpDeskController.release": {
+      "request": null,
+      "response": {
+        "$ref": "#/components/schemas/HelpDeskTicketResponse"
+      },
+      "query": []
+    },
+    "PlatformHelpDeskController.transfer": {
+      "request": "HelpDeskTicketTransferRequest",
+      "response": {
+        "$ref": "#/components/schemas/HelpDeskTicketResponse"
+      },
+      "query": []
+    },
+    "PublicBlogController.listPublishedPosts": {
+      "request": null,
+      "response": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/BlogPostSummaryResponse"
+        }
+      },
+      "query": []
+    },
+    "PublicBlogController.getPublishedPost": {
+      "request": null,
+      "response": {
+        "$ref": "#/components/schemas/BlogPostResponse"
+      },
+      "query": []
+    },
+    "PublicBlogController.getSettings": {
+      "request": null,
+      "response": {
+        "$ref": "#/components/schemas/BlogSettingsResponse"
+      },
+      "query": []
+    },
+    "PublicStaticPageController.resolve": {
+      "request": null,
+      "response": {
+        "$ref": "#/components/schemas/StaticPageResponse"
+      },
+      "query": [
+        {
+          "name": "path",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    "StartController.create": {
+      "request": "StartCompanyRequest",
+      "response": {
+        "$ref": "#/components/schemas/StartResult"
+      },
+      "query": []
+    },
+    "StartController.slug": {
+      "request": null,
+      "response": {
+        "$ref": "#/components/schemas/SlugResult"
+      },
+      "query": [
+        {
+          "name": "value",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    "UserAdminController.list": {
+      "request": null,
+      "response": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/UserProfileResponse"
+        }
+      },
+      "query": []
+    },
+    "UserAdminController.active": {
+      "request": null,
+      "response": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/UserProfileResponse"
+        }
+      },
+      "query": []
+    },
+    "UserAdminController.pending": {
+      "request": null,
+      "response": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/UserProfileResponse"
+        }
+      },
+      "query": []
+    },
+    "UserAdminController.delete": {
+      "request": null,
+      "response": null,
+      "query": []
+    },
+    "UserAdminController.activate": {
+      "request": null,
+      "response": {
+        "$ref": "#/components/schemas/UserProfileResponse"
+      },
+      "query": []
+    },
+    "UserAdminController.updateRole": {
+      "request": "UserRoleUpdateRequest",
+      "response": {
+        "$ref": "#/components/schemas/UserProfileResponse"
+      },
+      "query": []
+    },
+    "UserAdminController.updateStatus": {
+      "request": "UserStatusUpdateRequest",
+      "response": {
+        "$ref": "#/components/schemas/UserProfileResponse"
+      },
+      "query": []
+    }
+  }
+}

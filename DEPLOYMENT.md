@@ -2,13 +2,13 @@
 
 ## Provisionamento DynamoDB
 
-O workflow cria ou atualiza todas as 26 tabelas na stack `portal-bff-data-prd`
+O workflow cria ou atualiza todas as 27 tabelas na stack `portal-bff-data-prd`
 antes de verificar as tabelas e publicar a aplicacao na stack `portal-bff-prd`.
 O template completo e `infra/dynamodb-data.yml`, com chaves e indices de
 `src/table-definitions.json`, capacidade sob demanda, recuperacao pontual e
 TTL `expires_at` na tabela de jobs.
 
-As 23 tabelas do BFF usam `prd_flow_bff_*`. As tres tabelas do engine usam
+As 24 tabelas do BFF usam `prd_flow_bff_*`. As tres tabelas do engine usam
 `flow_engine_sessions`, `flow_engine_contacts` e `flow_engine_messages`.
 O workflow passa esses mesmos nomes para a stack de dados, a verificacao e
 as Lambdas. As tabelas com indices sao criadas em sequencia para evitar
@@ -27,7 +27,7 @@ dos dados necessarios antes da remocao manual. Confira se outros servicos usam
 as tabelas antes de remove-las. Nao exclua tabelas de outros projetos.
 
 Se ja criou `portal-bff-data-prd` com `infra/dynamodb-missing-prd.yml`, o novo
-template preserva os IDs logicos dessas cinco tabelas e adiciona as outras 21.
+template preserva os IDs logicos dessas cinco tabelas e adiciona as outras 22.
 Nesse caso, mantenha as cinco tabelas que essa stack ja gerencia.
 Os templates `dynamodb-missing-prd.yml` e `dynamodb-jobs.yml` sao alternativas
 anteriores; use agora `dynamodb-data.yml` para o provisionamento completo.
@@ -68,7 +68,7 @@ Ordem do workflow:
 
 1. Instalar dependencias, validar sintaxe e executar testes.
 2. Autenticar na AWS via OIDC e confirmar identidade.
-3. Criar/atualizar `portal-bff-data-prd` com as 26 tabelas.
+3. Criar/atualizar `portal-bff-data-prd` com as 27 tabelas.
 4. Executar `npm run check:aws:tables`.
 5. Publicar a aplicacao pelo Serverless e mostrar os endpoints.
 
@@ -83,3 +83,31 @@ $env:AWS_REGION="us-east-1"
 $env:APP_DYNAMODB_TABLE_PREFIX="prd_"
 npm run check:aws:tables
 ```
+
+## Entradas independentes e migração de clientes
+
+O template da aplicação agora cria SQS FIFO/DLQ, API Gateway WebSocket e uma
+distribuição CloudFront que publica /ws/webchat. A stack de dados adiciona
+flow_bff_websocket_connections com TTL, sem substituir tabelas antigas.
+Atualize o bootstrap IAM com infra/github-oidc-bootstrap.yml antes do deploy:
+as permissões adicionais cobrem SQS e CloudFront.
+
+No GitHub Environment prd, configure:
+
+- Secret APP_WHATSAPP_META_APP_SECRETS: JSON {"APP_ID":"APP_SECRET"} para cada app Meta.
+- Variable PORTAL_DESK_ORIGIN: origem HTTPS do Flow Desk quando diferente do Portal.
+
+Outputs da stack da aplicação:
+
+- MetaWebhookUrl: cadastrar na Meta, com o verify token já salvo no app.
+- ChatWebSocketUrl: definir em globalThis.PORTAL_CHAT_WS_URL nos chats HTML.
+- FlowDeskApiUrl: definir em VITE_API_BASE_URL e reconstruir o Flow Desk.
+- MetaDeadLetterQueueUrl: fila de eventos que falharam após cinco tentativas.
+
+Valide mensagem e status na Meta, fluxo publicado, passagem para atendente,
+resposta pelo Desk e reconexão do chat antes de desligar o flow-bff.
+Preserve a configuração antiga durante a homologação para permitir retorno.
+O pacote local não altera callback da Meta, DNS nem clientes já publicados.
+
+Referências: [WebSockets no Serverless](https://www.serverless.com/framework/docs/providers/aws/events/websocket)
+e [WebSockets no CloudFront](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/distribution-working-with.websockets.html).

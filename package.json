@@ -20,17 +20,22 @@
     "check:aws:tables": "node scripts/check-aws-tables.mjs"
   },
   "devDependencies": {
+    "@apidevtools/swagger-parser": "^13.0.0",
     "serverless": "3.40.0",
-    "serverless-offline": "13.9.0"
+    "serverless-offline": "13.9.0",
+    "ws": "^8.21.3"
   },
   "dependencies": {
+    "@aws-sdk/client-apigatewaymanagementapi": "^3.1130.0",
     "@aws-sdk/client-dynamodb": "^3.1130.0",
     "@aws-sdk/client-lambda": "^3.1130.0",
+    "@aws-sdk/client-sqs": "^3.1130.0",
     "@aws-sdk/lib-dynamodb": "^3.1130.0",
     "bcryptjs": "^3.0.3",
     "jose": "^6.2.12",
     "nodemailer": "^10.0.3",
     "quickjs-emscripten": "^0.32.0",
+    "swagger-ui-dist": "^5.32.15",
     "typescript": "5.9.3"
   }
 }

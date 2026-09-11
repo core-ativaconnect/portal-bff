@@ -25,7 +25,7 @@ export async function helpdeskOperation(store,operation,body,params,actor,contra
     if(!intent||!(intents.length?intents.some(i=>i.intent_key===intent):intent==='ATENDIMENTO_CONCLUIDO'))throw new HttpError(400,'Tag de encerramento inválida.');
     const contact=must(await store.get('engine_contacts',{contact_id:ticket.contact_id}));
     const response=await processFlow(store,{flowId:ticket.flow_id,versionId:ticket.flow_version_id,simulatorUserId:ticket.contact_id,start:false},actor,{contractId:contract.id,resumeIntent:intent});
-    for(const message of response.messages.filter(m=>m.kind==='BUSINESS'))if(message.text)await sendText(store,contract,channel,contact,message.text);
+    for(const message of response.messages.filter(m=>m.kind==='BUSINESS'))if(message.text)await sendText(store,contract,channel,contact,message.text,'BUSINESS',message);
     updated.status='CLOSED';updated.close_reason='ATTENDANT';updated.close_intent=intent;updated.closed_at=now();
   }
   // Compare-and-swap stops simultaneous agents from overwriting each other's assignments.

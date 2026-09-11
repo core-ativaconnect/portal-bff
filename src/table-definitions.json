@@ -1438,5 +1438,21 @@
         "KeyType": "HASH"
       }
     ]
+  },
+  {
+    "TableName": "flow_bff_websocket_connections",
+    "KeySchema": [
+      {
+        "AttributeName": "id",
+        "KeyType": "HASH"
+      }
+    ],
+    "AttributeDefinitions": [
+      {
+        "AttributeName": "id",
+        "AttributeType": "S"
+      }
+    ],
+    "BillingMode": "PAY_PER_REQUEST"
   }
 ]

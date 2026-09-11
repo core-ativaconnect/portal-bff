@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Description: Todas as 26 tabelas do portal-bff. Recursos retidos na exclusao da stack.
+Description: Todas as 27 tabelas do portal-bff. Recursos retidos na exclusao da stack.
 Parameters:
   TablePrefix:
     Type: String
@@ -17,6 +17,25 @@ Parameters:
     Type: String
     Default: prd
 Resources:
+  FlowBffWebsocketConnectionsTable:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      TableName:
+        Fn::Sub: ${TablePrefix}flow_bff_websocket_connections
+      BillingMode: PAY_PER_REQUEST
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+      TimeToLiveSpecification:
+        AttributeName: expires_at
+        Enabled: true
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
   FlowBffBlogPostsTable:
     Type: AWS::DynamoDB::Table
     DeletionPolicy: Retain

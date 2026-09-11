@@ -1,67 +1,82 @@
 # Portal BFF
 
-> **AWS/DynamoDB:** o workflow cria as 26 tabelas na stack `portal-bff-data-prd` antes de publicar a aplicacao. Veja `DEPLOYMENT.md`.
+Backend Node.js 20 / Serverless Framework 3 com handlers nativos e DynamoDB.
 
+| Cliente | Transporte local |
+| --- | --- |
+| Flow Studio | POST http://localhost:3001/commands |
+| Flow Desk | REST em http://localhost:3001/flow-desk/api/v1 |
+| Meta | GET e POST http://localhost:3001/v1/webhook/meta |
+| Chat | ws://localhost:3003/ws/webchat |
 
-Projeto em construção para Node.js 20 e Serverless Framework 3.
-Ainda não está pronto para substituir o backend em produção.
+## Execução local
 
-## Rodar com Serverless Offline
+Use Node.js 20, instale com npm ci, disponibilize DynamoDB Local na porta 8000,
+execute npm run init:local e depois npm run start:local.
+APP_DYNAMODB_ENDPOINT permite usar outra porta. npm run start:prod também roda
+localmente, mas usa configuração de produção; não faz deploy.
 
-Use Node.js 20 e execute `npm install` na pasta `portal-bff`.
+O Studio mantém o envelope {"path":"/api/v1/auth/login","method":"POST","body-data":{}}.
+O token de usuário permanece no cabeçalho Authorization: Bearer.
+As 120 operações legadas, exceto os webhooks, estão em src/routes.json.
+O endpoint HTTP de webchat existente foi mantido por compatibilidade.
 
-```bash
-npm run start:local
-```
+O Desk envia método e corpo HTTP diretamente, por exemplo
+POST /flow-desk/api/v1/auth/login com {"email":"...","password":"..."}.
+A API permite login, perfil, contratos acessíveis, leitura de configurações de
+atendimento e operações de tickets. Rotas administrativas do Studio não são
+expostas por esse transporte. Configure VITE_API_BASE_URL no Flow Desk.
 
-Inicia o endpoint em `http://localhost:3001/commands` com stage `local` e
-`NODE_ENV=development`. `npm run dev` e `npm start` são atalhos para esse comando.
+## WebSocket
 
-```bash
-npm run start:prod
-```
+Depois do handshake, envie:
 
-Também inicia **localmente**, na mesma porta, mas com stage `prd` e
-`NODE_ENV=production`. Não faz deploy. Rode apenas um dos dois de cada vez.
-O Serverless carrega `.env.local` ou `.env.prd` conforme o stage, se existirem.
-Não coloque credenciais nesses arquivos versionados.
+    {"type":"connect","agentName":"meu-agente","contactName":"Visitante"}
 
-Para verificar o servidor no PowerShell:
+O servidor devolve connected com contactId e contactToken. Guarde o token e
+inclua-o em um novo connect para retomar o histórico. Um contactId sozinho não
+autoriza acesso a uma conversa. Na conexão autenticada, envie
+{"type":"message","text":"Olá"} ou {"type":"ping"}.
+O servidor responde com envelopes messages, pong ou error.
+Mensagens do atendente são enviadas pelo servidor, sem polling do navegador.
 
-```powershell
-Invoke-RestMethod -Method Post -Uri http://localhost:3001/commands -ContentType 'application/json' -Body '{"path":"/actuator/health","method":"GET","body-data":{}}'
-```
+Os exemplos em ../chat aceitam globalThis.PORTAL_CHAT_WS_URL antes do script.
+O padrão é local. Em produção, configure o output ChatWebSocketUrl do deploy.
+CloudFront publica /ws/webchat e encaminha o handshake para o stage WebSocket
+do API Gateway; o envio pelo servidor usa o endereço interno do API Gateway.
+As conexões ficam em flow_bff_websocket_connections com TTL e são removidas
+no disconnect ou quando o API Gateway informa conexão encerrada.
 
-O health confirma o funcionamento do transporte. Os caminhos de negócio mapeados
-retornam **501** enquanto seus handlers não forem migrados; o Offline não substitui
-essa implementação. Por isso o flow-studio ainda não foi conectado definitivamente
-ao novo backend. Não há acesso ao DynamoDB nesta etapa de inicialização.
+## Meta
 
-Plugin: [Serverless Offline 13.9.0](https://github.com/dherault/serverless-offline/tree/v13.9.0), compatível com Serverless 3.
+O GET valida o verify token cadastrado no app e devolve hub.challenge.
+O POST valida X-Hub-Signature-256 sobre os bytes originais do corpo,
+usando o App Secret da Meta, diferente do access token e do verify token.
 
-Entrada HTTP prevista: `POST /commands`.
+Configure APP_WHATSAPP_META_APP_SECRETS como JSON com App IDs como chaves:
 
-```json
-{
-  "path": "/api/v1/contracts?confirmation=empresa",
-  "method": "DELETE",
-  "body-data": {}
-}
-```
+    {"123456789":"app-secret-configurado-na-meta"}
 
-`uri` é aceito como alias de `path`. O token continua no cabeçalho
-`Authorization: Bearer <token>`. Os parâmetros de consulta ficam no caminho.
-As respostas devem preservar os status HTTP e os DTOs esperados pelo flow-studio.
+Não versione segredos reais. Na AWS, eventos autenticados entram em SQS FIFO,
+ordenados por telefone e remetente, antes do EVENT_RECEIVED. O worker registra
+mensagens, atualiza status, executa fluxos publicados, envia textos/botões/listas
+e abre ou retoma atendimento humano. Falhas são repetidas e, após cinco tentativas,
+seguem para a DLQ. No Offline, o processamento é síncrono e dispensa SQS.
 
-`src/routes.json` contém o inventário de 120 operações HTTP do flow-bff,
-com seus caminhos, métodos e classificação inicial de acesso. O webhook da Meta
-foi excluído desse inventário. As permissões por contrato continuam necessárias
-além dessa classificação por rota.
+O estado do motor e a resposta para reentrega são gravados na mesma transação.
+O envio externo à Meta não participa dessa transação: uma interrupção depois do
+aceite da Graph API e antes da confirmação local ainda pode duplicar uma resposta.
+Revise a DLQ antes de reenviar mensagens. Anexos recebidos são preservados no
+histórico; somente texto e respostas interativas alimentam o motor.
 
-Concluído: inventário, parser, resolução de rotas e testes do transporte.
-Pendente: handlers de negócio, autenticação, persistência e integração efetiva
-do aplicativo. As decisões de backend independente versus encaminhamento e do
-transporte em tempo real foram solicitadas ao usuário antes dessa implementação.
+## Validação
 
-Referência da configuração HTTP API:
-https://www.serverless.com/framework/docs/providers/aws/events/http-api
+Execute npm run init:local e npm test com RUN_DYNAMODB_TESTS=1.
+Com o Offline rodando, adicione RUN_OFFLINE_TESTS=1 para o teste de WebSocket
+real, resposta do atendente pelo Desk e reconexão. Sem essas variáveis, os testes
+que dependem de serviços locais são ignorados. O CI inicia os serviços.
+
+npm run package -- --stage local valida o empacotamento sem publicar recursos.
+O health verifica o transporte; businessHandlersReady não certifica a migração.
+A substituição do serviço antigo ainda exige configurar endpoints, segredos e
+homologar integrações externas. Veja [DEPLOYMENT.md](DEPLOYMENT.md).

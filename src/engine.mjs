@@ -47,11 +47,13 @@ export async function resolveDefinition(store,body,contractId) {
   const definition=JSON.parse(version?.definition_json??flow.definition_json);if(!Array.isArray(definition.actions)||!definition.actions.length)throw new HttpError(400,'O fluxo não contém ações.');
   return{flow,versionId:version?.id??flow.id,status:version?.status??'DRAFT',definition};
 }
-export async function processFlow(store,body,actor,{contractId,resumeIntent}={}) {
+export async function processFlow(store,body,actor,{contractId,resumeIntent,operationId,resumeByCustomer=false}={}) {
+  if(operationId){const saved=await store.get('jobs',{id:operationId});if(saved?.response)return saved.response;}
   let resolved=await resolveDefinition(store,body,contractId);const contract=must(await store.get('contracts',{id:resolved.flow.contract_id}));writable(contract);
   if(!contractId&&actor?.role!=='OWNER'&&!await store.get('contract_access',{id:`${contract.id}#${actor?.id}`}))throw new HttpError(404,'Fluxo não encontrado.');
-  const simulator=required(body.simulatorUserId,'Usuário da sessão',180),key=`${simulator}#${body.flowId}#${resolved.versionId}`;
-  const old=await store.get('engine_sessions',{session_key:key});
+  const simulator=required(body.simulatorUserId,'Usuário da sessão',180),requestedKey=`${simulator}#${body.flowId}#${resolved.versionId}`;
+  const old=await store.get('engine_sessions',{session_key:requestedKey})??(!body.start?(await store.list('engine_sessions',s=>s.simulator_user_id===simulator&&s.flow_id===resolved.flow.id&&s.version_id===resolved.versionId&&s.contract_id===contract.id))[0]:undefined);
+  const key=old?.session_key??requestedKey;
   if(!body.start&&!old)throw new HttpError(404,'Sessão não encontrada.');
   if(old?.actor_id&&actor&&old.actor_id!==actor.id&&!contractId)throw new HttpError(404,'Sessão não encontrada.');
   const token=randomUUID();let session=body.start?{session_key:key,session_id:randomUUID(),simulator_user_id:simulator,flow_id:resolved.flow.id,version_id:resolved.versionId,version_status:resolved.status,waiting_state:'NONE',user_state_json:'{}',contract_id:contract.id,actor_id:actor?.id}: {...old};
@@ -66,7 +68,7 @@ export async function processFlow(store,body,actor,{contractId,resumeIntent}={})
     let current=body.start?(actions.find(a=>a.systemRole!=='global_router')??actions[0]).id:null;
     if(!body.start){
       const waiting=must(actions.find(a=>a.id===session.waiting_action_id),'A sessão não aguarda entrada.');previous=waiting.id;
-      if(session.waiting_state==='HUMAN_HANDOFF'&&!resumeIntent)throw new HttpError(409,'A conversa está em atendimento humano.');
+      if(session.waiting_state==='HUMAN_HANDOFF'&&!resumeIntent&&!resumeByCustomer)throw new HttpError(409,'A conversa está em atendimento humano.');
       const input=resumeIntent??required(body.input,'Entrada',20000);if(!resumeIntent)messages.push({author:'user',kind:'USER',text:input,choices:null,list:null,actionId:waiting.id});
       setVariable(state,'input',input);setVariable(state,'lastInput',input);
       if(resumeIntent){setVariable(state,'atendimento.intent',resumeIntent);setVariable(state,'atendimento.closedBy','ATTENDANT');if(waiting.config?.intentVariable)setVariable(state,waiting.config.intentVariable,resumeIntent);}
@@ -74,7 +76,7 @@ export async function processFlow(store,body,actor,{contractId,resumeIntent}={})
       if(session.waiting_state==='CHOICE'){setVariable(state,'lastChoice',input);setVariable(state,'lastChoiceItem',interaction(waiting.config??{},state).items[input]??null);}
       if(session.waiting_state==='AI_AGENT'){const history=variable(state,`__aiAgents.${waiting.id}.history`)??[];history.push({role:'user',content:input});setVariable(state,`__aiAgents.${waiting.id}.history`,history);current=waiting.id;}else current=waiting.nextActionId??null;
       if(resumeIntent&&waiting.config?.attendantFinishActionId)current=waiting.config.attendantFinishActionId;
-      if(global&&!resumeIntent){const choice=await router(global,state);if(choice){current=choice;previous=global.id;}}
+      if(global&&!resumeIntent&&!resumeByCustomer){const choice=await router(global,state);if(choice){current=choice;previous=global.id;}}
     }
     session.waiting_action_id=null;session.waiting_state='NONE';const deadline=Date.now()+23000;
     for(let steps=0;current;steps++){
@@ -120,8 +122,11 @@ export async function processFlow(store,body,actor,{contractId,resumeIntent}={})
     }
     if(!session.waiting_action_id){completed=true;debug('Fim do fluxo.');}
     session={...session,user_state_json:JSON.stringify(state),completed,updated_at:now()};delete session.lease_token;delete session.lease_until;
-    await store.transaction([store.guard(contract.id),store.putOperation('engine_sessions',session,'lease_token = :token',{':token':token})]);
-    return{flowId:session.flow_id,resolvedVersionId:session.version_id,resolvedVersionStatus:session.version_status,sessionId:session.session_id,simulatorUserId:simulator,started:body.start===true,completed,waitingState:session.waiting_state,waitingActionId:session.waiting_action_id,messages,trace:{actionIds,connectionKeys,activeActionId:active}};
+    const response={flowId:session.flow_id,resolvedVersionId:session.version_id,resolvedVersionStatus:session.version_status,sessionId:session.session_id,simulatorUserId:simulator,started:body.start===true,completed,waitingState:session.waiting_state,waitingActionId:session.waiting_action_id,messages,trace:{actionIds,connectionKeys,activeActionId:active}};
+    const writes=[store.guard(contract.id),store.putOperation('engine_sessions',session,'lease_token = :token',{':token':token})];
+    if(operationId)writes.push(store.putOperation('jobs',{id:operationId,contract_id:contract.id,response,expires_at:Math.floor(Date.now()/1000)+1209600},'attribute_not_exists(id)'));
+    await store.transaction(writes);
+    return response;
   }catch(error){
     const rollback=old??{...session,user_state_json:'{}'};delete rollback.lease_token;delete rollback.lease_until;
     await store.transaction([store.guard(contract.id),store.putOperation('engine_sessions',rollback,'lease_token = :token',{':token':token})]).catch(()=>{});throw error;

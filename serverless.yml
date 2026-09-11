@@ -1,0 +1,113 @@
+service: portal-bff
+frameworkVersion: '3'
+configValidationMode: error
+useDotenv: true
+
+plugins:
+  - serverless-offline
+
+custom:
+  nodeEnv:
+    local: development
+    prd: production
+  serverless-offline:
+    host: localhost
+    httpPort: 3001
+    lambdaPort: 3002
+    noPrependStageInUrl: true
+    reloadHandler: true
+    noTimeout: true
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  region: ${opt:region, 'us-east-1'}
+  stage: ${opt:stage, 'dev'}
+  memorySize: 1024
+  timeout: 28
+  httpApi:
+    payload: '2.0'
+    cors:
+      allowedOrigins:
+        - https://portal.tiudi.com.br
+        - http://localhost:4200
+      allowedHeaders:
+        - Content-Type
+        - Authorization
+      allowedMethods:
+        - POST
+        - OPTIONS
+  environment:
+    NODE_ENV: ${self:custom.nodeEnv.${sls:stage}, 'production'}
+    APP_STAGE: ${sls:stage}
+    PORTAL_WORKER_FUNCTION: ${self:service}-${sls:stage}-worker
+    APP_JWT_SECRET: ${env:APP_JWT_SECRET, ''}
+    APP_JWT_EXPIRATION_MILLIS: ${env:APP_JWT_EXPIRATION_MILLIS, '86400000'}
+    APP_DYNAMODB_ENDPOINT: ${env:APP_DYNAMODB_ENDPOINT, ''}
+    APP_DYNAMODB_TABLE_PREFIX: ${env:APP_DYNAMODB_TABLE_PREFIX, ''}
+    APP_ENGINE_DYNAMODB_SESSIONS_TABLE: ${env:APP_ENGINE_DYNAMODB_SESSIONS_TABLE, 'flow_engine_sessions'}
+    APP_ENGINE_DYNAMODB_CONTACTS_TABLE: ${env:APP_ENGINE_DYNAMODB_CONTACTS_TABLE, 'flow_engine_contacts'}
+    APP_ENGINE_DYNAMODB_MESSAGES_TABLE: ${env:APP_ENGINE_DYNAMODB_MESSAGES_TABLE, 'flow_engine_messages'}
+    APP_ONBOARDING_DURATION_DAYS: ${env:APP_ONBOARDING_DURATION_DAYS, '30'}
+    APP_ONBOARDING_MAX_FLOWS: ${env:APP_ONBOARDING_MAX_FLOWS, '1'}
+    APP_ONBOARDING_MAX_CHANNELS: ${env:APP_ONBOARDING_MAX_CHANNELS, '1'}
+    PORTAL_BOOTSTRAP_OWNER_EMAIL: ${env:PORTAL_BOOTSTRAP_OWNER_EMAIL, ''}
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+            - dynamodb:UpdateItem
+            - dynamodb:DeleteItem
+            - dynamodb:Query
+            - dynamodb:Scan
+            - dynamodb:ConditionCheckItem
+          Resource:
+            - Fn::Sub: arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${env:APP_DYNAMODB_TABLE_PREFIX, ''}flow_bff_*
+            - Fn::Sub: arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${env:APP_ENGINE_DYNAMODB_SESSIONS_TABLE, 'flow_engine_sessions'}
+            - Fn::Sub: arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${env:APP_ENGINE_DYNAMODB_CONTACTS_TABLE, 'flow_engine_contacts'}
+            - Fn::Sub: arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${env:APP_ENGINE_DYNAMODB_MESSAGES_TABLE, 'flow_engine_messages'}
+        - Effect: Allow
+          Action: lambda:InvokeFunction
+          Resource:
+            - Fn::Sub: arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${self:service}-${sls:stage}-worker
+
+functions:
+  worker:
+    handler: src/jobs.worker
+    timeout: 900
+    maximumRetryAttempts: 0
+    environment:
+      PORTAL_AI_TIMEOUT_MS: '240000'
+  commands:
+    handler: src/handler.handler
+    events:
+      - httpApi:
+          path: /commands
+            method: POST
+
+resources:
+  Resources:
+    JobsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${env:APP_DYNAMODB_TABLE_PREFIX, ''}flow_bff_jobs
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        TimeToLiveSpecification:
+          AttributeName: expires_at
+          Enabled: true
+
+package:
+  patterns:
+    - '!test/**'
+    - '!scripts/**'
+    - '!.env*'
+    - '!README.md'

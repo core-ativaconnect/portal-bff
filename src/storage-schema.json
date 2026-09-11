@@ -1,0 +1,289 @@
+{
+  "BlogPostRepository": {
+    "table": "flow_bff_blog_posts",
+    "attributes": {
+      "TABLE": "flow_bff_blog_posts",
+      "SLUG": "slug",
+      "ALL_KEY_ATTR": "all_key",
+      "ADMIN_SORT": "admin_sort",
+      "STATUS_KEY": "status_key",
+      "PUBLIC_SORT": "public_sort",
+      "ALL_ADMIN_INDEX": "all_admin-index",
+      "STATUS_PUBLIC_INDEX": "status_public-index",
+      "PUBLISHED_STATUS": "PUBLISHED"
+    },
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/repository/BlogPostRepository.java"
+  },
+  "BlogSettingsRepository": {
+    "table": "flow_bff_blog_settings",
+    "attributes": {
+      "TABLE": "flow_bff_blog_settings",
+      "ID": "id",
+      "SETTINGS_ID": "blog"
+    },
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/repository/BlogSettingsRepository.java"
+  },
+  "ContractAccessRepository": {
+    "table": "flow_bff_contract_access",
+    "attributes": {
+      "TABLE": "flow_bff_contract_access",
+      "ID": "id",
+      "CONTRACT_TIME_INDEX": "contract_time-index",
+      "CONTRACT_KEY": "contract_key",
+      "ADDED_AT_SORT": "added_at_sort",
+      "USER_INDEX": "user-index",
+      "USER_KEY": "user_key"
+    },
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/repository/ContractAccessRepository.java"
+  },
+  "ContractAiProviderConfigRepository": {
+    "table": "flow_bff_contract_ai_provider_configs",
+    "attributes": {
+      "TABLE": "flow_bff_contract_ai_provider_configs",
+      "ID": "id",
+      "CONTRACT_NAME_INDEX": "contract_name-index",
+      "CONTRACT_KEY": "contract_key",
+      "NAME_SORT": "name_sort"
+    },
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/repository/ContractAiProviderConfigRepository.java"
+  },
+  "ContractChannelFlowRepository": {
+    "table": "flow_bff_contract_channel_flows",
+    "attributes": {
+      "TABLE": "flow_bff_contract_channel_flows",
+      "ID": "id",
+      "CHANNEL_INDEX": "channel-index",
+      "CHANNEL_KEY": "channel_key",
+      "CREATED_AT_SORT": "created_at_sort"
+    },
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/repository/ContractChannelFlowRepository.java"
+  },
+  "ContractChannelRepository": {
+    "table": "flow_bff_contract_channels",
+    "attributes": {
+      "TABLE": "flow_bff_contract_channels",
+      "ID": "id",
+      "CONTRACT_NAME_INDEX": "contract_name-index",
+      "CONTRACT_KEY": "contract_key",
+      "NAME_SORT": "name_sort",
+      "CONTRACT_SLUG_INDEX": "contract_slug-index",
+      "CONTRACT_SLUG_KEY": "contract_slug_key",
+      "PHONE_INDEX": "phone-index",
+      "PHONE_KEY": "phone_key",
+      "WEBCHAT_AGENT_INDEX": "webchat_agent-index",
+      "WEBCHAT_AGENT_KEY": "webchat_agent_key"
+    },
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/repository/ContractChannelRepository.java"
+  },
+  "ContractEmailConnectionRepository": {
+    "table": "flow_bff_contract_email_connections",
+    "attributes": {
+      "TABLE": "flow_bff_contract_email_connections",
+      "ID": "id",
+      "CONTRACT_NAME_INDEX": "contract_name-index",
+      "CONTRACT_KEY": "contract_key",
+      "NAME_SORT": "name_sort"
+    },
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/repository/ContractEmailConnectionRepository.java"
+  },
+  "ContractHelpDeskAttendantRepository": {
+    "table": "flow_bff_contract_help_desk_attendants",
+    "attributes": {
+      "TABLE": "flow_bff_contract_help_desk_attendants",
+      "ID": "id",
+      "CONTRACT_NAME_INDEX": "contract_name-index",
+      "CONTRACT_KEY": "contract_key",
+      "NAME_SORT": "name_sort"
+    },
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/repository/ContractHelpDeskAttendantRepository.java"
+  },
+  "ContractHelpDeskCloseIntentRepository": {
+    "table": "flow_bff_contract_help_desk_close_intents",
+    "attributes": {
+      "TABLE": "flow_bff_contract_help_desk_close_intents",
+      "ID": "id",
+      "CONTRACT_NAME_INDEX": "contract_name-index",
+      "CONTRACT_KEY": "contract_key",
+      "NAME_SORT": "name_sort"
+    },
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/repository/ContractHelpDeskCloseIntentRepository.java"
+  },
+  "ContractHelpDeskQueueRepository": {
+    "table": "flow_bff_contract_help_desk_queues",
+    "attributes": {
+      "TABLE": "flow_bff_contract_help_desk_queues",
+      "ID": "id",
+      "CONTRACT_NAME_INDEX": "contract_name-index",
+      "CONTRACT_KEY": "contract_key",
+      "NAME_SORT": "name_sort"
+    },
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/repository/ContractHelpDeskQueueRepository.java"
+  },
+  "ContractRepository": {
+    "table": "flow_bff_contracts",
+    "attributes": {
+      "TABLE": "flow_bff_contracts",
+      "ID": "id",
+      "ALL_NAME_INDEX": "all_name-index",
+      "ALL_KEY_ATTR": "all_key",
+      "COMPANY_NAME_SORT": "company_name_sort",
+      "SLUG_INDEX": "slug-index",
+      "SLUG_KEY": "slug_key"
+    },
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/repository/ContractRepository.java"
+  },
+  "ContractWhatsAppWabaRepository": {
+    "table": "flow_bff_contract_whatsapp_wabas",
+    "attributes": {
+      "TABLE": "flow_bff_contract_whatsapp_wabas",
+      "ID": "id",
+      "CONTRACT_INDEX": "contract-index",
+      "CONTRACT_KEY": "contract_key",
+      "CREATED_AT_SORT": "created_at_sort",
+      "WABA_INDEX": "waba-index",
+      "WABA_KEY": "waba_key",
+      "ALL_INDEX": "all-index",
+      "ALL_KEY_ATTR": "all_key"
+    },
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/repository/ContractWhatsAppWabaRepository.java"
+  },
+  "FlowRepository": {
+    "table": "flow_bff_flows",
+    "attributes": {
+      "TABLE": "flow_bff_flows",
+      "ID": "id",
+      "CONTRACT_NAME_INDEX": "contract_name-index",
+      "CONTRACT_KEY": "contract_key",
+      "NAME_SORT": "name_sort",
+      "CONTRACT_SLUG_INDEX": "contract_slug-index",
+      "CONTRACT_SLUG_KEY": "contract_slug_key"
+    },
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/repository/FlowRepository.java"
+  },
+  "FlowVersionRepository": {
+    "table": "flow_bff_flow_versions",
+    "attributes": {
+      "TABLE": "flow_bff_flow_versions",
+      "ID": "id",
+      "FLOW_VERSION_INDEX": "flow_version-index",
+      "FLOW_KEY": "flow_key",
+      "VERSION_SORT": "version_sort",
+      "FLOW_STATUS_CURRENT_INDEX": "flow_status_current-index",
+      "FLOW_STATUS_CURRENT_KEY": "flow_status_current_key"
+    },
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/repository/FlowVersionRepository.java"
+  },
+  "HumanDeskTicketRepository": {
+    "table": "flow_bff_helpdesk_tickets",
+    "attributes": {
+      "TABLE": "flow_bff_helpdesk_tickets",
+      "ID": "id",
+      "CONTRACT_UPDATED_INDEX": "contract_id-updated_at-index",
+      "CONTRACT_ID": "contract_id",
+      "UPDATED_AT": "updated_at",
+      "CHANNEL_CONTACT_INDEX": "channel_contact_key-updated_at-index",
+      "CHANNEL_CONTACT_KEY": "channel_contact_key",
+      "ASSIGNED_USER_INDEX": "assigned_user_id-updated_at-index",
+      "ASSIGNED_USER_ID": "assigned_user_id"
+    },
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/repository/HumanDeskTicketRepository.java"
+  },
+  "StaticPageRepository": {
+    "table": "flow_bff_static_pages",
+    "attributes": {
+      "TABLE": "flow_bff_static_pages",
+      "PATH": "path",
+      "ALL_KEY_ATTR": "all_key",
+      "PATH_SORT": "path_sort",
+      "ALL_PATH_INDEX": "all_path-index"
+    },
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/repository/StaticPageRepository.java"
+  },
+  "UserRepository": {
+    "table": "flow_bff_users",
+    "attributes": {
+      "TABLE": "flow_bff_users",
+      "EMAIL": "email",
+      "ID_INDEX": "id-index",
+      "ID_KEY": "id_key",
+      "ACTIVE_NAME_INDEX": "active_name-index",
+      "ACTIVE_KEY": "active_key",
+      "NAME_SORT": "name_sort",
+      "ROLE_INDEX": "role-index",
+      "ROLE_KEY": "role_key",
+      "ALL_NAME_INDEX": "all_name-index",
+      "ALL_USERS_KEY": "all_users_key"
+    },
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/repository/UserRepository.java"
+  },
+  "WhatsAppAppRepository": {
+    "table": "flow_bff_whatsapp_apps",
+    "attributes": {
+      "TABLE": "flow_bff_whatsapp_apps",
+      "ID": "id",
+      "ALL_NAME_INDEX": "all_name-index",
+      "ALL_KEY_ATTR": "all_key",
+      "NAME_SORT": "name_sort",
+      "APP_ID_INDEX": "app_id-index",
+      "APP_ID_KEY": "app_id_key",
+      "VERIFY_TOKEN_INDEX": "verify_token-index",
+      "VERIFY_TOKEN_KEY": "verify_token_key"
+    },
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/repository/WhatsAppAppRepository.java"
+  },
+  "WhatsAppPhoneChannelLinkHistoryRepository": {
+    "table": "flow_bff_whatsapp_phone_channel_link_history",
+    "attributes": {
+      "TABLE": "flow_bff_whatsapp_phone_channel_link_history",
+      "ID": "id"
+    },
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/repository/WhatsAppPhoneChannelLinkHistoryRepository.java"
+  },
+  "WhatsAppPhoneNumberRepository": {
+    "table": "flow_bff_whatsapp_phone_numbers",
+    "attributes": {
+      "TABLE": "flow_bff_whatsapp_phone_numbers",
+      "ID": "id",
+      "WABA_DISPLAY_INDEX": "waba_display-index",
+      "WABA_KEY": "waba_key",
+      "DISPLAY_SORT": "display_sort",
+      "META_PHONE_INDEX": "meta_phone-index",
+      "META_PHONE_KEY": "meta_phone_key"
+    },
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/repository/WhatsAppPhoneNumberRepository.java"
+  },
+  "WhatsAppPhoneTransferRequestRepository": {
+    "table": "flow_bff_whatsapp_phone_transfer_requests",
+    "attributes": {
+      "TABLE": "flow_bff_whatsapp_phone_transfer_requests",
+      "ID": "id",
+      "SOURCE_CONTRACT_INDEX": "source_contract-index",
+      "SOURCE_CONTRACT_KEY": "source_contract_key",
+      "TARGET_CONTRACT_INDEX": "target_contract-index",
+      "TARGET_CONTRACT_KEY": "target_contract_key",
+      "TARGET_CHANNEL_STATUS_INDEX": "target_channel_status-index",
+      "TARGET_CHANNEL_STATUS_KEY": "target_channel_status_key",
+      "PHONE_STATUS_INDEX": "phone_status-index",
+      "PHONE_STATUS_KEY": "phone_status_key",
+      "SOURCE_CHANNEL_STATUS_INDEX": "source_channel_status-index",
+      "SOURCE_CHANNEL_STATUS_KEY": "source_channel_status_key",
+      "REQUESTED_AT_SORT": "requested_at_sort"
+    },
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/repository/WhatsAppPhoneTransferRequestRepository.java"
+  },
+  "WhatsAppWabaRepository": {
+    "table": "flow_bff_whatsapp_wabas",
+    "attributes": {
+      "TABLE": "flow_bff_whatsapp_wabas",
+      "ID": "id",
+      "ALL_NAME_INDEX": "all_name-index",
+      "ALL_KEY_ATTR": "all_key",
+      "NAME_SORT": "name_sort",
+      "WABA_ID_INDEX": "waba_id-index",
+      "WABA_ID_KEY": "waba_id_key",
+      "APP_INDEX": "app-index",
+      "APP_KEY": "app_key"
+    },
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/repository/WhatsAppWabaRepository.java"
+  }
+}

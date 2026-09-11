@@ -1,0 +1,1442 @@
+[
+  {
+    "TableName": "flow_bff_blog_posts",
+    "KeySchema": [
+      {
+        "AttributeName": "slug",
+        "KeyType": "HASH"
+      }
+    ],
+    "AttributeDefinitions": [
+      {
+        "AttributeName": "admin_sort",
+        "AttributeType": "S"
+      },
+      {
+        "AttributeName": "all_key",
+        "AttributeType": "S"
+      },
+      {
+        "AttributeName": "public_sort",
+        "AttributeType": "S"
+      },
+      {
+        "AttributeName": "slug",
+        "AttributeType": "S"
+      },
+      {
+        "AttributeName": "status_key",
+        "AttributeType": "S"
+      }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "GlobalSecondaryIndexes": [
+      {
+        "IndexName": "all_admin-index",
+        "KeySchema": [
+          {
+            "AttributeName": "all_key",
+            "KeyType": "HASH"
+          },
+          {
+            "AttributeName": "admin_sort",
+            "KeyType": "RANGE"
+          }
+        ],
+        "Projection": {
+          "ProjectionType": "ALL"
+        }
+      },
+      {
+        "IndexName": "status_public-index",
+        "KeySchema": [
+          {
+            "AttributeName": "status_key",
+            "KeyType": "HASH"
+          },
+          {
+            "AttributeName": "public_sort",
+            "KeyType": "RANGE"
+          }
+        ],
+        "Projection": {
+          "ProjectionType": "ALL"
+        }
+      }
+    ]
+  },
+  {
+    "TableName": "flow_bff_blog_settings",
+    "KeySchema": [
+      {
+        "AttributeName": "id",
+        "KeyType": "HASH"
+      }
+    ],
+    "AttributeDefinitions": [
+      {
+        "AttributeName": "id",
+        "AttributeType": "S"
+      }
+    ],
+    "BillingMode": "PAY_PER_REQUEST"
+  },
+  {
+    "TableName": "flow_bff_contract_access",
+    "KeySchema": [
+      {
+        "AttributeName": "id",
+        "KeyType": "HASH"
+      }
+    ],
+    "AttributeDefinitions": [
+      {
+        "AttributeName": "added_at_sort",
+        "AttributeType": "S"
+      },
+      {
+        "AttributeName": "contract_key",
+        "AttributeType": "S"
+      },
+      {
+        "AttributeName": "id",
+        "AttributeType": "S"
+      },
+      {
+        "AttributeName": "user_key",
+        "AttributeType": "S"
+      }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "GlobalSecondaryIndexes": [
+      {
+        "IndexName": "contract_time-index",
+        "KeySchema": [
+          {
+            "AttributeName": "contract_key",
+            "KeyType": "HASH"
+          },
+          {
+            "AttributeName": "added_at_sort",
+            "KeyType": "RANGE"
+          }
+        ],
+        "Projection": {
+          "ProjectionType": "ALL"
+        }
+      },
+      {
+        "IndexName": "user-index",
+        "KeySchema": [
+          {
+            "AttributeName": "user_key",
+            "KeyType": "HASH"
+          },
+          {
+            "AttributeName": "added_at_sort",
+            "KeyType": "RANGE"
+          }
+        ],
+        "Projection": {
+          "ProjectionType": "ALL"
+        }
+      }
+    ]
+  },
+  {
+    "TableName": "flow_bff_contract_ai_provider_configs",
+    "KeySchema": [
+      {
+        "AttributeName": "id",
+        "KeyType": "HASH"
+      }
+    ],
+    "AttributeDefinitions": [
+      {
+        "AttributeName": "contract_key",
+        "AttributeType": "S"
+      },
+      {
+        "AttributeName": "id",
+        "AttributeType": "S"
+      },
+      {
+        "AttributeName": "name_sort",
+        "AttributeType": "S"
+      }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "GlobalSecondaryIndexes": [
+      {
+        "IndexName": "contract_name-index",
+        "KeySchema": [
+          {
+            "AttributeName": "contract_key",
+            "KeyType": "HASH"
+          },
+          {
+            "AttributeName": "name_sort",
+            "KeyType": "RANGE"
+          }
+        ],
+        "Projection": {
+          "ProjectionType": "ALL"
+        }
+      }
+    ]
+  },
+  {
+    "TableName": "flow_bff_contract_channel_flows",
+    "KeySchema": [
+      {
+        "AttributeName": "id",
+        "KeyType": "HASH"
+      }
+    ],
+    "AttributeDefinitions": [
+      {
+        "AttributeName": "channel_key",
+        "AttributeType": "S"
+      },
+      {
+        "AttributeName": "created_at_sort",
+        "AttributeType": "S"
+      },
+      {
+        "AttributeName": "id",
+        "AttributeType": "S"
+      }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "GlobalSecondaryIndexes": [
+      {
+        "IndexName": "channel-index",
+        "KeySchema": [
+          {
+            "AttributeName": "channel_key",
+            "KeyType": "HASH"
+          },
+          {
+            "AttributeName": "created_at_sort",
+            "KeyType": "RANGE"
+          }
+        ],
+        "Projection": {
+          "ProjectionType": "ALL"
+        }
+      }
+    ]
+  },
+  {
+    "TableName": "flow_bff_contract_channels",
+    "KeySchema": [
+      {
+        "AttributeName": "id",
+        "KeyType": "HASH"
+      }
+    ],
+    "AttributeDefinitions": [
+      {
+        "AttributeName": "contract_key",
+        "AttributeType": "S"
+      },
+      {
+        "AttributeName": "contract_slug_key",
+        "AttributeType": "S"
+      },
+      {
+        "AttributeName": "id",
+        "AttributeType": "S"
+      },
+      {
+        "AttributeName": "name_sort",
+        "AttributeType": "S"
+      },
+      {
+        "AttributeName": "phone_key",
+        "AttributeType": "S"
+      },
+      {
+        "AttributeName": "webchat_agent_key",
+        "AttributeType": "S"
+      }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "GlobalSecondaryIndexes": [
+      {
+        "IndexName": "contract_name-index",
+        "KeySchema": [
+          {
+            "AttributeName": "contract_key",
+            "KeyType": "HASH"
+          },
+          {
+            "AttributeName": "name_sort",
+            "KeyType": "RANGE"
+          }
+        ],
+        "Projection": {
+          "ProjectionType": "ALL"
+        }
+      },
+      {
+        "IndexName": "contract_slug-index",
+        "KeySchema": [
+          {
+            "AttributeName": "contract_slug_key",
+            "KeyType": "HASH"
+          }
+        ],
+        "Projection": {
+          "ProjectionType": "ALL"
+        }
+      },
+      {
+        "IndexName": "phone-index",
+        "KeySchema": [
+          {
+            "AttributeName": "phone_key",
+            "KeyType": "HASH"
+          }
+        ],
+        "Projection": {
+          "ProjectionType": "ALL"
+        }
+      },
+      {
+        "IndexName": "webchat_agent-index",
+        "KeySchema": [
+          {
+            "AttributeName": "webchat_agent_key",
+            "KeyType": "HASH"
+          }
+        ],
+        "Projection": {
+          "ProjectionType": "ALL"
+        }
+      }
+    ]
+  },
+  {
+    "TableName": "flow_bff_contract_email_connections",
+    "KeySchema": [
+      {
+        "AttributeName": "id",
+        "KeyType": "HASH"
+      }
+    ],
+    "AttributeDefinitions": [
+      {
+        "AttributeName": "contract_key",
+        "AttributeType": "S"
+      },
+      {
+        "AttributeName": "id",
+        "AttributeType": "S"
+      },
+      {
+        "AttributeName": "name_sort",
+        "AttributeType": "S"
+      }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "GlobalSecondaryIndexes": [
+      {
+        "IndexName": "contract_name-index",
+        "KeySchema": [
+          {
+            "AttributeName": "contract_key",
+            "KeyType": "HASH"
+          },
+          {
+            "AttributeName": "name_sort",
+            "KeyType": "RANGE"
+          }
+        ],
+        "Projection": {
+          "ProjectionType": "ALL"
+        }
+      }
+    ]
+  },
+  {
+    "TableName": "flow_bff_contract_help_desk_attendants",
+    "KeySchema": [
+      {
+        "AttributeName": "id",
+        "KeyType": "HASH"
+      }
+    ],
+    "AttributeDefinitions": [
+      {
+        "AttributeName": "contract_key",
+        "AttributeType": "S"
+      },
+      {
+        "AttributeName": "id",
+        "AttributeType": "S"
+      },
+      {
+        "AttributeName": "name_sort",
+        "AttributeType": "S"
+      }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "GlobalSecondaryIndexes": [
+      {
+        "IndexName": "contract_name-index",
+        "KeySchema": [
+          {
+            "AttributeName": "contract_key",
+            "KeyType": "HASH"
+          },
+          {
+            "AttributeName": "name_sort",
+            "KeyType": "RANGE"
+          }
+        ],
+        "Projection": {
+          "ProjectionType": "ALL"
+        }
+      }
+    ]
+  },
+  {
+    "TableName": "flow_bff_contract_help_desk_close_intents",
+    "KeySchema": [
+      {
+        "AttributeName": "id",
+        "KeyType": "HASH"
+      }
+    ],
+    "AttributeDefinitions": [
+      {
+        "AttributeName": "contract_key",
+        "AttributeType": "S"
+      },
+      {
+        "AttributeName": "id",
+        "AttributeType": "S"
+      },
+      {
+        "AttributeName": "name_sort",
+        "AttributeType": "S"
+      }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "GlobalSecondaryIndexes": [
+      {
+        "IndexName": "contract_name-index",
+        "KeySchema": [
+          {
+            "AttributeName": "contract_key",
+            "KeyType": "HASH"
+          },
+          {
+            "AttributeName": "name_sort",
+            "KeyType": "RANGE"
+          }
+        ],
+        "Projection": {
+          "ProjectionType": "ALL"
+        }
+      }
+    ]
+  },
+  {
+    "TableName": "flow_bff_contract_help_desk_queues",
+    "KeySchema": [
+      {
+        "AttributeName": "id",
+        "KeyType": "HASH"
+      }
+    ],
+    "AttributeDefinitions": [
+      {
+        "AttributeName": "contract_key",
+        "AttributeType": "S"
+      },
+      {
+        "AttributeName": "id",
+        "AttributeType": "S"
+      },
+      {
+        "AttributeName": "name_sort",
+        "AttributeType": "S"
+      }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "GlobalSecondaryIndexes": [
+      {
+        "IndexName": "contract_name-index",
+        "KeySchema": [
+          {
+            "AttributeName": "contract_key",
+            "KeyType": "HASH"
+          },
+          {
+            "AttributeName": "name_sort",
+            "KeyType": "RANGE"
+          }
+        ],
+        "Projection": {
+          "ProjectionType": "ALL"
+        }
+      }
+    ]
+  },
+  {
+    "TableName": "flow_bff_contracts",
+    "KeySchema": [
+      {
+        "AttributeName": "id",
+        "KeyType": "HASH"
+      }
+    ],
+    "AttributeDefinitions": [
+      {
+        "AttributeName": "all_key",
+        "AttributeType": "S"
+      },
+      {
+        "AttributeName": "company_name_sort",
+        "AttributeType": "S"
+      },
+      {
+        "AttributeName": "id",
+        "AttributeType": "S"
+      },
+      {
+        "AttributeName": "slug_key",
+        "AttributeType": "S"
+      }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "GlobalSecondaryIndexes": [
+      {
+        "IndexName": "all_name-index",
+        "KeySchema": [
+          {
+            "AttributeName": "all_key",
+            "KeyType": "HASH"
+          },
+          {
+            "AttributeName": "company_name_sort",
+            "KeyType": "RANGE"
+          }
+        ],
+        "Projection": {
+          "ProjectionType": "ALL"
+        }
+      },
+      {
+        "IndexName": "slug-index",
+        "KeySchema": [
+          {
+            "AttributeName": "slug_key",
+            "KeyType": "HASH"
+          }
+        ],
+        "Projection": {
+          "ProjectionType": "ALL"
+        }
+      }
+    ]
+  },
+  {
+    "TableName": "flow_bff_contract_whatsapp_wabas",
+    "KeySchema": [
+      {
+        "AttributeName": "id",
+        "KeyType": "HASH"
+      }
+    ],
+    "AttributeDefinitions": [
+      {
+        "AttributeName": "all_key",
+        "AttributeType": "S"
+      },
+      {
+        "AttributeName": "contract_key",
+        "AttributeType": "S"
+      },
+      {
+        "AttributeName": "created_at_sort",
+        "AttributeType": "S"
+      },
+      {
+        "AttributeName": "id",
+        "AttributeType": "S"
+      },
+      {
+        "AttributeName": "waba_key",
+        "AttributeType": "S"
+      }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "GlobalSecondaryIndexes": [
+      {
+        "IndexName": "contract-index",
+        "KeySchema": [
+          {
+            "AttributeName": "contract_key",
+            "KeyType": "HASH"
+          },
+          {
+            "AttributeName": "created_at_sort",
+            "KeyType": "RANGE"
+          }
+        ],
+        "Projection": {
+          "ProjectionType": "ALL"
+        }
+      },
+      {
+        "IndexName": "waba-index",
+        "KeySchema": [
+          {
+            "AttributeName": "waba_key",
+            "KeyType": "HASH"
+          }
+        ],
+        "Projection": {
+          "ProjectionType": "ALL"
+        }
+      },
+      {
+        "IndexName": "all-index",
+        "KeySchema": [
+          {
+            "AttributeName": "all_key",
+            "KeyType": "HASH"
+          },
+          {
+            "AttributeName": "created_at_sort",
+            "KeyType": "RANGE"
+          }
+        ],
+        "Projection": {
+          "ProjectionType": "ALL"
+        }
+      }
+    ]
+  },
+  {
+    "TableName": "flow_bff_flows",
+    "KeySchema": [
+      {
+        "AttributeName": "id",
+        "KeyType": "HASH"
+      }
+    ],
+    "AttributeDefinitions": [
+      {
+        "AttributeName": "contract_key",
+        "AttributeType": "S"
+      },
+      {
+        "AttributeName": "contract_slug_key",
+        "AttributeType": "S"
+      },
+      {
+        "AttributeName": "id",
+        "AttributeType": "S"
+      },
+      {
+        "AttributeName": "name_sort",
+        "AttributeType": "S"
+      }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "GlobalSecondaryIndexes": [
+      {
+        "IndexName": "contract_name-index",
+        "KeySchema": [
+          {
+            "AttributeName": "contract_key",
+            "KeyType": "HASH"
+          },
+          {
+            "AttributeName": "name_sort",
+            "KeyType": "RANGE"
+          }
+        ],
+        "Projection": {
+          "ProjectionType": "ALL"
+        }
+      },
+      {
+        "IndexName": "contract_slug-index",
+        "KeySchema": [
+          {
+            "AttributeName": "contract_slug_key",
+            "KeyType": "HASH"
+          }
+        ],
+        "Projection": {
+          "ProjectionType": "ALL"
+        }
+      }
+    ]
+  },
+  {
+    "TableName": "flow_bff_flow_versions",
+    "KeySchema": [
+      {
+        "AttributeName": "id",
+        "KeyType": "HASH"
+      }
+    ],
+    "AttributeDefinitions": [
+      {
+        "AttributeName": "flow_key",
+        "AttributeType": "S"
+      },
+      {
+        "AttributeName": "flow_status_current_key",
+        "AttributeType": "S"
+      },
+      {
+        "AttributeName": "id",
+        "AttributeType": "S"
+      },
+      {
+        "AttributeName": "version_sort",
+        "AttributeType": "S"
+      }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "GlobalSecondaryIndexes": [
+      {
+        "IndexName": "flow_version-index",
+        "KeySchema": [
+          {
+            "AttributeName": "flow_key",
+            "KeyType": "HASH"
+          },
+          {
+            "AttributeName": "version_sort",
+            "KeyType": "RANGE"
+          }
+        ],
+        "Projection": {
+          "ProjectionType": "ALL"
+        }
+      },
+      {
+        "IndexName": "flow_status_current-index",
+        "KeySchema": [
+          {
+            "AttributeName": "flow_status_current_key",
+            "KeyType": "HASH"
+          },
+          {
+            "AttributeName": "version_sort",
+            "KeyType": "RANGE"
+          }
+        ],
+        "Projection": {
+          "ProjectionType": "ALL"
+        }
+      }
+    ]
+  },
+  {
+    "TableName": "flow_bff_helpdesk_tickets",
+    "KeySchema": [
+      {
+        "AttributeName": "id",
+        "KeyType": "HASH"
+      }
+    ],
+    "AttributeDefinitions": [
+      {
+        "AttributeName": "assigned_user_id",
+        "AttributeType": "S"
+      },
+      {
+        "AttributeName": "channel_contact_key",
+        "AttributeType": "S"
+      },
+      {
+        "AttributeName": "contract_id",
+        "AttributeType": "S"
+      },
+      {
+        "AttributeName": "id",
+        "AttributeType": "S"
+      },
+      {
+        "AttributeName": "updated_at",
+        "AttributeType": "S"
+      }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "GlobalSecondaryIndexes": [
+      {
+        "IndexName": "contract_id-updated_at-index",
+        "KeySchema": [
+          {
+            "AttributeName": "contract_id",
+            "KeyType": "HASH"
+          },
+          {
+            "AttributeName": "updated_at",
+            "KeyType": "RANGE"
+          }
+        ],
+        "Projection": {
+          "ProjectionType": "ALL"
+        }
+      },
+      {
+        "IndexName": "channel_contact_key-updated_at-index",
+        "KeySchema": [
+          {
+            "AttributeName": "channel_contact_key",
+            "KeyType": "HASH"
+          },
+          {
+            "AttributeName": "updated_at",
+            "KeyType": "RANGE"
+          }
+        ],
+        "Projection": {
+          "ProjectionType": "ALL"
+        }
+      },
+      {
+        "IndexName": "assigned_user_id-updated_at-index",
+        "KeySchema": [
+          {
+            "AttributeName": "assigned_user_id",
+            "KeyType": "HASH"
+          },
+          {
+            "AttributeName": "updated_at",
+            "KeyType": "RANGE"
+          }
+        ],
+        "Projection": {
+          "ProjectionType": "ALL"
+        }
+      }
+    ]
+  },
+  {
+    "TableName": "flow_bff_static_pages",
+    "KeySchema": [
+      {
+        "AttributeName": "path",
+        "KeyType": "HASH"
+      }
+    ],
+    "AttributeDefinitions": [
+      {
+        "AttributeName": "all_key",
+        "AttributeType": "S"
+      },
+      {
+        "AttributeName": "path",
+        "AttributeType": "S"
+      },
+      {
+        "AttributeName": "path_sort",
+        "AttributeType": "S"
+      }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "GlobalSecondaryIndexes": [
+      {
+        "IndexName": "all_path-index",
+        "KeySchema": [
+          {
+            "AttributeName": "all_key",
+            "KeyType": "HASH"
+          },
+          {
+            "AttributeName": "path_sort",
+            "KeyType": "RANGE"
+          }
+        ],
+        "Projection": {
+          "ProjectionType": "ALL"
+        }
+      }
+    ]
+  },
+  {
+    "TableName": "flow_bff_users",
+    "KeySchema": [
+      {
+        "AttributeName": "email",
+        "KeyType": "HASH"
+      }
+    ],
+    "AttributeDefinitions": [
+      {
+        "AttributeName": "active_key",
+        "AttributeType": "S"
+      },
+      {
+        "AttributeName": "all_users_key",
+        "AttributeType": "S"
+      },
+      {
+        "AttributeName": "email",
+        "AttributeType": "S"
+      },
+      {
+        "AttributeName": "id_key",
+        "AttributeType": "S"
+      },
+      {
+        "AttributeName": "name_sort",
+        "AttributeType": "S"
+      },
+      {
+        "AttributeName": "role_key",
+        "AttributeType": "S"
+      }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "GlobalSecondaryIndexes": [
+      {
+        "IndexName": "id-index",
+        "KeySchema": [
+          {
+            "AttributeName": "id_key",
+            "KeyType": "HASH"
+          }
+        ],
+        "Projection": {
+          "ProjectionType": "ALL"
+        }
+      },
+      {
+        "IndexName": "active_name-index",
+        "KeySchema": [
+          {
+            "AttributeName": "active_key",
+            "KeyType": "HASH"
+          },
+          {
+            "AttributeName": "name_sort",
+            "KeyType": "RANGE"
+          }
+        ],
+        "Projection": {
+          "ProjectionType": "ALL"
+        }
+      },
+      {
+        "IndexName": "role-index",
+        "KeySchema": [
+          {
+            "AttributeName": "role_key",
+            "KeyType": "HASH"
+          }
+        ],
+        "Projection": {
+          "ProjectionType": "ALL"
+        }
+      },
+      {
+        "IndexName": "all_name-index",
+        "KeySchema": [
+          {
+            "AttributeName": "all_users_key",
+            "KeyType": "HASH"
+          },
+          {
+            "AttributeName": "name_sort",
+            "KeyType": "RANGE"
+          }
+        ],
+        "Projection": {
+          "ProjectionType": "ALL"
+        }
+      }
+    ]
+  },
+  {
+    "TableName": "flow_bff_whatsapp_apps",
+    "KeySchema": [
+      {
+        "AttributeName": "id",
+        "KeyType": "HASH"
+      }
+    ],
+    "AttributeDefinitions": [
+      {
+        "AttributeName": "all_key",
+        "AttributeType": "S"
+      },
+      {
+        "AttributeName": "app_id_key",
+        "AttributeType": "S"
+      },
+      {
+        "AttributeName": "id",
+        "AttributeType": "S"
+      },
+      {
+        "AttributeName": "name_sort",
+        "AttributeType": "S"
+      },
+      {
+        "AttributeName": "verify_token_key",
+        "AttributeType": "S"
+      }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "GlobalSecondaryIndexes": [
+      {
+        "IndexName": "all_name-index",
+        "KeySchema": [
+          {
+            "AttributeName": "all_key",
+            "KeyType": "HASH"
+          },
+          {
+            "AttributeName": "name_sort",
+            "KeyType": "RANGE"
+          }
+        ],
+        "Projection": {
+          "ProjectionType": "ALL"
+        }
+      },
+      {
+        "IndexName": "app_id-index",
+        "KeySchema": [
+          {
+            "AttributeName": "app_id_key",
+            "KeyType": "HASH"
+          }
+        ],
+        "Projection": {
+          "ProjectionType": "ALL"
+        }
+      },
+      {
+        "IndexName": "verify_token-index",
+        "KeySchema": [
+          {
+            "AttributeName": "verify_token_key",
+            "KeyType": "HASH"
+          },
+          {
+            "AttributeName": "name_sort",
+            "KeyType": "RANGE"
+          }
+        ],
+        "Projection": {
+          "ProjectionType": "ALL"
+        }
+      }
+    ]
+  },
+  {
+    "TableName": "flow_bff_whatsapp_phone_channel_link_history",
+    "KeySchema": [
+      {
+        "AttributeName": "id",
+        "KeyType": "HASH"
+      }
+    ],
+    "AttributeDefinitions": [
+      {
+        "AttributeName": "id",
+        "AttributeType": "S"
+      }
+    ],
+    "BillingMode": "PAY_PER_REQUEST"
+  },
+  {
+    "TableName": "flow_bff_whatsapp_phone_numbers",
+    "KeySchema": [
+      {
+        "AttributeName": "id",
+        "KeyType": "HASH"
+      }
+    ],
+    "AttributeDefinitions": [
+      {
+        "AttributeName": "display_sort",
+        "AttributeType": "S"
+      },
+      {
+        "AttributeName": "id",
+        "AttributeType": "S"
+      },
+      {
+        "AttributeName": "meta_phone_key",
+        "AttributeType": "S"
+      },
+      {
+        "AttributeName": "waba_key",
+        "AttributeType": "S"
+      }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "GlobalSecondaryIndexes": [
+      {
+        "IndexName": "waba_display-index",
+        "KeySchema": [
+          {
+            "AttributeName": "waba_key",
+            "KeyType": "HASH"
+          },
+          {
+            "AttributeName": "display_sort",
+            "KeyType": "RANGE"
+          }
+        ],
+        "Projection": {
+          "ProjectionType": "ALL"
+        }
+      },
+      {
+        "IndexName": "meta_phone-index",
+        "KeySchema": [
+          {
+            "AttributeName": "meta_phone_key",
+            "KeyType": "HASH"
+          }
+        ],
+        "Projection": {
+          "ProjectionType": "ALL"
+        }
+      }
+    ]
+  },
+  {
+    "TableName": "flow_bff_whatsapp_phone_transfer_requests",
+    "KeySchema": [
+      {
+        "AttributeName": "id",
+        "KeyType": "HASH"
+      }
+    ],
+    "AttributeDefinitions": [
+      {
+        "AttributeName": "id",
+        "AttributeType": "S"
+      },
+      {
+        "AttributeName": "phone_status_key",
+        "AttributeType": "S"
+      },
+      {
+        "AttributeName": "requested_at_sort",
+        "AttributeType": "S"
+      },
+      {
+        "AttributeName": "source_channel_status_key",
+        "AttributeType": "S"
+      },
+      {
+        "AttributeName": "source_contract_key",
+        "AttributeType": "S"
+      },
+      {
+        "AttributeName": "target_channel_status_key",
+        "AttributeType": "S"
+      },
+      {
+        "AttributeName": "target_contract_key",
+        "AttributeType": "S"
+      }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "GlobalSecondaryIndexes": [
+      {
+        "IndexName": "source_contract-index",
+        "KeySchema": [
+          {
+            "AttributeName": "source_contract_key",
+            "KeyType": "HASH"
+          },
+          {
+            "AttributeName": "requested_at_sort",
+            "KeyType": "RANGE"
+          }
+        ],
+        "Projection": {
+          "ProjectionType": "ALL"
+        }
+      },
+      {
+        "IndexName": "target_contract-index",
+        "KeySchema": [
+          {
+            "AttributeName": "target_contract_key",
+            "KeyType": "HASH"
+          },
+          {
+            "AttributeName": "requested_at_sort",
+            "KeyType": "RANGE"
+          }
+        ],
+        "Projection": {
+          "ProjectionType": "ALL"
+        }
+      },
+      {
+        "IndexName": "target_channel_status-index",
+        "KeySchema": [
+          {
+            "AttributeName": "target_channel_status_key",
+            "KeyType": "HASH"
+          },
+          {
+            "AttributeName": "requested_at_sort",
+            "KeyType": "RANGE"
+          }
+        ],
+        "Projection": {
+          "ProjectionType": "ALL"
+        }
+      },
+      {
+        "IndexName": "phone_status-index",
+        "KeySchema": [
+          {
+            "AttributeName": "phone_status_key",
+            "KeyType": "HASH"
+          },
+          {
+            "AttributeName": "requested_at_sort",
+            "KeyType": "RANGE"
+          }
+        ],
+        "Projection": {
+          "ProjectionType": "ALL"
+        }
+      },
+      {
+        "IndexName": "source_channel_status-index",
+        "KeySchema": [
+          {
+            "AttributeName": "source_channel_status_key",
+            "KeyType": "HASH"
+          },
+          {
+            "AttributeName": "requested_at_sort",
+            "KeyType": "RANGE"
+          }
+        ],
+        "Projection": {
+          "ProjectionType": "ALL"
+        }
+      }
+    ]
+  },
+  {
+    "TableName": "flow_bff_whatsapp_wabas",
+    "KeySchema": [
+      {
+        "AttributeName": "id",
+        "KeyType": "HASH"
+      }
+    ],
+    "AttributeDefinitions": [
+      {
+        "AttributeName": "all_key",
+        "AttributeType": "S"
+      },
+      {
+        "AttributeName": "app_key",
+        "AttributeType": "S"
+      },
+      {
+        "AttributeName": "id",
+        "AttributeType": "S"
+      },
+      {
+        "AttributeName": "name_sort",
+        "AttributeType": "S"
+      },
+      {
+        "AttributeName": "waba_id_key",
+        "AttributeType": "S"
+      }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "GlobalSecondaryIndexes": [
+      {
+        "IndexName": "all_name-index",
+        "KeySchema": [
+          {
+            "AttributeName": "all_key",
+            "KeyType": "HASH"
+          },
+          {
+            "AttributeName": "name_sort",
+            "KeyType": "RANGE"
+          }
+        ],
+        "Projection": {
+          "ProjectionType": "ALL"
+        }
+      },
+      {
+        "IndexName": "waba_id-index",
+        "KeySchema": [
+          {
+            "AttributeName": "waba_id_key",
+            "KeyType": "HASH"
+          }
+        ],
+        "Projection": {
+          "ProjectionType": "ALL"
+        }
+      },
+      {
+        "IndexName": "app-index",
+        "KeySchema": [
+          {
+            "AttributeName": "app_key",
+            "KeyType": "HASH"
+          }
+        ],
+        "Projection": {
+          "ProjectionType": "ALL"
+        }
+      }
+    ]
+  },
+  {
+    "TableName": "flow_engine_sessions",
+    "KeySchema": [
+      {
+        "AttributeName": "session_key",
+        "KeyType": "HASH"
+      }
+    ],
+    "AttributeDefinitions": [
+      {
+        "AttributeName": "session_key",
+        "AttributeType": "S"
+      }
+    ],
+    "BillingMode": "PAY_PER_REQUEST"
+  },
+  {
+    "TableName": "flow_engine_contacts",
+    "KeySchema": [
+      {
+        "AttributeName": "contact_id",
+        "KeyType": "HASH"
+      }
+    ],
+    "AttributeDefinitions": [
+      {
+        "AttributeName": "contact_id",
+        "AttributeType": "S"
+      },
+      {
+        "AttributeName": "user_id",
+        "AttributeType": "S"
+      },
+      {
+        "AttributeName": "wa_id",
+        "AttributeType": "S"
+      }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "GlobalSecondaryIndexes": [
+      {
+        "IndexName": "user_id-index",
+        "KeySchema": [
+          {
+            "AttributeName": "user_id",
+            "KeyType": "HASH"
+          }
+        ],
+        "Projection": {
+          "ProjectionType": "ALL"
+        }
+      },
+      {
+        "IndexName": "wa_id-index",
+        "KeySchema": [
+          {
+            "AttributeName": "wa_id",
+            "KeyType": "HASH"
+          }
+        ],
+        "Projection": {
+          "ProjectionType": "ALL"
+        }
+      }
+    ]
+  },
+  {
+    "TableName": "flow_engine_messages",
+    "KeySchema": [
+      {
+        "AttributeName": "contact_id",
+        "KeyType": "HASH"
+      },
+      {
+        "AttributeName": "message_id",
+        "KeyType": "RANGE"
+      }
+    ],
+    "AttributeDefinitions": [
+      {
+        "AttributeName": "channel_id",
+        "AttributeType": "S"
+      },
+      {
+        "AttributeName": "contact_id",
+        "AttributeType": "S"
+      },
+      {
+        "AttributeName": "message_id",
+        "AttributeType": "S"
+      },
+      {
+        "AttributeName": "occurred_at",
+        "AttributeType": "S"
+      }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "GlobalSecondaryIndexes": [
+      {
+        "IndexName": "channel_id-occurred_at-index",
+        "KeySchema": [
+          {
+            "AttributeName": "channel_id",
+            "KeyType": "HASH"
+          },
+          {
+            "AttributeName": "occurred_at",
+            "KeyType": "RANGE"
+          }
+        ],
+        "Projection": {
+          "ProjectionType": "ALL"
+        }
+      }
+    ]
+  },
+  {
+    "TableName": "flow_bff_jobs",
+    "BillingMode": "PAY_PER_REQUEST",
+    "AttributeDefinitions": [
+      {
+        "AttributeName": "id",
+        "AttributeType": "S"
+      }
+    ],
+    "KeySchema": [
+      {
+        "AttributeName": "id",
+        "KeyType": "HASH"
+      }
+    ]
+  }
+]

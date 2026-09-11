@@ -1,0 +1,970 @@
+[
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/blog/posts",
+    "access": "OWNER",
+    "controller": "AdminBlogController",
+    "operation": "listPosts",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/content/AdminBlogController.java"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/v1/admin/blog/posts",
+    "access": "OWNER",
+    "controller": "AdminBlogController",
+    "operation": "savePost",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/content/AdminBlogController.java"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/blog/posts/import",
+    "access": "OWNER",
+    "controller": "AdminBlogController",
+    "operation": "importPosts",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/content/AdminBlogController.java"
+  },
+  {
+    "method": "DELETE",
+    "path": "/api/v1/admin/blog/posts/{slug}",
+    "access": "OWNER",
+    "controller": "AdminBlogController",
+    "operation": "deletePost",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/content/AdminBlogController.java"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/blog/posts/{slug}",
+    "access": "OWNER",
+    "controller": "AdminBlogController",
+    "operation": "getPost",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/content/AdminBlogController.java"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/blog/settings",
+    "access": "OWNER",
+    "controller": "AdminBlogController",
+    "operation": "getSettings",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/content/AdminBlogController.java"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/v1/admin/blog/settings",
+    "access": "OWNER",
+    "controller": "AdminBlogController",
+    "operation": "saveSettings",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/content/AdminBlogController.java"
+  },
+  {
+    "method": "DELETE",
+    "path": "/api/v1/admin/content-pages",
+    "access": "OWNER",
+    "controller": "AdminStaticPageController",
+    "operation": "delete",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/content/AdminStaticPageController.java"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/content-pages",
+    "access": "OWNER",
+    "controller": "AdminStaticPageController",
+    "operation": "list",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/content/AdminStaticPageController.java"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/v1/admin/content-pages",
+    "access": "OWNER",
+    "controller": "AdminStaticPageController",
+    "operation": "save",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/content/AdminStaticPageController.java"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/content-pages/resolve",
+    "access": "OWNER",
+    "controller": "AdminStaticPageController",
+    "operation": "resolve",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/content/AdminStaticPageController.java"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/whatsapp/apps",
+    "access": "OWNER",
+    "controller": "WhatsAppAdminController",
+    "operation": "listApps",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/whatsapp/WhatsAppAdminController.java"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/whatsapp/apps",
+    "access": "OWNER",
+    "controller": "WhatsAppAdminController",
+    "operation": "createApp",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/whatsapp/WhatsAppAdminController.java"
+  },
+  {
+    "method": "DELETE",
+    "path": "/api/v1/admin/whatsapp/apps/{appId}",
+    "access": "OWNER",
+    "controller": "WhatsAppAdminController",
+    "operation": "deleteApp",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/whatsapp/WhatsAppAdminController.java"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/v1/admin/whatsapp/apps/{appId}",
+    "access": "OWNER",
+    "controller": "WhatsAppAdminController",
+    "operation": "updateApp",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/whatsapp/WhatsAppAdminController.java"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/whatsapp/wabas",
+    "access": "OWNER",
+    "controller": "WhatsAppAdminController",
+    "operation": "listWabas",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/whatsapp/WhatsAppAdminController.java"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/whatsapp/wabas",
+    "access": "OWNER",
+    "controller": "WhatsAppAdminController",
+    "operation": "createWaba",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/whatsapp/WhatsAppAdminController.java"
+  },
+  {
+    "method": "DELETE",
+    "path": "/api/v1/admin/whatsapp/wabas/{wabaId}",
+    "access": "OWNER",
+    "controller": "WhatsAppAdminController",
+    "operation": "deleteWaba",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/whatsapp/WhatsAppAdminController.java"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/v1/admin/whatsapp/wabas/{wabaId}",
+    "access": "OWNER",
+    "controller": "WhatsAppAdminController",
+    "operation": "updateWaba",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/whatsapp/WhatsAppAdminController.java"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/whatsapp/wabas/{wabaId}/phone-numbers",
+    "access": "OWNER",
+    "controller": "WhatsAppAdminController",
+    "operation": "listPhoneNumbers",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/whatsapp/WhatsAppAdminController.java"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/whatsapp/wabas/{wabaId}/phone-numbers/import",
+    "access": "OWNER",
+    "controller": "WhatsAppAdminController",
+    "operation": "importPhoneNumbers",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/whatsapp/WhatsAppAdminController.java"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/auth/login",
+    "access": "PUBLIC",
+    "controller": "AuthController",
+    "operation": "login",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/auth/AuthController.java"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/auth/me",
+    "access": "AUTHENTICATED",
+    "controller": "AuthController",
+    "operation": "currentUser",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/auth/AuthController.java"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/auth/register",
+    "access": "PUBLIC",
+    "controller": "AuthController",
+    "operation": "register",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/auth/AuthController.java"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/channels/contract/{contractId}",
+    "access": "OWNER",
+    "controller": "ChannelController",
+    "operation": "listByContract",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/channel/ChannelController.java"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/channels/contract/{contractId}",
+    "access": "OWNER",
+    "controller": "ChannelController",
+    "operation": "create",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/channel/ChannelController.java"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/channels/{channelId}",
+    "access": "OWNER",
+    "controller": "ChannelController",
+    "operation": "find",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/channel/ChannelController.java"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/v1/channels/{channelId}/flows",
+    "access": "OWNER",
+    "controller": "ChannelController",
+    "operation": "updateFlows",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/channel/ChannelController.java"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/contracts",
+    "access": "OWNER",
+    "controller": "ContractController",
+    "operation": "list",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/contract/ContractController.java"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/contracts",
+    "access": "OWNER",
+    "controller": "ContractController",
+    "operation": "create",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/contract/ContractController.java"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/contracts/slug/{slug}",
+    "access": "OWNER",
+    "controller": "ContractController",
+    "operation": "findBySlug",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/contract/ContractController.java"
+  },
+  {
+    "method": "DELETE",
+    "path": "/api/v1/contracts/{id}",
+    "access": "OWNER",
+    "controller": "ContractDeleteController",
+    "operation": "delete",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/contract/ContractDeleteController.java"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/v1/contracts/{id}",
+    "access": "OWNER",
+    "controller": "ContractController",
+    "operation": "update",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/contract/ContractController.java"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/contracts/{id}/access-users",
+    "access": "OWNER",
+    "controller": "ContractController",
+    "operation": "listAccessUsers",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/contract/ContractController.java"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/contracts/{id}/access-users",
+    "access": "OWNER",
+    "controller": "ContractController",
+    "operation": "addAccessUser",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/contract/ContractController.java"
+  },
+  {
+    "method": "DELETE",
+    "path": "/api/v1/contracts/{id}/access-users/{userId}",
+    "access": "OWNER",
+    "controller": "ContractController",
+    "operation": "removeAccessUser",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/contract/ContractController.java"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/contracts/{id}/ai-providers",
+    "access": "OWNER",
+    "controller": "ContractController",
+    "operation": "listAiProviders",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/contract/ContractController.java"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/contracts/{id}/ai-providers",
+    "access": "OWNER",
+    "controller": "ContractController",
+    "operation": "createAiProvider",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/contract/ContractController.java"
+  },
+  {
+    "method": "DELETE",
+    "path": "/api/v1/contracts/{id}/ai-providers/{providerId}",
+    "access": "OWNER",
+    "controller": "ContractController",
+    "operation": "deleteAiProvider",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/contract/ContractController.java"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/v1/contracts/{id}/ai-providers/{providerId}",
+    "access": "OWNER",
+    "controller": "ContractController",
+    "operation": "updateAiProvider",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/contract/ContractController.java"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/contracts/{id}/block",
+    "access": "OWNER",
+    "controller": "ContractController",
+    "operation": "block",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/contract/ContractController.java"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/contracts/{id}/email-connections",
+    "access": "OWNER",
+    "controller": "ContractController",
+    "operation": "listEmailConnections",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/contract/ContractController.java"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/contracts/{id}/email-connections",
+    "access": "OWNER",
+    "controller": "ContractController",
+    "operation": "createEmailConnection",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/contract/ContractController.java"
+  },
+  {
+    "method": "DELETE",
+    "path": "/api/v1/contracts/{id}/email-connections/{connectionId}",
+    "access": "OWNER",
+    "controller": "ContractController",
+    "operation": "deleteEmailConnection",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/contract/ContractController.java"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/v1/contracts/{id}/email-connections/{connectionId}",
+    "access": "OWNER",
+    "controller": "ContractController",
+    "operation": "updateEmailConnection",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/contract/ContractController.java"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/contracts/{id}/email-connections/{connectionId}/test",
+    "access": "OWNER",
+    "controller": "ContractController",
+    "operation": "testEmailConnection",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/contract/ContractController.java"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/contracts/{id}/flows",
+    "access": "OWNER",
+    "controller": "ContractController",
+    "operation": "listFlows",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/contract/ContractController.java"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/contracts/{id}/flows",
+    "access": "OWNER",
+    "controller": "ContractController",
+    "operation": "createFlow",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/contract/ContractController.java"
+  },
+  {
+    "method": "PATCH",
+    "path": "/api/v1/contracts/{id}/slug",
+    "access": "OWNER",
+    "controller": "ContractController",
+    "operation": "updateSlug",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/contract/ContractController.java"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/contracts/{id}/unblock",
+    "access": "OWNER",
+    "controller": "ContractController",
+    "operation": "unblock",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/contract/ContractController.java"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/contracts/{id}/wabas",
+    "access": "OWNER",
+    "controller": "ContractController",
+    "operation": "listLinkedWabas",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/contract/ContractController.java"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/contracts/{id}/wabas",
+    "access": "OWNER",
+    "controller": "ContractController",
+    "operation": "addLinkedWaba",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/contract/ContractController.java"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/contracts/{id}/wabas/available",
+    "access": "OWNER",
+    "controller": "ContractController",
+    "operation": "listAvailableWabas",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/contract/ContractController.java"
+  },
+  {
+    "method": "DELETE",
+    "path": "/api/v1/contracts/{id}/wabas/{wabaConfigId}",
+    "access": "OWNER",
+    "controller": "ContractController",
+    "operation": "removeLinkedWaba",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/contract/ContractController.java"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/engine/process",
+    "access": "AUTHENTICATED",
+    "controller": "FlowProcessingController",
+    "operation": "process",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/engine/web/FlowProcessingController.java"
+  },
+  {
+    "method": "DELETE",
+    "path": "/api/v1/flows/{id}",
+    "access": "OWNER",
+    "controller": "FlowController",
+    "operation": "delete",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/flow/FlowController.java"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/flows/{id}",
+    "access": "OWNER",
+    "controller": "FlowController",
+    "operation": "find",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/flow/FlowController.java"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/v1/flows/{id}",
+    "access": "OWNER",
+    "controller": "FlowController",
+    "operation": "update",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/flow/FlowController.java"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/flows/{id}/publish",
+    "access": "OWNER",
+    "controller": "FlowController",
+    "operation": "publish",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/flow/FlowController.java"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/flows/{id}/versions",
+    "access": "OWNER",
+    "controller": "FlowController",
+    "operation": "listVersions",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/flow/FlowController.java"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/flows/{id}/versions/{versionId}/restore",
+    "access": "OWNER",
+    "controller": "FlowController",
+    "operation": "restoreVersion",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/flow/FlowController.java"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/platform/contracts",
+    "access": "AUTHENTICATED",
+    "controller": "PlatformController",
+    "operation": "listContracts",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/platform/PlatformController.java"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/platform/contracts/{contractSlug}",
+    "access": "AUTHENTICATED",
+    "controller": "PlatformController",
+    "operation": "getContract",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/platform/PlatformController.java"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/platform/contracts/{contractSlug}/ai-providers",
+    "access": "AUTHENTICATED",
+    "controller": "PlatformController",
+    "operation": "listAiProviders",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/platform/PlatformController.java"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/platform/contracts/{contractSlug}/channels",
+    "access": "AUTHENTICATED",
+    "controller": "PlatformChannelController",
+    "operation": "list",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/platform/PlatformChannelController.java"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/platform/contracts/{contractSlug}/channels",
+    "access": "AUTHENTICATED",
+    "controller": "PlatformChannelController",
+    "operation": "create",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/platform/PlatformChannelController.java"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/platform/contracts/{contractSlug}/channels/phone-options",
+    "access": "AUTHENTICATED",
+    "controller": "PlatformChannelController",
+    "operation": "listPhoneOptions",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/platform/PlatformChannelController.java"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/platform/contracts/{contractSlug}/channels/transfer-requests",
+    "access": "AUTHENTICATED",
+    "controller": "PlatformChannelController",
+    "operation": "listTransferRequests",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/platform/PlatformChannelController.java"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/platform/contracts/{contractSlug}/channels/transfer-requests/{requestId}/approve",
+    "access": "AUTHENTICATED",
+    "controller": "PlatformChannelController",
+    "operation": "approveTransfer",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/platform/PlatformChannelController.java"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/platform/contracts/{contractSlug}/channels/transfer-requests/{requestId}/reject",
+    "access": "AUTHENTICATED",
+    "controller": "PlatformChannelController",
+    "operation": "rejectTransfer",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/platform/PlatformChannelController.java"
+  },
+  {
+    "method": "DELETE",
+    "path": "/api/v1/platform/contracts/{contractSlug}/channels/{channelSlug}",
+    "access": "AUTHENTICATED",
+    "controller": "PlatformChannelController",
+    "operation": "deleteChannel",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/platform/PlatformChannelController.java"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/platform/contracts/{contractSlug}/channels/{channelSlug}",
+    "access": "AUTHENTICATED",
+    "controller": "PlatformChannelController",
+    "operation": "find",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/platform/PlatformChannelController.java"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/v1/platform/contracts/{contractSlug}/channels/{channelSlug}",
+    "access": "AUTHENTICATED",
+    "controller": "PlatformChannelController",
+    "operation": "updateChannel",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/platform/PlatformChannelController.java"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/platform/contracts/{contractSlug}/channels/{channelSlug}/contacts",
+    "access": "AUTHENTICATED",
+    "controller": "PlatformChannelController",
+    "operation": "listContacts",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/platform/PlatformChannelController.java"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/platform/contracts/{contractSlug}/channels/{channelSlug}/contacts/{contactId}/messages",
+    "access": "AUTHENTICATED",
+    "controller": "PlatformChannelController",
+    "operation": "listConversation",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/platform/PlatformChannelController.java"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/v1/platform/contracts/{contractSlug}/channels/{channelSlug}/flows",
+    "access": "AUTHENTICATED",
+    "controller": "PlatformChannelController",
+    "operation": "updateFlows",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/platform/PlatformChannelController.java"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/v1/platform/contracts/{contractSlug}/channels/{channelSlug}/phone",
+    "access": "AUTHENTICATED",
+    "controller": "PlatformChannelController",
+    "operation": "updatePhone",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/platform/PlatformChannelController.java"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/platform/contracts/{contractSlug}/email-connections",
+    "access": "AUTHENTICATED",
+    "controller": "PlatformController",
+    "operation": "listEmailConnections",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/platform/PlatformController.java"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/platform/contracts/{contractSlug}/email-connections",
+    "access": "AUTHENTICATED",
+    "controller": "PlatformController",
+    "operation": "createEmailConnection",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/platform/PlatformController.java"
+  },
+  {
+    "method": "DELETE",
+    "path": "/api/v1/platform/contracts/{contractSlug}/email-connections/{connectionId}",
+    "access": "AUTHENTICATED",
+    "controller": "PlatformController",
+    "operation": "deleteEmailConnection",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/platform/PlatformController.java"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/v1/platform/contracts/{contractSlug}/email-connections/{connectionId}",
+    "access": "AUTHENTICATED",
+    "controller": "PlatformController",
+    "operation": "updateEmailConnection",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/platform/PlatformController.java"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/platform/contracts/{contractSlug}/email-connections/{connectionId}/test",
+    "access": "AUTHENTICATED",
+    "controller": "PlatformController",
+    "operation": "testEmailConnection",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/platform/PlatformController.java"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/platform/contracts/{contractSlug}/flows",
+    "access": "AUTHENTICATED",
+    "controller": "PlatformController",
+    "operation": "createFlow",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/platform/PlatformController.java"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/platform/contracts/{contractSlug}/flows/{flowSlug}",
+    "access": "AUTHENTICATED",
+    "controller": "PlatformController",
+    "operation": "getFlow",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/platform/PlatformController.java"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/platform/contracts/{contractSlug}/flows/{flowSlug}/ai-draft",
+    "access": "AUTHENTICATED",
+    "controller": "PlatformController",
+    "operation": "generateAiDraft",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/platform/PlatformController.java"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/v1/platform/contracts/{contractSlug}/flows/{flowSlug}/draft",
+    "access": "AUTHENTICATED",
+    "controller": "PlatformController",
+    "operation": "saveDraft",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/platform/PlatformController.java"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/platform/contracts/{contractSlug}/flows/{flowSlug}/publish",
+    "access": "AUTHENTICATED",
+    "controller": "PlatformController",
+    "operation": "publishFlow",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/platform/PlatformController.java"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/platform/contracts/{contractSlug}/flows/{flowSlug}/versions",
+    "access": "AUTHENTICATED",
+    "controller": "PlatformController",
+    "operation": "listVersions",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/platform/PlatformController.java"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/platform/contracts/{contractSlug}/flows/{flowSlug}/versions/{versionId}/restore",
+    "access": "AUTHENTICATED",
+    "controller": "PlatformController",
+    "operation": "restoreVersion",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/platform/PlatformController.java"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/platform/contracts/{contractSlug}/help-desk/attendants",
+    "access": "AUTHENTICATED",
+    "controller": "PlatformHelpDeskController",
+    "operation": "listAttendants",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/platform/PlatformHelpDeskController.java"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/v1/platform/contracts/{contractSlug}/help-desk/attendants",
+    "access": "AUTHENTICATED",
+    "controller": "PlatformHelpDeskController",
+    "operation": "replaceAttendants",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/platform/PlatformHelpDeskController.java"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/platform/contracts/{contractSlug}/help-desk/close-intents",
+    "access": "AUTHENTICATED",
+    "controller": "PlatformHelpDeskController",
+    "operation": "listCloseIntents",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/platform/PlatformHelpDeskController.java"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/platform/contracts/{contractSlug}/help-desk/close-intents",
+    "access": "AUTHENTICATED",
+    "controller": "PlatformHelpDeskController",
+    "operation": "createCloseIntent",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/platform/PlatformHelpDeskController.java"
+  },
+  {
+    "method": "DELETE",
+    "path": "/api/v1/platform/contracts/{contractSlug}/help-desk/close-intents/{intentId}",
+    "access": "AUTHENTICATED",
+    "controller": "PlatformHelpDeskController",
+    "operation": "deleteCloseIntent",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/platform/PlatformHelpDeskController.java"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/v1/platform/contracts/{contractSlug}/help-desk/close-intents/{intentId}",
+    "access": "AUTHENTICATED",
+    "controller": "PlatformHelpDeskController",
+    "operation": "updateCloseIntent",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/platform/PlatformHelpDeskController.java"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/platform/contracts/{contractSlug}/help-desk/queues",
+    "access": "AUTHENTICATED",
+    "controller": "PlatformHelpDeskController",
+    "operation": "listQueues",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/platform/PlatformHelpDeskController.java"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/platform/contracts/{contractSlug}/help-desk/queues",
+    "access": "AUTHENTICATED",
+    "controller": "PlatformHelpDeskController",
+    "operation": "createQueue",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/platform/PlatformHelpDeskController.java"
+  },
+  {
+    "method": "DELETE",
+    "path": "/api/v1/platform/contracts/{contractSlug}/help-desk/queues/{queueId}",
+    "access": "AUTHENTICATED",
+    "controller": "PlatformHelpDeskController",
+    "operation": "deleteQueue",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/platform/PlatformHelpDeskController.java"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/v1/platform/contracts/{contractSlug}/help-desk/queues/{queueId}",
+    "access": "AUTHENTICATED",
+    "controller": "PlatformHelpDeskController",
+    "operation": "updateQueue",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/platform/PlatformHelpDeskController.java"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/platform/contracts/{contractSlug}/help-desk/tickets",
+    "access": "AUTHENTICATED",
+    "controller": "PlatformHelpDeskController",
+    "operation": "listTickets",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/platform/PlatformHelpDeskController.java"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/platform/contracts/{contractSlug}/help-desk/tickets/{ticketId}",
+    "access": "AUTHENTICATED",
+    "controller": "PlatformHelpDeskController",
+    "operation": "findTicket",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/platform/PlatformHelpDeskController.java"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/platform/contracts/{contractSlug}/help-desk/tickets/{ticketId}/assign",
+    "access": "AUTHENTICATED",
+    "controller": "PlatformHelpDeskController",
+    "operation": "assign",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/platform/PlatformHelpDeskController.java"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/platform/contracts/{contractSlug}/help-desk/tickets/{ticketId}/close",
+    "access": "AUTHENTICATED",
+    "controller": "PlatformHelpDeskController",
+    "operation": "close",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/platform/PlatformHelpDeskController.java"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/platform/contracts/{contractSlug}/help-desk/tickets/{ticketId}/messages",
+    "access": "AUTHENTICATED",
+    "controller": "PlatformHelpDeskController",
+    "operation": "listMessages",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/platform/PlatformHelpDeskController.java"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/platform/contracts/{contractSlug}/help-desk/tickets/{ticketId}/messages",
+    "access": "AUTHENTICATED",
+    "controller": "PlatformHelpDeskController",
+    "operation": "sendMessage",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/platform/PlatformHelpDeskController.java"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/platform/contracts/{contractSlug}/help-desk/tickets/{ticketId}/release",
+    "access": "AUTHENTICATED",
+    "controller": "PlatformHelpDeskController",
+    "operation": "release",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/platform/PlatformHelpDeskController.java"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/platform/contracts/{contractSlug}/help-desk/tickets/{ticketId}/transfer",
+    "access": "AUTHENTICATED",
+    "controller": "PlatformHelpDeskController",
+    "operation": "transfer",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/platform/PlatformHelpDeskController.java"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/public/blog/posts",
+    "access": "PUBLIC",
+    "controller": "PublicBlogController",
+    "operation": "listPublishedPosts",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/content/PublicBlogController.java"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/public/blog/posts/{slug}",
+    "access": "PUBLIC",
+    "controller": "PublicBlogController",
+    "operation": "getPublishedPost",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/content/PublicBlogController.java"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/public/blog/settings",
+    "access": "PUBLIC",
+    "controller": "PublicBlogController",
+    "operation": "getSettings",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/content/PublicBlogController.java"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/public/content-pages/resolve",
+    "access": "PUBLIC",
+    "controller": "PublicStaticPageController",
+    "operation": "resolve",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/content/PublicStaticPageController.java"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/start/company",
+    "access": "AUTHENTICATED",
+    "controller": "StartController",
+    "operation": "create",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/onboarding/StartController.java"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/start/slug",
+    "access": "AUTHENTICATED",
+    "controller": "StartController",
+    "operation": "slug",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/onboarding/StartController.java"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/users",
+    "access": "OWNER",
+    "controller": "UserAdminController",
+    "operation": "list",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/user/UserAdminController.java"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/users/active",
+    "access": "OWNER",
+    "controller": "UserAdminController",
+    "operation": "active",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/user/UserAdminController.java"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/users/pending",
+    "access": "OWNER",
+    "controller": "UserAdminController",
+    "operation": "pending",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/user/UserAdminController.java"
+  },
+  {
+    "method": "DELETE",
+    "path": "/api/v1/users/{id}",
+    "access": "OWNER",
+    "controller": "UserAdminController",
+    "operation": "delete",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/user/UserAdminController.java"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/users/{id}/activate",
+    "access": "OWNER",
+    "controller": "UserAdminController",
+    "operation": "activate",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/user/UserAdminController.java"
+  },
+  {
+    "method": "PATCH",
+    "path": "/api/v1/users/{id}/role",
+    "access": "OWNER",
+    "controller": "UserAdminController",
+    "operation": "updateRole",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/user/UserAdminController.java"
+  },
+  {
+    "method": "PATCH",
+    "path": "/api/v1/users/{id}/status",
+    "access": "OWNER",
+    "controller": "UserAdminController",
+    "operation": "updateStatus",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/user/UserAdminController.java"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/public/webchat",
+    "access": "PUBLIC",
+    "controller": "WebChatCommands",
+    "operation": "execute",
+    "source": "portal-bff/src/webchat.mjs"
+  }
+]

@@ -1,0 +1,35 @@
+{
+  "name": "portal-bff",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=20 <21"
+  },
+  "scripts": {
+    "init:local": "node scripts/init-local.mjs",
+    "create:owner": "node scripts/create-owner.mjs",
+    "dev": "npm run start:local",
+    "start": "npm run start:local",
+    "start:local": "serverless offline start --stage local",
+    "start:prod": "serverless offline start --stage prd",
+    "test": "node --test",
+    "package": "serverless package",
+    "deploy": "serverless deploy",
+    "check": "node --check src/handler.mjs"
+  },
+  "devDependencies": {
+    "serverless": "3.40.0",
+    "serverless-offline": "13.9.0"
+  },
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.1130.0",
+    "@aws-sdk/client-lambda": "^3.1130.0",
+    "@aws-sdk/lib-dynamodb": "^3.1130.0",
+    "bcryptjs": "^3.0.3",
+    "jose": "^6.2.12",
+    "nodemailer": "^10.0.3",
+    "quickjs-emscripten": "^0.32.0",
+    "typescript": "5.9.3"
+  }
+}

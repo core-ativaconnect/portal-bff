@@ -53,7 +53,7 @@ Resources:
           AllowedMethods: [GET, HEAD]
           CachedMethods: [GET, HEAD]
           # AWS managed CachingDisabled and AllViewerExceptHostHeader policies.
-          CachePolicyId: 413f160d-6e73-4c48-85e2-63bfb566060e
+          CachePolicyId: 4135ea2d-6df8-44a3-9df3-4b5a84be39ad
           OriginRequestPolicyId: b689b0a8-53d0-40ab-baf2-68738e2966ac
           FunctionAssociations:
             - EventType: viewer-request

@@ -36,6 +36,7 @@ prop('ChannelRequest','agentName',{description:'Obrigatório para WEBCHAT; nome 
 prop('ChannelFlowBindingsRequest','primaryFlowId',{nullable:true,description:'Fluxo principal publicado; null remove o vínculo principal.'});
 prop('ContractEmailConnectionRequest','secret',{format:'password',writeOnly:true,description:'Obrigatório ao criar. Omitir na atualização mantém o segredo salvo.'});
 schemas.ContractEmailConnectionRequest.description='GMAIL e OUTLOOK usam presets SMTP. Para SMTP, informe host, port e security.';
+schemas.ChannelUpdateRequest.description='Ao atualizar WEBCHAT, informe agentName; ao atualizar WHATSAPP, informe whatsAppPhoneNumberId.';
 prop('WhatsAppAppRequest','accessToken',{writeOnly:true,format:'password'});
 prop('WhatsAppAppRequest','verifyToken',{writeOnly:true});
 prop('ContractAiProviderRequest','apiKey',{writeOnly:true,format:'password'});
@@ -62,7 +63,15 @@ schemas.WebChatEnvelope=object({type:{type:'string',enum:['connected','messages'
 operationContracts['WebChatCommands.execute']={request:'WebChatCommand',response:ref('WebChatEnvelope'),query:[]};
 
 const metaMessage=object({id:string,from:string,timestamp:string,type:string,text:object({body:string}),button:object({text:string,payload:string}),interactive:object({button_reply:object({id:string,title:string}),list_reply:object({id:string,title:string})})},['id','from']);
-schemas.MetaWebhook=object({object:{type:'string',enum:['whatsapp_business_account']},entry:{type:'array',items:object({id:string,changes:{type:'array',items:object({field:string,value:object({metadata:object({phone_number_id:string,display_phone_number:string}),contacts:{type:'array',items:object({wa_id:string,profile:object({name:string})})},messages:{type:'array',items:metaMessage},statuses:{type:'array',items:object({id:string,recipient_id:string,status:{type:'string',enum:['sent','delivered','read','failed']},timestamp:string,errors:{type:'array',items:{type:'object',additionalProperties:true}}},['id','recipient_id','status'])})},['field','value'])}},['id','changes'])}},['object','entry']);
+const metaStatus=object({id:string,recipient_id:string,status:{type:'string',enum:['sent','delivered','read','failed']},timestamp:string,errors:{type:'array',items:{type:'object',additionalProperties:true}}},['id','recipient_id','status']);
+const metaValue=object({
+  metadata:object({phone_number_id:string,display_phone_number:string}),
+  contacts:{type:'array',items:object({wa_id:string,profile:object({name:string})})},
+  messages:{type:'array',items:metaMessage},statuses:{type:'array',items:metaStatus},
+});
+const metaChange=object({field:string,value:metaValue},['field','value']);
+const metaEntry=object({id:string,changes:{type:'array',items:metaChange}},['id','changes']);
+schemas.MetaWebhook=object({object:{type:'string',enum:['whatsapp_business_account']},entry:{type:'array',items:metaEntry}},['object','entry']);
 
 export function exampleFor(name){
   if(!name)return{};

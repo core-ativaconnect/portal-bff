@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="pt-BR">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Portal BFF · API</title><link rel="stylesheet" href="./docs/swagger-ui.css"><link rel="stylesheet" href="./docs/style.css"></head>
+<body>
+  <header><h1>Portal BFF <span>Documentação da API</span></h1>
+    <nav><a href="./openapi.json" target="_blank" rel="noopener">OpenAPI JSON</a><a href="./docs/websocket.html">Chat WebSocket</a><a href="./asyncapi.json" target="_blank" rel="noopener">AsyncAPI JSON</a></nav>
+    <p>Studio por commands · Flow Desk por REST · Webhooks da Meta</p>
+    <label for="search">Buscar comando</label><input id="search" type="search" placeholder="Ex.: login, contratos, tickets, publish…">
+    <label for="command">Catálogo</label><select id="command"><option value="">API HTTP completa</option></select>
+    <p id="selection">Carregando catálogo…</p>
+    <p class="note">Escolha o servidor antes de executar uma chamada. Use Authorize para informar o accessToken do login. Operações de escrita alteram dados reais do servidor selecionado.</p>
+  </header>
+  <div id="swagger-ui"></div>
+  <script src="./docs/swagger-ui-bundle.js"></script><script src="./docs/app.js"></script>
+</body></html>

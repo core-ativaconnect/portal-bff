@@ -1,0 +1,393 @@
+{
+  "asyncapi": "3.0.0",
+  "info": {
+    "title": "Portal BFF — Webchat",
+    "version": "0.1.0",
+    "description": "Chat JSON por WebSocket. Envie ping a cada 25 segundos e reconecte com contactToken. Remova mensagens duplicadas por id. Não use JWT administrativo no handshake. O token de contato expira em 30 dias; conexões AWS podem encerrar em até 2 horas. O deploy fornece o host WSS em ChatWebSocketUrl."
+  },
+  "defaultContentType": "application/json",
+  "servers": {
+    "local": {
+      "host": "localhost:3003",
+      "protocol": "ws",
+      "description": "Serverless Offline. Produção: substitua pelo host de ChatWebSocketUrl."
+    }
+  },
+  "channels": {
+    "webchat": {
+      "address": "/ws/webchat",
+      "description": "Uma conexão mantém o agente e o token de contato. message/ping exigem connect. Mensagens do atendente chegam por push. Na AWS, use ChatWebSocketUrl da stack; o host WebSocket é independente da API HTTP.",
+      "servers": [
+        {
+          "$ref": "#/servers/local"
+        }
+      ],
+      "messages": {
+        "connect": {
+          "$ref": "#/components/messages/connect"
+        },
+        "message": {
+          "$ref": "#/components/messages/message"
+        },
+        "ping": {
+          "$ref": "#/components/messages/ping"
+        },
+        "connected": {
+          "$ref": "#/components/messages/connected"
+        },
+        "messages": {
+          "$ref": "#/components/messages/messages"
+        },
+        "pong": {
+          "$ref": "#/components/messages/pong"
+        },
+        "error": {
+          "$ref": "#/components/messages/error"
+        }
+      }
+    }
+  },
+  "operations": {
+    "connect": {
+      "action": "receive",
+      "channel": {
+        "$ref": "#/channels/webchat"
+      },
+      "messages": [
+        {
+          "$ref": "#/channels/webchat/messages/connect"
+        }
+      ]
+    },
+    "message": {
+      "action": "receive",
+      "channel": {
+        "$ref": "#/channels/webchat"
+      },
+      "messages": [
+        {
+          "$ref": "#/channels/webchat/messages/message"
+        }
+      ]
+    },
+    "ping": {
+      "action": "receive",
+      "channel": {
+        "$ref": "#/channels/webchat"
+      },
+      "messages": [
+        {
+          "$ref": "#/channels/webchat/messages/ping"
+        }
+      ]
+    },
+    "connected": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/webchat"
+      },
+      "messages": [
+        {
+          "$ref": "#/channels/webchat/messages/connected"
+        }
+      ]
+    },
+    "messages": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/webchat"
+      },
+      "messages": [
+        {
+          "$ref": "#/channels/webchat/messages/messages"
+        }
+      ]
+    },
+    "pong": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/webchat"
+      },
+      "messages": [
+        {
+          "$ref": "#/channels/webchat/messages/pong"
+        }
+      ]
+    },
+    "error": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/webchat"
+      },
+      "messages": [
+        {
+          "$ref": "#/channels/webchat/messages/error"
+        }
+      ]
+    }
+  },
+  "components": {
+    "messages": {
+      "connect": {
+        "name": "connect",
+        "title": "Iniciar ou retomar conversa",
+        "payload": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "const": "connect"
+            },
+            "agentName": {
+              "type": "string"
+            },
+            "contactName": {
+              "type": "string"
+            },
+            "contactToken": {
+              "type": "string",
+              "description": "Token recebido em connected; necessário para retomar a conversa. contactId sozinho não autentica."
+            }
+          },
+          "required": [
+            "type",
+            "agentName"
+          ]
+        },
+        "examples": [
+          {
+            "payload": {
+              "type": "connect",
+              "agentName": "agente-exemplo",
+              "contactName": "Visitante"
+            }
+          }
+        ]
+      },
+      "message": {
+        "name": "message",
+        "title": "Enviar mensagem do visitante",
+        "payload": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "const": "message"
+            },
+            "text": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 20000
+            }
+          },
+          "required": [
+            "type",
+            "text"
+          ]
+        },
+        "examples": [
+          {
+            "payload": {
+              "type": "message",
+              "text": "Olá"
+            }
+          }
+        ]
+      },
+      "ping": {
+        "name": "ping",
+        "payload": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "const": "ping"
+            }
+          },
+          "required": [
+            "type"
+          ]
+        },
+        "examples": [
+          {
+            "payload": {
+              "type": "ping"
+            }
+          }
+        ]
+      },
+      "connected": {
+        "name": "connected",
+        "payload": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "const": "connected"
+            },
+            "contactId": {
+              "type": "string"
+            },
+            "contactToken": {
+              "type": "string"
+            },
+            "agentName": {
+              "type": "string"
+            },
+            "channelSlug": {
+              "type": "string"
+            },
+            "channelName": {
+              "type": "string"
+            },
+            "messages": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "kind": {
+                    "type": "string"
+                  },
+                  "text": {
+                    "type": "string"
+                  },
+                  "choices": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "list": {
+                    "type": [
+                      "object",
+                      "null"
+                    ],
+                    "additionalProperties": true
+                  },
+                  "actionId": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "occurredAt": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                },
+                "required": [
+                  "id",
+                  "text"
+                ]
+              }
+            }
+          },
+          "required": [
+            "type",
+            "contactId",
+            "contactToken"
+          ]
+        }
+      },
+      "messages": {
+        "name": "messages",
+        "payload": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "const": "messages"
+            },
+            "contactId": {
+              "type": "string"
+            },
+            "messages": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "kind": {
+                    "type": "string"
+                  },
+                  "text": {
+                    "type": "string"
+                  },
+                  "choices": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "list": {
+                    "type": [
+                      "object",
+                      "null"
+                    ],
+                    "additionalProperties": true
+                  },
+                  "actionId": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "occurredAt": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                },
+                "required": [
+                  "id",
+                  "text"
+                ]
+              }
+            }
+          },
+          "required": [
+            "type",
+            "messages"
+          ]
+        }
+      },
+      "pong": {
+        "name": "pong",
+        "payload": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "const": "pong"
+            },
+            "contactId": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ]
+        }
+      },
+      "error": {
+        "name": "error",
+        "payload": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "const": "error"
+            },
+            "status": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "type",
+            "message"
+          ]
+        }
+      }
+    }
+  }
+}

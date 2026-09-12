@@ -149,7 +149,6 @@ Resources:
                 Effect: Allow
                 Action:
                   - cloudfront:CreateDistribution
-                  - cloudfront:CreateDistributionWithTags
                   - cloudfront:GetDistribution
                   - cloudfront:GetDistributionConfig
                   - cloudfront:UpdateDistribution

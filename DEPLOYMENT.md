@@ -1,5 +1,36 @@
 # Deploy do portal-bff na AWS
 
+## Recuperar AccessDenied na criação de SQS ou CloudFront
+
+Se o deploy falhar com sqs:CreateQueue na role portal-bff-github-actions-deploy,
+a política IAM aplicada ainda não inclui os novos transportes. Alterar somente
+o arquivo do bootstrap no Git não atualiza a role existente na AWS.
+
+Na conta 500888846090, adicione como política inline complementar à role de
+deploy o conteúdo de infra/deploy-transports-policy-prd.json, com o nome
+PortalBffDeployTransports. Preserve as políticas existentes. Depois execute
+novamente a esteira, com a stack em UPDATE_ROLLBACK_COMPLETE.
+
+Como alternativa de gerenciamento por infraestrutura, atualize a stack de
+bootstrap usando infra/github-oidc-bootstrap.yml, preservando os parâmetros
+atuais. Não aplique essa política à trust policy OIDC nem à role das Lambdas:
+ela concede permissões de provisionamento ao GitHub Actions.
+
+A API CloudFront CreateDistributionWithTags é autorizada pelas ações IAM
+CreateDistribution e TagResource; não existe uma ação IAM separada com o nome
+CreateDistributionWithTags. Referência:
+https://docs.aws.amazon.com/service-authorization/latest/reference/list_cloudfront.html
+
+## Documentação da API
+
+O deploy publica GET /docs, /swagger, /openapi.json e /asyncapi.json, além dos
+arquivos locais de Swagger UI sob /docs/. Na URL pública configurada, o Swagger
+fica em https://api.tiudi.com.br/portal/docs. Preserve o mapeamento /portal para
+esta HTTP API. Nenhum CDN externo é necessário para carregar a interface.
+Os endpoints de documentação são públicos e não acessam o DynamoDB.
+Os exemplos usam credenciais fictícias; as chamadas executadas no Swagger
+respeitam as mesmas autenticações e permissões dos clientes.
+
 ## Provisionamento DynamoDB
 
 O workflow cria ou atualiza todas as 27 tabelas na stack `portal-bff-data-prd`

@@ -1,0 +1,4309 @@
+[
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/blog/posts",
+    "access": "OWNER",
+    "controller": "AdminBlogController",
+    "operation": "listPosts",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/content/AdminBlogController.java",
+    "id": "AdminBlogController.listPosts",
+    "group": "Blog administrativo",
+    "public": false,
+    "requestSchema": "EmptyBody",
+    "responseSchema": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/BlogPostSummaryResponse"
+      }
+    },
+    "parameters": [],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/admin/blog/posts",
+      "method": "GET",
+      "body-data": {}
+    },
+    "pattern": "^/api/v1/admin/blog/posts/?(?:\\?.*)?$"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/v1/admin/blog/posts",
+    "access": "OWNER",
+    "controller": "AdminBlogController",
+    "operation": "savePost",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/content/AdminBlogController.java",
+    "id": "AdminBlogController.savePost",
+    "group": "Blog administrativo",
+    "public": false,
+    "requestSchema": "BlogPostRequest",
+    "responseSchema": {
+      "$ref": "#/components/schemas/BlogPostResponse"
+    },
+    "parameters": [],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/admin/blog/posts",
+      "method": "PUT",
+      "body-data": {
+        "slug": "empresa-exemplo",
+        "title": "Título exemplo",
+        "pillar": "educativo",
+        "audience": "ambos",
+        "author": "Equipe"
+      }
+    },
+    "pattern": "^/api/v1/admin/blog/posts/?(?:\\?.*)?$"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/blog/posts/import",
+    "access": "OWNER",
+    "controller": "AdminBlogController",
+    "operation": "importPosts",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/content/AdminBlogController.java",
+    "id": "AdminBlogController.importPosts",
+    "group": "Blog administrativo",
+    "public": false,
+    "requestSchema": "BlogImportRequest",
+    "responseSchema": {
+      "$ref": "#/components/schemas/BlogImportResponse"
+    },
+    "parameters": [],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/admin/blog/posts/import",
+      "method": "POST",
+      "body-data": {
+        "posts": [
+          {
+            "slug": "empresa-exemplo",
+            "title": "Título exemplo",
+            "pillar": "educativo",
+            "audience": "ambos",
+            "author": "Equipe"
+          }
+        ]
+      }
+    },
+    "pattern": "^/api/v1/admin/blog/posts/import/?(?:\\?.*)?$"
+  },
+  {
+    "method": "DELETE",
+    "path": "/api/v1/admin/blog/posts/{slug}",
+    "access": "OWNER",
+    "controller": "AdminBlogController",
+    "operation": "deletePost",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/content/AdminBlogController.java",
+    "id": "AdminBlogController.deletePost",
+    "group": "Blog administrativo",
+    "public": false,
+    "requestSchema": "EmptyBody",
+    "responseSchema": null,
+    "parameters": [
+      {
+        "name": "slug",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/admin/blog/posts/empresa-exemplo",
+      "method": "DELETE",
+      "body-data": {}
+    },
+    "pattern": "^/api/v1/admin/blog/posts/[^/?]+/?(?:\\?.*)?$"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/blog/posts/{slug}",
+    "access": "OWNER",
+    "controller": "AdminBlogController",
+    "operation": "getPost",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/content/AdminBlogController.java",
+    "id": "AdminBlogController.getPost",
+    "group": "Blog administrativo",
+    "public": false,
+    "requestSchema": "EmptyBody",
+    "responseSchema": {
+      "$ref": "#/components/schemas/BlogPostResponse"
+    },
+    "parameters": [
+      {
+        "name": "slug",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/admin/blog/posts/empresa-exemplo",
+      "method": "GET",
+      "body-data": {}
+    },
+    "pattern": "^/api/v1/admin/blog/posts/[^/?]+/?(?:\\?.*)?$"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/blog/settings",
+    "access": "OWNER",
+    "controller": "AdminBlogController",
+    "operation": "getSettings",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/content/AdminBlogController.java",
+    "id": "AdminBlogController.getSettings",
+    "group": "Blog administrativo",
+    "public": false,
+    "requestSchema": "EmptyBody",
+    "responseSchema": {
+      "$ref": "#/components/schemas/BlogSettingsResponse"
+    },
+    "parameters": [],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/admin/blog/settings",
+      "method": "GET",
+      "body-data": {}
+    },
+    "pattern": "^/api/v1/admin/blog/settings/?(?:\\?.*)?$"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/v1/admin/blog/settings",
+    "access": "OWNER",
+    "controller": "AdminBlogController",
+    "operation": "saveSettings",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/content/AdminBlogController.java",
+    "id": "AdminBlogController.saveSettings",
+    "group": "Blog administrativo",
+    "public": false,
+    "requestSchema": "BlogSettingsRequest",
+    "responseSchema": {
+      "$ref": "#/components/schemas/BlogSettingsResponse"
+    },
+    "parameters": [],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/admin/blog/settings",
+      "method": "PUT",
+      "body-data": {
+        "navigation": [
+          {
+            "label": "exemplo",
+            "href": "exemplo"
+          }
+        ]
+      }
+    },
+    "pattern": "^/api/v1/admin/blog/settings/?(?:\\?.*)?$"
+  },
+  {
+    "method": "DELETE",
+    "path": "/api/v1/admin/content-pages",
+    "access": "OWNER",
+    "controller": "AdminStaticPageController",
+    "operation": "delete",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/content/AdminStaticPageController.java",
+    "id": "AdminStaticPageController.delete",
+    "group": "Páginas administrativas",
+    "public": false,
+    "requestSchema": "EmptyBody",
+    "responseSchema": null,
+    "parameters": [
+      {
+        "name": "path",
+        "in": "query",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/admin/content-pages?path=%2Fpagina-exemplo",
+      "method": "DELETE",
+      "body-data": {}
+    },
+    "pattern": "^/api/v1/admin/content-pages/?(?:\\?.*)?$"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/content-pages",
+    "access": "OWNER",
+    "controller": "AdminStaticPageController",
+    "operation": "list",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/content/AdminStaticPageController.java",
+    "id": "AdminStaticPageController.list",
+    "group": "Páginas administrativas",
+    "public": false,
+    "requestSchema": "EmptyBody",
+    "responseSchema": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/StaticPageResponse"
+      }
+    },
+    "parameters": [],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/admin/content-pages",
+      "method": "GET",
+      "body-data": {}
+    },
+    "pattern": "^/api/v1/admin/content-pages/?(?:\\?.*)?$"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/v1/admin/content-pages",
+    "access": "OWNER",
+    "controller": "AdminStaticPageController",
+    "operation": "save",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/content/AdminStaticPageController.java",
+    "id": "AdminStaticPageController.save",
+    "group": "Páginas administrativas",
+    "public": false,
+    "requestSchema": "StaticPageRequest",
+    "responseSchema": {
+      "$ref": "#/components/schemas/StaticPageResponse"
+    },
+    "parameters": [],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/admin/content-pages",
+      "method": "PUT",
+      "body-data": {
+        "path": "/pagina-exemplo",
+        "title": "Título exemplo"
+      }
+    },
+    "pattern": "^/api/v1/admin/content-pages/?(?:\\?.*)?$"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/content-pages/resolve",
+    "access": "OWNER",
+    "controller": "AdminStaticPageController",
+    "operation": "resolve",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/content/AdminStaticPageController.java",
+    "id": "AdminStaticPageController.resolve",
+    "group": "Páginas administrativas",
+    "public": false,
+    "requestSchema": "EmptyBody",
+    "responseSchema": {
+      "$ref": "#/components/schemas/StaticPageResponse"
+    },
+    "parameters": [
+      {
+        "name": "path",
+        "in": "query",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/admin/content-pages/resolve?path=%2Fpagina-exemplo",
+      "method": "GET",
+      "body-data": {}
+    },
+    "pattern": "^/api/v1/admin/content-pages/resolve/?(?:\\?.*)?$"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/whatsapp/apps",
+    "access": "OWNER",
+    "controller": "WhatsAppAdminController",
+    "operation": "listApps",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/whatsapp/WhatsAppAdminController.java",
+    "id": "WhatsAppAdminController.listApps",
+    "group": "Administração WhatsApp",
+    "public": false,
+    "requestSchema": "EmptyBody",
+    "responseSchema": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/WhatsAppAppResponse"
+      }
+    },
+    "parameters": [],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/admin/whatsapp/apps",
+      "method": "GET",
+      "body-data": {}
+    },
+    "pattern": "^/api/v1/admin/whatsapp/apps/?(?:\\?.*)?$"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/whatsapp/apps",
+    "access": "OWNER",
+    "controller": "WhatsAppAdminController",
+    "operation": "createApp",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/whatsapp/WhatsAppAdminController.java",
+    "id": "WhatsAppAdminController.createApp",
+    "group": "Administração WhatsApp",
+    "public": false,
+    "requestSchema": "WhatsAppAppRequest",
+    "responseSchema": {
+      "$ref": "#/components/schemas/WhatsAppAppResponse"
+    },
+    "parameters": [],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/admin/whatsapp/apps",
+      "method": "POST",
+      "body-data": {
+        "name": "Exemplo",
+        "appId": "exemplo",
+        "accessToken": "substitua-pelo-token",
+        "verifyToken": "substitua-pelo-verify-token"
+      }
+    },
+    "pattern": "^/api/v1/admin/whatsapp/apps/?(?:\\?.*)?$"
+  },
+  {
+    "method": "DELETE",
+    "path": "/api/v1/admin/whatsapp/apps/{appId}",
+    "access": "OWNER",
+    "controller": "WhatsAppAdminController",
+    "operation": "deleteApp",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/whatsapp/WhatsAppAdminController.java",
+    "id": "WhatsAppAdminController.deleteApp",
+    "group": "Administração WhatsApp",
+    "public": false,
+    "requestSchema": "EmptyBody",
+    "responseSchema": null,
+    "parameters": [
+      {
+        "name": "appId",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/admin/whatsapp/apps/11111111-1111-4111-8111-111111111111",
+      "method": "DELETE",
+      "body-data": {}
+    },
+    "pattern": "^/api/v1/admin/whatsapp/apps/[^/?]+/?(?:\\?.*)?$"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/v1/admin/whatsapp/apps/{appId}",
+    "access": "OWNER",
+    "controller": "WhatsAppAdminController",
+    "operation": "updateApp",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/whatsapp/WhatsAppAdminController.java",
+    "id": "WhatsAppAdminController.updateApp",
+    "group": "Administração WhatsApp",
+    "public": false,
+    "requestSchema": "WhatsAppAppRequest",
+    "responseSchema": {
+      "$ref": "#/components/schemas/WhatsAppAppResponse"
+    },
+    "parameters": [
+      {
+        "name": "appId",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/admin/whatsapp/apps/11111111-1111-4111-8111-111111111111",
+      "method": "PUT",
+      "body-data": {
+        "name": "Exemplo",
+        "appId": "exemplo",
+        "accessToken": "substitua-pelo-token",
+        "verifyToken": "substitua-pelo-verify-token"
+      }
+    },
+    "pattern": "^/api/v1/admin/whatsapp/apps/[^/?]+/?(?:\\?.*)?$"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/whatsapp/wabas",
+    "access": "OWNER",
+    "controller": "WhatsAppAdminController",
+    "operation": "listWabas",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/whatsapp/WhatsAppAdminController.java",
+    "id": "WhatsAppAdminController.listWabas",
+    "group": "Administração WhatsApp",
+    "public": false,
+    "requestSchema": "EmptyBody",
+    "responseSchema": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/WhatsAppWabaResponse"
+      }
+    },
+    "parameters": [],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/admin/whatsapp/wabas",
+      "method": "GET",
+      "body-data": {}
+    },
+    "pattern": "^/api/v1/admin/whatsapp/wabas/?(?:\\?.*)?$"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/whatsapp/wabas",
+    "access": "OWNER",
+    "controller": "WhatsAppAdminController",
+    "operation": "createWaba",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/whatsapp/WhatsAppAdminController.java",
+    "id": "WhatsAppAdminController.createWaba",
+    "group": "Administração WhatsApp",
+    "public": false,
+    "requestSchema": "WhatsAppWabaRequest",
+    "responseSchema": {
+      "$ref": "#/components/schemas/WhatsAppWabaResponse"
+    },
+    "parameters": [],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/admin/whatsapp/wabas",
+      "method": "POST",
+      "body-data": {
+        "name": "Exemplo",
+        "wabaId": "exemplo",
+        "appConfigId": "11111111-1111-4111-8111-111111111111"
+      }
+    },
+    "pattern": "^/api/v1/admin/whatsapp/wabas/?(?:\\?.*)?$"
+  },
+  {
+    "method": "DELETE",
+    "path": "/api/v1/admin/whatsapp/wabas/{wabaId}",
+    "access": "OWNER",
+    "controller": "WhatsAppAdminController",
+    "operation": "deleteWaba",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/whatsapp/WhatsAppAdminController.java",
+    "id": "WhatsAppAdminController.deleteWaba",
+    "group": "Administração WhatsApp",
+    "public": false,
+    "requestSchema": "EmptyBody",
+    "responseSchema": null,
+    "parameters": [
+      {
+        "name": "wabaId",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/admin/whatsapp/wabas/11111111-1111-4111-8111-111111111111",
+      "method": "DELETE",
+      "body-data": {}
+    },
+    "pattern": "^/api/v1/admin/whatsapp/wabas/[^/?]+/?(?:\\?.*)?$"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/v1/admin/whatsapp/wabas/{wabaId}",
+    "access": "OWNER",
+    "controller": "WhatsAppAdminController",
+    "operation": "updateWaba",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/whatsapp/WhatsAppAdminController.java",
+    "id": "WhatsAppAdminController.updateWaba",
+    "group": "Administração WhatsApp",
+    "public": false,
+    "requestSchema": "WhatsAppWabaRequest",
+    "responseSchema": {
+      "$ref": "#/components/schemas/WhatsAppWabaResponse"
+    },
+    "parameters": [
+      {
+        "name": "wabaId",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/admin/whatsapp/wabas/11111111-1111-4111-8111-111111111111",
+      "method": "PUT",
+      "body-data": {
+        "name": "Exemplo",
+        "wabaId": "exemplo",
+        "appConfigId": "11111111-1111-4111-8111-111111111111"
+      }
+    },
+    "pattern": "^/api/v1/admin/whatsapp/wabas/[^/?]+/?(?:\\?.*)?$"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/admin/whatsapp/wabas/{wabaId}/phone-numbers",
+    "access": "OWNER",
+    "controller": "WhatsAppAdminController",
+    "operation": "listPhoneNumbers",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/whatsapp/WhatsAppAdminController.java",
+    "id": "WhatsAppAdminController.listPhoneNumbers",
+    "group": "Administração WhatsApp",
+    "public": false,
+    "requestSchema": "EmptyBody",
+    "responseSchema": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/WhatsAppPhoneNumberResponse"
+      }
+    },
+    "parameters": [
+      {
+        "name": "wabaId",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/admin/whatsapp/wabas/11111111-1111-4111-8111-111111111111/phone-numbers",
+      "method": "GET",
+      "body-data": {}
+    },
+    "pattern": "^/api/v1/admin/whatsapp/wabas/[^/?]+/phone-numbers/?(?:\\?.*)?$"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/admin/whatsapp/wabas/{wabaId}/phone-numbers/import",
+    "access": "OWNER",
+    "controller": "WhatsAppAdminController",
+    "operation": "importPhoneNumbers",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/whatsapp/WhatsAppAdminController.java",
+    "id": "WhatsAppAdminController.importPhoneNumbers",
+    "group": "Administração WhatsApp",
+    "public": false,
+    "requestSchema": "EmptyBody",
+    "responseSchema": {
+      "$ref": "#/components/schemas/WhatsAppPhoneNumberImportResponse"
+    },
+    "parameters": [
+      {
+        "name": "wabaId",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/admin/whatsapp/wabas/11111111-1111-4111-8111-111111111111/phone-numbers/import",
+      "method": "POST",
+      "body-data": {}
+    },
+    "pattern": "^/api/v1/admin/whatsapp/wabas/[^/?]+/phone-numbers/import/?(?:\\?.*)?$"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/auth/login",
+    "access": "PUBLIC",
+    "controller": "AuthController",
+    "operation": "login",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/auth/AuthController.java",
+    "id": "AuthController.login",
+    "group": "Autenticação",
+    "public": true,
+    "requestSchema": "LoginRequest",
+    "responseSchema": {
+      "$ref": "#/components/schemas/AuthResponse"
+    },
+    "parameters": [],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/auth/login",
+      "method": "POST",
+      "body-data": {
+        "email": "usuario@example.com",
+        "password": "senha-exemplo-123"
+      }
+    },
+    "pattern": "^/api/v1/auth/login/?(?:\\?.*)?$"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/auth/me",
+    "access": "AUTHENTICATED",
+    "controller": "AuthController",
+    "operation": "currentUser",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/auth/AuthController.java",
+    "id": "AuthController.currentUser",
+    "group": "Autenticação",
+    "public": false,
+    "requestSchema": "EmptyBody",
+    "responseSchema": {
+      "$ref": "#/components/schemas/UserProfileResponse"
+    },
+    "parameters": [],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/auth/me",
+      "method": "GET",
+      "body-data": {}
+    },
+    "pattern": "^/api/v1/auth/me/?(?:\\?.*)?$"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/auth/register",
+    "access": "PUBLIC",
+    "controller": "AuthController",
+    "operation": "register",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/auth/AuthController.java",
+    "id": "AuthController.register",
+    "group": "Autenticação",
+    "public": true,
+    "requestSchema": "RegisterRequest",
+    "responseSchema": {
+      "$ref": "#/components/schemas/AuthResponse"
+    },
+    "parameters": [],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/auth/register",
+      "method": "POST",
+      "body-data": {
+        "name": "Usuário exemplo",
+        "email": "usuario@example.com",
+        "password": "senha-exemplo-123"
+      }
+    },
+    "pattern": "^/api/v1/auth/register/?(?:\\?.*)?$"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/channels/contract/{contractId}",
+    "access": "OWNER",
+    "controller": "ChannelController",
+    "operation": "listByContract",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/channel/ChannelController.java",
+    "id": "ChannelController.listByContract",
+    "group": "Canais",
+    "public": false,
+    "requestSchema": "EmptyBody",
+    "responseSchema": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/ChannelResponse"
+      }
+    },
+    "parameters": [
+      {
+        "name": "contractId",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/channels/contract/11111111-1111-4111-8111-111111111111",
+      "method": "GET",
+      "body-data": {}
+    },
+    "pattern": "^/api/v1/channels/contract/[^/?]+/?(?:\\?.*)?$"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/channels/contract/{contractId}",
+    "access": "OWNER",
+    "controller": "ChannelController",
+    "operation": "create",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/channel/ChannelController.java",
+    "id": "ChannelController.create",
+    "group": "Canais",
+    "public": false,
+    "requestSchema": "ChannelRequest",
+    "responseSchema": {
+      "$ref": "#/components/schemas/ChannelResponse"
+    },
+    "parameters": [
+      {
+        "name": "contractId",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/channels/contract/11111111-1111-4111-8111-111111111111",
+      "method": "POST",
+      "body-data": {
+        "name": "Chat do site",
+        "type": "WEBCHAT",
+        "agentName": "agente-exemplo"
+      }
+    },
+    "pattern": "^/api/v1/channels/contract/[^/?]+/?(?:\\?.*)?$"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/channels/{channelId}",
+    "access": "OWNER",
+    "controller": "ChannelController",
+    "operation": "find",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/channel/ChannelController.java",
+    "id": "ChannelController.find",
+    "group": "Canais",
+    "public": false,
+    "requestSchema": "EmptyBody",
+    "responseSchema": {
+      "$ref": "#/components/schemas/ChannelResponse"
+    },
+    "parameters": [
+      {
+        "name": "channelId",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/channels/11111111-1111-4111-8111-111111111111",
+      "method": "GET",
+      "body-data": {}
+    },
+    "pattern": "^/api/v1/channels/[^/?]+/?(?:\\?.*)?$"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/v1/channels/{channelId}/flows",
+    "access": "OWNER",
+    "controller": "ChannelController",
+    "operation": "updateFlows",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/channel/ChannelController.java",
+    "id": "ChannelController.updateFlows",
+    "group": "Canais",
+    "public": false,
+    "requestSchema": "ChannelFlowBindingsRequest",
+    "responseSchema": {
+      "$ref": "#/components/schemas/ChannelResponse"
+    },
+    "parameters": [
+      {
+        "name": "channelId",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/channels/11111111-1111-4111-8111-111111111111/flows",
+      "method": "PUT",
+      "body-data": {
+        "primaryFlowId": "11111111-1111-4111-8111-111111111111"
+      }
+    },
+    "pattern": "^/api/v1/channels/[^/?]+/flows/?(?:\\?.*)?$"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/contracts",
+    "access": "OWNER",
+    "controller": "ContractController",
+    "operation": "list",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/contract/ContractController.java",
+    "id": "ContractController.list",
+    "group": "Contratos",
+    "public": false,
+    "requestSchema": "EmptyBody",
+    "responseSchema": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/ContractResponse"
+      }
+    },
+    "parameters": [],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/contracts",
+      "method": "GET",
+      "body-data": {}
+    },
+    "pattern": "^/api/v1/contracts/?(?:\\?.*)?$"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/contracts",
+    "access": "OWNER",
+    "controller": "ContractController",
+    "operation": "create",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/contract/ContractController.java",
+    "id": "ContractController.create",
+    "group": "Contratos",
+    "public": false,
+    "requestSchema": "ContractRequest",
+    "responseSchema": {
+      "$ref": "#/components/schemas/ContractResponse"
+    },
+    "parameters": [],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/contracts",
+      "method": "POST",
+      "body-data": {
+        "companyName": "Empresa exemplo",
+        "cnpj": "40432544000147",
+        "contactEmail": "contato@example.com",
+        "contactPhone": "1143134620",
+        "address": "Rua exemplo, 100",
+        "neighborhood": "Centro",
+        "city": "São Paulo",
+        "state": "SP",
+        "zipCode": "04709110",
+        "startDate": "2026-01-01",
+        "endDate": "2030-01-01",
+        "maxFlowCount": 5,
+        "maxChannelCount": 5
+      }
+    },
+    "pattern": "^/api/v1/contracts/?(?:\\?.*)?$"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/contracts/slug/{slug}",
+    "access": "OWNER",
+    "controller": "ContractController",
+    "operation": "findBySlug",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/contract/ContractController.java",
+    "id": "ContractController.findBySlug",
+    "group": "Contratos",
+    "public": false,
+    "requestSchema": "EmptyBody",
+    "responseSchema": {
+      "$ref": "#/components/schemas/ContractResponse"
+    },
+    "parameters": [
+      {
+        "name": "slug",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/contracts/slug/empresa-exemplo",
+      "method": "GET",
+      "body-data": {}
+    },
+    "pattern": "^/api/v1/contracts/slug/[^/?]+/?(?:\\?.*)?$"
+  },
+  {
+    "method": "DELETE",
+    "path": "/api/v1/contracts/{id}",
+    "access": "OWNER",
+    "controller": "ContractDeleteController",
+    "operation": "delete",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/contract/ContractDeleteController.java",
+    "id": "ContractDeleteController.delete",
+    "group": "Contratos",
+    "public": false,
+    "requestSchema": "EmptyBody",
+    "responseSchema": null,
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "confirmation",
+        "in": "query",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "asynchronous": true,
+    "example": {
+      "path": "/api/v1/contracts/11111111-1111-4111-8111-111111111111?confirmation=empresa-exemplo",
+      "method": "DELETE",
+      "body-data": {}
+    },
+    "pattern": "^/api/v1/contracts/[^/?]+/?(?:\\?.*)?$"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/v1/contracts/{id}",
+    "access": "OWNER",
+    "controller": "ContractController",
+    "operation": "update",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/contract/ContractController.java",
+    "id": "ContractController.update",
+    "group": "Contratos",
+    "public": false,
+    "requestSchema": "ContractRequest",
+    "responseSchema": {
+      "$ref": "#/components/schemas/ContractResponse"
+    },
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/contracts/11111111-1111-4111-8111-111111111111",
+      "method": "PUT",
+      "body-data": {
+        "companyName": "Empresa exemplo",
+        "cnpj": "40432544000147",
+        "contactEmail": "contato@example.com",
+        "contactPhone": "1143134620",
+        "address": "Rua exemplo, 100",
+        "neighborhood": "Centro",
+        "city": "São Paulo",
+        "state": "SP",
+        "zipCode": "04709110",
+        "startDate": "2026-01-01",
+        "endDate": "2030-01-01",
+        "maxFlowCount": 5,
+        "maxChannelCount": 5
+      }
+    },
+    "pattern": "^/api/v1/contracts/[^/?]+/?(?:\\?.*)?$"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/contracts/{id}/access-users",
+    "access": "OWNER",
+    "controller": "ContractController",
+    "operation": "listAccessUsers",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/contract/ContractController.java",
+    "id": "ContractController.listAccessUsers",
+    "group": "Contratos",
+    "public": false,
+    "requestSchema": "EmptyBody",
+    "responseSchema": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/ContractAccessUserResponse"
+      }
+    },
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/contracts/11111111-1111-4111-8111-111111111111/access-users",
+      "method": "GET",
+      "body-data": {}
+    },
+    "pattern": "^/api/v1/contracts/[^/?]+/access-users/?(?:\\?.*)?$"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/contracts/{id}/access-users",
+    "access": "OWNER",
+    "controller": "ContractController",
+    "operation": "addAccessUser",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/contract/ContractController.java",
+    "id": "ContractController.addAccessUser",
+    "group": "Contratos",
+    "public": false,
+    "requestSchema": "ContractAccessRequest",
+    "responseSchema": {
+      "$ref": "#/components/schemas/ContractAccessUserResponse"
+    },
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/contracts/11111111-1111-4111-8111-111111111111/access-users",
+      "method": "POST",
+      "body-data": {
+        "email": "usuario@example.com"
+      }
+    },
+    "pattern": "^/api/v1/contracts/[^/?]+/access-users/?(?:\\?.*)?$"
+  },
+  {
+    "method": "DELETE",
+    "path": "/api/v1/contracts/{id}/access-users/{userId}",
+    "access": "OWNER",
+    "controller": "ContractController",
+    "operation": "removeAccessUser",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/contract/ContractController.java",
+    "id": "ContractController.removeAccessUser",
+    "group": "Contratos",
+    "public": false,
+    "requestSchema": "EmptyBody",
+    "responseSchema": null,
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "userId",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/contracts/11111111-1111-4111-8111-111111111111/access-users/11111111-1111-4111-8111-111111111111",
+      "method": "DELETE",
+      "body-data": {}
+    },
+    "pattern": "^/api/v1/contracts/[^/?]+/access-users/[^/?]+/?(?:\\?.*)?$"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/contracts/{id}/ai-providers",
+    "access": "OWNER",
+    "controller": "ContractController",
+    "operation": "listAiProviders",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/contract/ContractController.java",
+    "id": "ContractController.listAiProviders",
+    "group": "Contratos",
+    "public": false,
+    "requestSchema": "EmptyBody",
+    "responseSchema": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/ContractAiProviderResponse"
+      }
+    },
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/contracts/11111111-1111-4111-8111-111111111111/ai-providers",
+      "method": "GET",
+      "body-data": {}
+    },
+    "pattern": "^/api/v1/contracts/[^/?]+/ai-providers/?(?:\\?.*)?$"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/contracts/{id}/ai-providers",
+    "access": "OWNER",
+    "controller": "ContractController",
+    "operation": "createAiProvider",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/contract/ContractController.java",
+    "id": "ContractController.createAiProvider",
+    "group": "Contratos",
+    "public": false,
+    "requestSchema": "ContractAiProviderRequest",
+    "responseSchema": {
+      "$ref": "#/components/schemas/ContractAiProviderResponse"
+    },
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/contracts/11111111-1111-4111-8111-111111111111/ai-providers",
+      "method": "POST",
+      "body-data": {
+        "name": "Exemplo",
+        "providerType": "OPENAI",
+        "model": "modelo-configurado",
+        "apiKey": "substitua-pela-chave",
+        "maxInputTokens": 1000,
+        "maxOutputTokens": 200,
+        "temperature": 0.5,
+        "enabled": true
+      }
+    },
+    "pattern": "^/api/v1/contracts/[^/?]+/ai-providers/?(?:\\?.*)?$"
+  },
+  {
+    "method": "DELETE",
+    "path": "/api/v1/contracts/{id}/ai-providers/{providerId}",
+    "access": "OWNER",
+    "controller": "ContractController",
+    "operation": "deleteAiProvider",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/contract/ContractController.java",
+    "id": "ContractController.deleteAiProvider",
+    "group": "Contratos",
+    "public": false,
+    "requestSchema": "EmptyBody",
+    "responseSchema": null,
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "providerId",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/contracts/11111111-1111-4111-8111-111111111111/ai-providers/11111111-1111-4111-8111-111111111111",
+      "method": "DELETE",
+      "body-data": {}
+    },
+    "pattern": "^/api/v1/contracts/[^/?]+/ai-providers/[^/?]+/?(?:\\?.*)?$"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/v1/contracts/{id}/ai-providers/{providerId}",
+    "access": "OWNER",
+    "controller": "ContractController",
+    "operation": "updateAiProvider",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/contract/ContractController.java",
+    "id": "ContractController.updateAiProvider",
+    "group": "Contratos",
+    "public": false,
+    "requestSchema": "ContractAiProviderRequest",
+    "responseSchema": {
+      "$ref": "#/components/schemas/ContractAiProviderResponse"
+    },
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "providerId",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/contracts/11111111-1111-4111-8111-111111111111/ai-providers/11111111-1111-4111-8111-111111111111",
+      "method": "PUT",
+      "body-data": {
+        "name": "Exemplo",
+        "providerType": "OPENAI",
+        "model": "modelo-configurado",
+        "apiKey": "substitua-pela-chave",
+        "maxInputTokens": 1000,
+        "maxOutputTokens": 200,
+        "temperature": 0.5,
+        "enabled": true
+      }
+    },
+    "pattern": "^/api/v1/contracts/[^/?]+/ai-providers/[^/?]+/?(?:\\?.*)?$"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/contracts/{id}/block",
+    "access": "OWNER",
+    "controller": "ContractController",
+    "operation": "block",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/contract/ContractController.java",
+    "id": "ContractController.block",
+    "group": "Contratos",
+    "public": false,
+    "requestSchema": "EmptyBody",
+    "responseSchema": {
+      "$ref": "#/components/schemas/ContractResponse"
+    },
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/contracts/11111111-1111-4111-8111-111111111111/block",
+      "method": "POST",
+      "body-data": {}
+    },
+    "pattern": "^/api/v1/contracts/[^/?]+/block/?(?:\\?.*)?$"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/contracts/{id}/email-connections",
+    "access": "OWNER",
+    "controller": "ContractController",
+    "operation": "listEmailConnections",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/contract/ContractController.java",
+    "id": "ContractController.listEmailConnections",
+    "group": "Contratos",
+    "public": false,
+    "requestSchema": "EmptyBody",
+    "responseSchema": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/ContractEmailConnectionResponse"
+      }
+    },
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/contracts/11111111-1111-4111-8111-111111111111/email-connections",
+      "method": "GET",
+      "body-data": {}
+    },
+    "pattern": "^/api/v1/contracts/[^/?]+/email-connections/?(?:\\?.*)?$"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/contracts/{id}/email-connections",
+    "access": "OWNER",
+    "controller": "ContractController",
+    "operation": "createEmailConnection",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/contract/ContractController.java",
+    "id": "ContractController.createEmailConnection",
+    "group": "Contratos",
+    "public": false,
+    "requestSchema": "ContractEmailConnectionRequest",
+    "responseSchema": {
+      "$ref": "#/components/schemas/ContractEmailConnectionResponse"
+    },
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/contracts/11111111-1111-4111-8111-111111111111/email-connections",
+      "method": "POST",
+      "body-data": {
+        "name": "Email suporte",
+        "providerType": "GMAIL",
+        "fromEmail": "suporte@example.com",
+        "username": "suporte@example.com",
+        "secret": "substitua-pelo-segredo",
+        "enabled": true
+      }
+    },
+    "pattern": "^/api/v1/contracts/[^/?]+/email-connections/?(?:\\?.*)?$"
+  },
+  {
+    "method": "DELETE",
+    "path": "/api/v1/contracts/{id}/email-connections/{connectionId}",
+    "access": "OWNER",
+    "controller": "ContractController",
+    "operation": "deleteEmailConnection",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/contract/ContractController.java",
+    "id": "ContractController.deleteEmailConnection",
+    "group": "Contratos",
+    "public": false,
+    "requestSchema": "EmptyBody",
+    "responseSchema": null,
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "connectionId",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/contracts/11111111-1111-4111-8111-111111111111/email-connections/11111111-1111-4111-8111-111111111111",
+      "method": "DELETE",
+      "body-data": {}
+    },
+    "pattern": "^/api/v1/contracts/[^/?]+/email-connections/[^/?]+/?(?:\\?.*)?$"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/v1/contracts/{id}/email-connections/{connectionId}",
+    "access": "OWNER",
+    "controller": "ContractController",
+    "operation": "updateEmailConnection",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/contract/ContractController.java",
+    "id": "ContractController.updateEmailConnection",
+    "group": "Contratos",
+    "public": false,
+    "requestSchema": "ContractEmailConnectionRequest",
+    "responseSchema": {
+      "$ref": "#/components/schemas/ContractEmailConnectionResponse"
+    },
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "connectionId",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/contracts/11111111-1111-4111-8111-111111111111/email-connections/11111111-1111-4111-8111-111111111111",
+      "method": "PUT",
+      "body-data": {
+        "name": "Email suporte",
+        "providerType": "GMAIL",
+        "fromEmail": "suporte@example.com",
+        "username": "suporte@example.com",
+        "secret": "substitua-pelo-segredo",
+        "enabled": true
+      }
+    },
+    "pattern": "^/api/v1/contracts/[^/?]+/email-connections/[^/?]+/?(?:\\?.*)?$"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/contracts/{id}/email-connections/{connectionId}/test",
+    "access": "OWNER",
+    "controller": "ContractController",
+    "operation": "testEmailConnection",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/contract/ContractController.java",
+    "id": "ContractController.testEmailConnection",
+    "group": "Contratos",
+    "public": false,
+    "requestSchema": "ContractEmailConnectionTestRequest",
+    "responseSchema": {
+      "$ref": "#/components/schemas/ContractEmailConnectionTestResponse"
+    },
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "connectionId",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/contracts/11111111-1111-4111-8111-111111111111/email-connections/11111111-1111-4111-8111-111111111111/test",
+      "method": "POST",
+      "body-data": {
+        "targetEmail": "destino@example.com"
+      }
+    },
+    "pattern": "^/api/v1/contracts/[^/?]+/email-connections/[^/?]+/test/?(?:\\?.*)?$"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/contracts/{id}/flows",
+    "access": "OWNER",
+    "controller": "ContractController",
+    "operation": "listFlows",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/contract/ContractController.java",
+    "id": "ContractController.listFlows",
+    "group": "Contratos",
+    "public": false,
+    "requestSchema": "EmptyBody",
+    "responseSchema": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/FlowResponse"
+      }
+    },
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/contracts/11111111-1111-4111-8111-111111111111/flows",
+      "method": "GET",
+      "body-data": {}
+    },
+    "pattern": "^/api/v1/contracts/[^/?]+/flows/?(?:\\?.*)?$"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/contracts/{id}/flows",
+    "access": "OWNER",
+    "controller": "ContractController",
+    "operation": "createFlow",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/contract/ContractController.java",
+    "id": "ContractController.createFlow",
+    "group": "Contratos",
+    "public": false,
+    "requestSchema": "FlowRequest",
+    "responseSchema": {
+      "$ref": "#/components/schemas/FlowResponse"
+    },
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/contracts/11111111-1111-4111-8111-111111111111/flows",
+      "method": "POST",
+      "body-data": {
+        "name": "Boas-vindas",
+        "definitionJson": "{\"actions\":[{\"id\":\"hello\",\"type\":\"interaction\",\"config\":{\"message\":\"Olá!\"},\"nextActionId\":null}]}"
+      }
+    },
+    "pattern": "^/api/v1/contracts/[^/?]+/flows/?(?:\\?.*)?$"
+  },
+  {
+    "method": "PATCH",
+    "path": "/api/v1/contracts/{id}/slug",
+    "access": "OWNER",
+    "controller": "ContractController",
+    "operation": "updateSlug",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/contract/ContractController.java",
+    "id": "ContractController.updateSlug",
+    "group": "Contratos",
+    "public": false,
+    "requestSchema": "ContractSlugRequest",
+    "responseSchema": {
+      "$ref": "#/components/schemas/ContractResponse"
+    },
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/contracts/11111111-1111-4111-8111-111111111111/slug",
+      "method": "PATCH",
+      "body-data": {
+        "slug": "empresa-exemplo"
+      }
+    },
+    "pattern": "^/api/v1/contracts/[^/?]+/slug/?(?:\\?.*)?$"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/contracts/{id}/unblock",
+    "access": "OWNER",
+    "controller": "ContractController",
+    "operation": "unblock",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/contract/ContractController.java",
+    "id": "ContractController.unblock",
+    "group": "Contratos",
+    "public": false,
+    "requestSchema": "EmptyBody",
+    "responseSchema": {
+      "$ref": "#/components/schemas/ContractResponse"
+    },
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/contracts/11111111-1111-4111-8111-111111111111/unblock",
+      "method": "POST",
+      "body-data": {}
+    },
+    "pattern": "^/api/v1/contracts/[^/?]+/unblock/?(?:\\?.*)?$"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/contracts/{id}/wabas",
+    "access": "OWNER",
+    "controller": "ContractController",
+    "operation": "listLinkedWabas",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/contract/ContractController.java",
+    "id": "ContractController.listLinkedWabas",
+    "group": "Contratos",
+    "public": false,
+    "requestSchema": "EmptyBody",
+    "responseSchema": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/ContractWhatsAppWabaResponse"
+      }
+    },
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/contracts/11111111-1111-4111-8111-111111111111/wabas",
+      "method": "GET",
+      "body-data": {}
+    },
+    "pattern": "^/api/v1/contracts/[^/?]+/wabas/?(?:\\?.*)?$"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/contracts/{id}/wabas",
+    "access": "OWNER",
+    "controller": "ContractController",
+    "operation": "addLinkedWaba",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/contract/ContractController.java",
+    "id": "ContractController.addLinkedWaba",
+    "group": "Contratos",
+    "public": false,
+    "requestSchema": "ContractWhatsAppWabaLinkRequest",
+    "responseSchema": {
+      "$ref": "#/components/schemas/ContractWhatsAppWabaResponse"
+    },
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/contracts/11111111-1111-4111-8111-111111111111/wabas",
+      "method": "POST",
+      "body-data": {
+        "wabaConfigId": "11111111-1111-4111-8111-111111111111"
+      }
+    },
+    "pattern": "^/api/v1/contracts/[^/?]+/wabas/?(?:\\?.*)?$"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/contracts/{id}/wabas/available",
+    "access": "OWNER",
+    "controller": "ContractController",
+    "operation": "listAvailableWabas",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/contract/ContractController.java",
+    "id": "ContractController.listAvailableWabas",
+    "group": "Contratos",
+    "public": false,
+    "requestSchema": "EmptyBody",
+    "responseSchema": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/ContractWhatsAppWabaResponse"
+      }
+    },
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/contracts/11111111-1111-4111-8111-111111111111/wabas/available",
+      "method": "GET",
+      "body-data": {}
+    },
+    "pattern": "^/api/v1/contracts/[^/?]+/wabas/available/?(?:\\?.*)?$"
+  },
+  {
+    "method": "DELETE",
+    "path": "/api/v1/contracts/{id}/wabas/{wabaConfigId}",
+    "access": "OWNER",
+    "controller": "ContractController",
+    "operation": "removeLinkedWaba",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/contract/ContractController.java",
+    "id": "ContractController.removeLinkedWaba",
+    "group": "Contratos",
+    "public": false,
+    "requestSchema": "EmptyBody",
+    "responseSchema": null,
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "wabaConfigId",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/contracts/11111111-1111-4111-8111-111111111111/wabas/11111111-1111-4111-8111-111111111111",
+      "method": "DELETE",
+      "body-data": {}
+    },
+    "pattern": "^/api/v1/contracts/[^/?]+/wabas/[^/?]+/?(?:\\?.*)?$"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/engine/process",
+    "access": "AUTHENTICATED",
+    "controller": "FlowProcessingController",
+    "operation": "process",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/engine/web/FlowProcessingController.java",
+    "id": "FlowProcessingController.process",
+    "group": "Motor de fluxos",
+    "public": false,
+    "requestSchema": "FlowProcessingRequest",
+    "responseSchema": {
+      "$ref": "#/components/schemas/FlowProcessingResponse"
+    },
+    "parameters": [],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/engine/process",
+      "method": "POST",
+      "body-data": {
+        "flowId": "11111111-1111-4111-8111-111111111111",
+        "versionMode": "DRAFT",
+        "simulatorUserId": "simulador-documentacao",
+        "start": true
+      }
+    },
+    "pattern": "^/api/v1/engine/process/?(?:\\?.*)?$"
+  },
+  {
+    "method": "DELETE",
+    "path": "/api/v1/flows/{id}",
+    "access": "OWNER",
+    "controller": "FlowController",
+    "operation": "delete",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/flow/FlowController.java",
+    "id": "FlowController.delete",
+    "group": "Fluxos",
+    "public": false,
+    "requestSchema": "EmptyBody",
+    "responseSchema": null,
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/flows/11111111-1111-4111-8111-111111111111",
+      "method": "DELETE",
+      "body-data": {}
+    },
+    "pattern": "^/api/v1/flows/[^/?]+/?(?:\\?.*)?$"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/flows/{id}",
+    "access": "OWNER",
+    "controller": "FlowController",
+    "operation": "find",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/flow/FlowController.java",
+    "id": "FlowController.find",
+    "group": "Fluxos",
+    "public": false,
+    "requestSchema": "EmptyBody",
+    "responseSchema": {
+      "$ref": "#/components/schemas/FlowResponse"
+    },
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/flows/11111111-1111-4111-8111-111111111111",
+      "method": "GET",
+      "body-data": {}
+    },
+    "pattern": "^/api/v1/flows/[^/?]+/?(?:\\?.*)?$"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/v1/flows/{id}",
+    "access": "OWNER",
+    "controller": "FlowController",
+    "operation": "update",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/flow/FlowController.java",
+    "id": "FlowController.update",
+    "group": "Fluxos",
+    "public": false,
+    "requestSchema": "FlowRequest",
+    "responseSchema": {
+      "$ref": "#/components/schemas/FlowResponse"
+    },
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/flows/11111111-1111-4111-8111-111111111111",
+      "method": "PUT",
+      "body-data": {
+        "name": "Boas-vindas",
+        "definitionJson": "{\"actions\":[{\"id\":\"hello\",\"type\":\"interaction\",\"config\":{\"message\":\"Olá!\"},\"nextActionId\":null}]}"
+      }
+    },
+    "pattern": "^/api/v1/flows/[^/?]+/?(?:\\?.*)?$"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/flows/{id}/publish",
+    "access": "OWNER",
+    "controller": "FlowController",
+    "operation": "publish",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/flow/FlowController.java",
+    "id": "FlowController.publish",
+    "group": "Fluxos",
+    "public": false,
+    "requestSchema": "EmptyBody",
+    "responseSchema": {
+      "$ref": "#/components/schemas/FlowResponse"
+    },
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/flows/11111111-1111-4111-8111-111111111111/publish",
+      "method": "POST",
+      "body-data": {}
+    },
+    "pattern": "^/api/v1/flows/[^/?]+/publish/?(?:\\?.*)?$"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/flows/{id}/versions",
+    "access": "OWNER",
+    "controller": "FlowController",
+    "operation": "listVersions",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/flow/FlowController.java",
+    "id": "FlowController.listVersions",
+    "group": "Fluxos",
+    "public": false,
+    "requestSchema": "EmptyBody",
+    "responseSchema": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/FlowVersionResponse"
+      }
+    },
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/flows/11111111-1111-4111-8111-111111111111/versions",
+      "method": "GET",
+      "body-data": {}
+    },
+    "pattern": "^/api/v1/flows/[^/?]+/versions/?(?:\\?.*)?$"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/flows/{id}/versions/{versionId}/restore",
+    "access": "OWNER",
+    "controller": "FlowController",
+    "operation": "restoreVersion",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/flow/FlowController.java",
+    "id": "FlowController.restoreVersion",
+    "group": "Fluxos",
+    "public": false,
+    "requestSchema": "EmptyBody",
+    "responseSchema": {
+      "$ref": "#/components/schemas/FlowResponse"
+    },
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "versionId",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/flows/11111111-1111-4111-8111-111111111111/versions/11111111-1111-4111-8111-111111111111/restore",
+      "method": "POST",
+      "body-data": {}
+    },
+    "pattern": "^/api/v1/flows/[^/?]+/versions/[^/?]+/restore/?(?:\\?.*)?$"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/platform/contracts",
+    "access": "AUTHENTICATED",
+    "controller": "PlatformController",
+    "operation": "listContracts",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/platform/PlatformController.java",
+    "id": "PlatformController.listContracts",
+    "group": "Plataforma",
+    "public": false,
+    "requestSchema": "EmptyBody",
+    "responseSchema": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/ContractResponse"
+      }
+    },
+    "parameters": [],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/platform/contracts",
+      "method": "GET",
+      "body-data": {}
+    },
+    "pattern": "^/api/v1/platform/contracts/?(?:\\?.*)?$"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/platform/contracts/{contractSlug}",
+    "access": "AUTHENTICATED",
+    "controller": "PlatformController",
+    "operation": "getContract",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/platform/PlatformController.java",
+    "id": "PlatformController.getContract",
+    "group": "Plataforma",
+    "public": false,
+    "requestSchema": "EmptyBody",
+    "responseSchema": {
+      "$ref": "#/components/schemas/ContractResponse"
+    },
+    "parameters": [
+      {
+        "name": "contractSlug",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/platform/contracts/empresa-exemplo",
+      "method": "GET",
+      "body-data": {}
+    },
+    "pattern": "^/api/v1/platform/contracts/[^/?]+/?(?:\\?.*)?$"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/platform/contracts/{contractSlug}/ai-providers",
+    "access": "AUTHENTICATED",
+    "controller": "PlatformController",
+    "operation": "listAiProviders",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/platform/PlatformController.java",
+    "id": "PlatformController.listAiProviders",
+    "group": "Plataforma",
+    "public": false,
+    "requestSchema": "EmptyBody",
+    "responseSchema": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/ContractAiProviderResponse"
+      }
+    },
+    "parameters": [
+      {
+        "name": "contractSlug",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/platform/contracts/empresa-exemplo/ai-providers",
+      "method": "GET",
+      "body-data": {}
+    },
+    "pattern": "^/api/v1/platform/contracts/[^/?]+/ai-providers/?(?:\\?.*)?$"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/platform/contracts/{contractSlug}/channels",
+    "access": "AUTHENTICATED",
+    "controller": "PlatformChannelController",
+    "operation": "list",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/platform/PlatformChannelController.java",
+    "id": "PlatformChannelController.list",
+    "group": "Canais da plataforma",
+    "public": false,
+    "requestSchema": "EmptyBody",
+    "responseSchema": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/ChannelResponse"
+      }
+    },
+    "parameters": [
+      {
+        "name": "contractSlug",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/platform/contracts/empresa-exemplo/channels",
+      "method": "GET",
+      "body-data": {}
+    },
+    "pattern": "^/api/v1/platform/contracts/[^/?]+/channels/?(?:\\?.*)?$"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/platform/contracts/{contractSlug}/channels",
+    "access": "AUTHENTICATED",
+    "controller": "PlatformChannelController",
+    "operation": "create",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/platform/PlatformChannelController.java",
+    "id": "PlatformChannelController.create",
+    "group": "Canais da plataforma",
+    "public": false,
+    "requestSchema": "ChannelRequest",
+    "responseSchema": {
+      "$ref": "#/components/schemas/ChannelResponse"
+    },
+    "parameters": [
+      {
+        "name": "contractSlug",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/platform/contracts/empresa-exemplo/channels",
+      "method": "POST",
+      "body-data": {
+        "name": "Chat do site",
+        "type": "WEBCHAT",
+        "agentName": "agente-exemplo"
+      }
+    },
+    "pattern": "^/api/v1/platform/contracts/[^/?]+/channels/?(?:\\?.*)?$"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/platform/contracts/{contractSlug}/channels/phone-options",
+    "access": "AUTHENTICATED",
+    "controller": "PlatformChannelController",
+    "operation": "listPhoneOptions",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/platform/PlatformChannelController.java",
+    "id": "PlatformChannelController.listPhoneOptions",
+    "group": "Canais da plataforma",
+    "public": false,
+    "requestSchema": "EmptyBody",
+    "responseSchema": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/ChannelPhoneResponse"
+      }
+    },
+    "parameters": [
+      {
+        "name": "contractSlug",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/platform/contracts/empresa-exemplo/channels/phone-options",
+      "method": "GET",
+      "body-data": {}
+    },
+    "pattern": "^/api/v1/platform/contracts/[^/?]+/channels/phone-options/?(?:\\?.*)?$"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/platform/contracts/{contractSlug}/channels/transfer-requests",
+    "access": "AUTHENTICATED",
+    "controller": "PlatformChannelController",
+    "operation": "listTransferRequests",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/platform/PlatformChannelController.java",
+    "id": "PlatformChannelController.listTransferRequests",
+    "group": "Canais da plataforma",
+    "public": false,
+    "requestSchema": "EmptyBody",
+    "responseSchema": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/ChannelTransferRequestResponse"
+      }
+    },
+    "parameters": [
+      {
+        "name": "contractSlug",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/platform/contracts/empresa-exemplo/channels/transfer-requests",
+      "method": "GET",
+      "body-data": {}
+    },
+    "pattern": "^/api/v1/platform/contracts/[^/?]+/channels/transfer-requests/?(?:\\?.*)?$"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/platform/contracts/{contractSlug}/channels/transfer-requests/{requestId}/approve",
+    "access": "AUTHENTICATED",
+    "controller": "PlatformChannelController",
+    "operation": "approveTransfer",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/platform/PlatformChannelController.java",
+    "id": "PlatformChannelController.approveTransfer",
+    "group": "Canais da plataforma",
+    "public": false,
+    "requestSchema": "EmptyBody",
+    "responseSchema": {
+      "$ref": "#/components/schemas/ChannelTransferRequestResponse"
+    },
+    "parameters": [
+      {
+        "name": "contractSlug",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "requestId",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/platform/contracts/empresa-exemplo/channels/transfer-requests/11111111-1111-4111-8111-111111111111/approve",
+      "method": "POST",
+      "body-data": {}
+    },
+    "pattern": "^/api/v1/platform/contracts/[^/?]+/channels/transfer-requests/[^/?]+/approve/?(?:\\?.*)?$"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/platform/contracts/{contractSlug}/channels/transfer-requests/{requestId}/reject",
+    "access": "AUTHENTICATED",
+    "controller": "PlatformChannelController",
+    "operation": "rejectTransfer",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/platform/PlatformChannelController.java",
+    "id": "PlatformChannelController.rejectTransfer",
+    "group": "Canais da plataforma",
+    "public": false,
+    "requestSchema": "EmptyBody",
+    "responseSchema": {
+      "$ref": "#/components/schemas/ChannelTransferRequestResponse"
+    },
+    "parameters": [
+      {
+        "name": "contractSlug",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "requestId",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/platform/contracts/empresa-exemplo/channels/transfer-requests/11111111-1111-4111-8111-111111111111/reject",
+      "method": "POST",
+      "body-data": {}
+    },
+    "pattern": "^/api/v1/platform/contracts/[^/?]+/channels/transfer-requests/[^/?]+/reject/?(?:\\?.*)?$"
+  },
+  {
+    "method": "DELETE",
+    "path": "/api/v1/platform/contracts/{contractSlug}/channels/{channelSlug}",
+    "access": "OWNER",
+    "controller": "PlatformChannelController",
+    "operation": "deleteChannel",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/platform/PlatformChannelController.java",
+    "id": "PlatformChannelController.deleteChannel",
+    "group": "Canais da plataforma",
+    "public": false,
+    "requestSchema": "EmptyBody",
+    "responseSchema": null,
+    "parameters": [
+      {
+        "name": "contractSlug",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "channelSlug",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/platform/contracts/empresa-exemplo/channels/empresa-exemplo",
+      "method": "DELETE",
+      "body-data": {}
+    },
+    "pattern": "^/api/v1/platform/contracts/[^/?]+/channels/[^/?]+/?(?:\\?.*)?$"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/platform/contracts/{contractSlug}/channels/{channelSlug}",
+    "access": "AUTHENTICATED",
+    "controller": "PlatformChannelController",
+    "operation": "find",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/platform/PlatformChannelController.java",
+    "id": "PlatformChannelController.find",
+    "group": "Canais da plataforma",
+    "public": false,
+    "requestSchema": "EmptyBody",
+    "responseSchema": {
+      "$ref": "#/components/schemas/ChannelResponse"
+    },
+    "parameters": [
+      {
+        "name": "contractSlug",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "channelSlug",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/platform/contracts/empresa-exemplo/channels/empresa-exemplo",
+      "method": "GET",
+      "body-data": {}
+    },
+    "pattern": "^/api/v1/platform/contracts/[^/?]+/channels/[^/?]+/?(?:\\?.*)?$"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/v1/platform/contracts/{contractSlug}/channels/{channelSlug}",
+    "access": "AUTHENTICATED",
+    "controller": "PlatformChannelController",
+    "operation": "updateChannel",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/platform/PlatformChannelController.java",
+    "id": "PlatformChannelController.updateChannel",
+    "group": "Canais da plataforma",
+    "public": false,
+    "requestSchema": "ChannelUpdateRequest",
+    "responseSchema": {
+      "$ref": "#/components/schemas/ChannelResponse"
+    },
+    "parameters": [
+      {
+        "name": "contractSlug",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "channelSlug",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/platform/contracts/empresa-exemplo/channels/empresa-exemplo",
+      "method": "PUT",
+      "body-data": {
+        "name": "Exemplo"
+      }
+    },
+    "pattern": "^/api/v1/platform/contracts/[^/?]+/channels/[^/?]+/?(?:\\?.*)?$"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/platform/contracts/{contractSlug}/channels/{channelSlug}/contacts",
+    "access": "AUTHENTICATED",
+    "controller": "PlatformChannelController",
+    "operation": "listContacts",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/platform/PlatformChannelController.java",
+    "id": "PlatformChannelController.listContacts",
+    "group": "Canais da plataforma",
+    "public": false,
+    "requestSchema": "EmptyBody",
+    "responseSchema": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/ChannelConversationContactResponse"
+      }
+    },
+    "parameters": [
+      {
+        "name": "contractSlug",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "channelSlug",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/platform/contracts/empresa-exemplo/channels/empresa-exemplo/contacts",
+      "method": "GET",
+      "body-data": {}
+    },
+    "pattern": "^/api/v1/platform/contracts/[^/?]+/channels/[^/?]+/contacts/?(?:\\?.*)?$"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/platform/contracts/{contractSlug}/channels/{channelSlug}/contacts/{contactId}/messages",
+    "access": "AUTHENTICATED",
+    "controller": "PlatformChannelController",
+    "operation": "listConversation",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/platform/PlatformChannelController.java",
+    "id": "PlatformChannelController.listConversation",
+    "group": "Canais da plataforma",
+    "public": false,
+    "requestSchema": "EmptyBody",
+    "responseSchema": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/ChannelConversationMessageResponse"
+      }
+    },
+    "parameters": [
+      {
+        "name": "contractSlug",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "channelSlug",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "contactId",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/platform/contracts/empresa-exemplo/channels/empresa-exemplo/contacts/11111111-1111-4111-8111-111111111111/messages",
+      "method": "GET",
+      "body-data": {}
+    },
+    "pattern": "^/api/v1/platform/contracts/[^/?]+/channels/[^/?]+/contacts/[^/?]+/messages/?(?:\\?.*)?$"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/v1/platform/contracts/{contractSlug}/channels/{channelSlug}/flows",
+    "access": "AUTHENTICATED",
+    "controller": "PlatformChannelController",
+    "operation": "updateFlows",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/platform/PlatformChannelController.java",
+    "id": "PlatformChannelController.updateFlows",
+    "group": "Canais da plataforma",
+    "public": false,
+    "requestSchema": "ChannelFlowBindingsRequest",
+    "responseSchema": {
+      "$ref": "#/components/schemas/ChannelResponse"
+    },
+    "parameters": [
+      {
+        "name": "contractSlug",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "channelSlug",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/platform/contracts/empresa-exemplo/channels/empresa-exemplo/flows",
+      "method": "PUT",
+      "body-data": {
+        "primaryFlowId": "11111111-1111-4111-8111-111111111111"
+      }
+    },
+    "pattern": "^/api/v1/platform/contracts/[^/?]+/channels/[^/?]+/flows/?(?:\\?.*)?$"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/v1/platform/contracts/{contractSlug}/channels/{channelSlug}/phone",
+    "access": "AUTHENTICATED",
+    "controller": "PlatformChannelController",
+    "operation": "updatePhone",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/platform/PlatformChannelController.java",
+    "id": "PlatformChannelController.updatePhone",
+    "group": "Canais da plataforma",
+    "public": false,
+    "requestSchema": "ChannelPhoneBindingRequest",
+    "responseSchema": {
+      "$ref": "#/components/schemas/ChannelResponse"
+    },
+    "parameters": [
+      {
+        "name": "contractSlug",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "channelSlug",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/platform/contracts/empresa-exemplo/channels/empresa-exemplo/phone",
+      "method": "PUT",
+      "body-data": {
+        "whatsAppPhoneNumberId": "11111111-1111-4111-8111-111111111111"
+      }
+    },
+    "pattern": "^/api/v1/platform/contracts/[^/?]+/channels/[^/?]+/phone/?(?:\\?.*)?$"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/platform/contracts/{contractSlug}/email-connections",
+    "access": "AUTHENTICATED",
+    "controller": "PlatformController",
+    "operation": "listEmailConnections",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/platform/PlatformController.java",
+    "id": "PlatformController.listEmailConnections",
+    "group": "Plataforma",
+    "public": false,
+    "requestSchema": "EmptyBody",
+    "responseSchema": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/ContractEmailConnectionResponse"
+      }
+    },
+    "parameters": [
+      {
+        "name": "contractSlug",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/platform/contracts/empresa-exemplo/email-connections",
+      "method": "GET",
+      "body-data": {}
+    },
+    "pattern": "^/api/v1/platform/contracts/[^/?]+/email-connections/?(?:\\?.*)?$"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/platform/contracts/{contractSlug}/email-connections",
+    "access": "AUTHENTICATED",
+    "controller": "PlatformController",
+    "operation": "createEmailConnection",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/platform/PlatformController.java",
+    "id": "PlatformController.createEmailConnection",
+    "group": "Plataforma",
+    "public": false,
+    "requestSchema": "ContractEmailConnectionRequest",
+    "responseSchema": {
+      "$ref": "#/components/schemas/ContractEmailConnectionResponse"
+    },
+    "parameters": [
+      {
+        "name": "contractSlug",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/platform/contracts/empresa-exemplo/email-connections",
+      "method": "POST",
+      "body-data": {
+        "name": "Email suporte",
+        "providerType": "GMAIL",
+        "fromEmail": "suporte@example.com",
+        "username": "suporte@example.com",
+        "secret": "substitua-pelo-segredo",
+        "enabled": true
+      }
+    },
+    "pattern": "^/api/v1/platform/contracts/[^/?]+/email-connections/?(?:\\?.*)?$"
+  },
+  {
+    "method": "DELETE",
+    "path": "/api/v1/platform/contracts/{contractSlug}/email-connections/{connectionId}",
+    "access": "AUTHENTICATED",
+    "controller": "PlatformController",
+    "operation": "deleteEmailConnection",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/platform/PlatformController.java",
+    "id": "PlatformController.deleteEmailConnection",
+    "group": "Plataforma",
+    "public": false,
+    "requestSchema": "EmptyBody",
+    "responseSchema": null,
+    "parameters": [
+      {
+        "name": "contractSlug",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "connectionId",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/platform/contracts/empresa-exemplo/email-connections/11111111-1111-4111-8111-111111111111",
+      "method": "DELETE",
+      "body-data": {}
+    },
+    "pattern": "^/api/v1/platform/contracts/[^/?]+/email-connections/[^/?]+/?(?:\\?.*)?$"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/v1/platform/contracts/{contractSlug}/email-connections/{connectionId}",
+    "access": "AUTHENTICATED",
+    "controller": "PlatformController",
+    "operation": "updateEmailConnection",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/platform/PlatformController.java",
+    "id": "PlatformController.updateEmailConnection",
+    "group": "Plataforma",
+    "public": false,
+    "requestSchema": "ContractEmailConnectionRequest",
+    "responseSchema": {
+      "$ref": "#/components/schemas/ContractEmailConnectionResponse"
+    },
+    "parameters": [
+      {
+        "name": "contractSlug",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "connectionId",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/platform/contracts/empresa-exemplo/email-connections/11111111-1111-4111-8111-111111111111",
+      "method": "PUT",
+      "body-data": {
+        "name": "Email suporte",
+        "providerType": "GMAIL",
+        "fromEmail": "suporte@example.com",
+        "username": "suporte@example.com",
+        "secret": "substitua-pelo-segredo",
+        "enabled": true
+      }
+    },
+    "pattern": "^/api/v1/platform/contracts/[^/?]+/email-connections/[^/?]+/?(?:\\?.*)?$"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/platform/contracts/{contractSlug}/email-connections/{connectionId}/test",
+    "access": "AUTHENTICATED",
+    "controller": "PlatformController",
+    "operation": "testEmailConnection",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/platform/PlatformController.java",
+    "id": "PlatformController.testEmailConnection",
+    "group": "Plataforma",
+    "public": false,
+    "requestSchema": "ContractEmailConnectionTestRequest",
+    "responseSchema": {
+      "$ref": "#/components/schemas/ContractEmailConnectionTestResponse"
+    },
+    "parameters": [
+      {
+        "name": "contractSlug",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "connectionId",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/platform/contracts/empresa-exemplo/email-connections/11111111-1111-4111-8111-111111111111/test",
+      "method": "POST",
+      "body-data": {
+        "targetEmail": "destino@example.com"
+      }
+    },
+    "pattern": "^/api/v1/platform/contracts/[^/?]+/email-connections/[^/?]+/test/?(?:\\?.*)?$"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/platform/contracts/{contractSlug}/flows",
+    "access": "AUTHENTICATED",
+    "controller": "PlatformController",
+    "operation": "createFlow",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/platform/PlatformController.java",
+    "id": "PlatformController.createFlow",
+    "group": "Plataforma",
+    "public": false,
+    "requestSchema": "FlowRequest",
+    "responseSchema": {
+      "$ref": "#/components/schemas/FlowResponse"
+    },
+    "parameters": [
+      {
+        "name": "contractSlug",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/platform/contracts/empresa-exemplo/flows",
+      "method": "POST",
+      "body-data": {
+        "name": "Boas-vindas",
+        "definitionJson": "{\"actions\":[{\"id\":\"hello\",\"type\":\"interaction\",\"config\":{\"message\":\"Olá!\"},\"nextActionId\":null}]}"
+      }
+    },
+    "pattern": "^/api/v1/platform/contracts/[^/?]+/flows/?(?:\\?.*)?$"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/platform/contracts/{contractSlug}/flows/{flowSlug}",
+    "access": "AUTHENTICATED",
+    "controller": "PlatformController",
+    "operation": "getFlow",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/platform/PlatformController.java",
+    "id": "PlatformController.getFlow",
+    "group": "Plataforma",
+    "public": false,
+    "requestSchema": "EmptyBody",
+    "responseSchema": {
+      "$ref": "#/components/schemas/FlowResponse"
+    },
+    "parameters": [
+      {
+        "name": "contractSlug",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "flowSlug",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/platform/contracts/empresa-exemplo/flows/empresa-exemplo",
+      "method": "GET",
+      "body-data": {}
+    },
+    "pattern": "^/api/v1/platform/contracts/[^/?]+/flows/[^/?]+/?(?:\\?.*)?$"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/platform/contracts/{contractSlug}/flows/{flowSlug}/ai-draft",
+    "access": "AUTHENTICATED",
+    "controller": "PlatformController",
+    "operation": "generateAiDraft",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/platform/PlatformController.java",
+    "id": "PlatformController.generateAiDraft",
+    "group": "Plataforma",
+    "public": false,
+    "requestSchema": "FlowAiDraftRequest",
+    "responseSchema": {
+      "$ref": "#/components/schemas/FlowAiDraftResponse"
+    },
+    "parameters": [
+      {
+        "name": "contractSlug",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "flowSlug",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "asynchronous": true,
+    "example": {
+      "path": "/api/v1/platform/contracts/empresa-exemplo/flows/empresa-exemplo/ai-draft",
+      "method": "POST",
+      "body-data": {
+        "providerConfigId": "11111111-1111-4111-8111-111111111111",
+        "goal": "Crie um fluxo de boas-vindas"
+      }
+    },
+    "pattern": "^/api/v1/platform/contracts/[^/?]+/flows/[^/?]+/ai-draft/?(?:\\?.*)?$"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/v1/platform/contracts/{contractSlug}/flows/{flowSlug}/draft",
+    "access": "AUTHENTICATED",
+    "controller": "PlatformController",
+    "operation": "saveDraft",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/platform/PlatformController.java",
+    "id": "PlatformController.saveDraft",
+    "group": "Plataforma",
+    "public": false,
+    "requestSchema": "FlowRequest",
+    "responseSchema": {
+      "$ref": "#/components/schemas/FlowResponse"
+    },
+    "parameters": [
+      {
+        "name": "contractSlug",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "flowSlug",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/platform/contracts/empresa-exemplo/flows/empresa-exemplo/draft",
+      "method": "PUT",
+      "body-data": {
+        "name": "Boas-vindas",
+        "definitionJson": "{\"actions\":[{\"id\":\"hello\",\"type\":\"interaction\",\"config\":{\"message\":\"Olá!\"},\"nextActionId\":null}]}"
+      }
+    },
+    "pattern": "^/api/v1/platform/contracts/[^/?]+/flows/[^/?]+/draft/?(?:\\?.*)?$"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/platform/contracts/{contractSlug}/flows/{flowSlug}/publish",
+    "access": "AUTHENTICATED",
+    "controller": "PlatformController",
+    "operation": "publishFlow",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/platform/PlatformController.java",
+    "id": "PlatformController.publishFlow",
+    "group": "Plataforma",
+    "public": false,
+    "requestSchema": "EmptyBody",
+    "responseSchema": {
+      "$ref": "#/components/schemas/FlowResponse"
+    },
+    "parameters": [
+      {
+        "name": "contractSlug",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "flowSlug",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/platform/contracts/empresa-exemplo/flows/empresa-exemplo/publish",
+      "method": "POST",
+      "body-data": {}
+    },
+    "pattern": "^/api/v1/platform/contracts/[^/?]+/flows/[^/?]+/publish/?(?:\\?.*)?$"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/platform/contracts/{contractSlug}/flows/{flowSlug}/versions",
+    "access": "AUTHENTICATED",
+    "controller": "PlatformController",
+    "operation": "listVersions",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/platform/PlatformController.java",
+    "id": "PlatformController.listVersions",
+    "group": "Plataforma",
+    "public": false,
+    "requestSchema": "EmptyBody",
+    "responseSchema": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/FlowVersionResponse"
+      }
+    },
+    "parameters": [
+      {
+        "name": "contractSlug",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "flowSlug",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/platform/contracts/empresa-exemplo/flows/empresa-exemplo/versions",
+      "method": "GET",
+      "body-data": {}
+    },
+    "pattern": "^/api/v1/platform/contracts/[^/?]+/flows/[^/?]+/versions/?(?:\\?.*)?$"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/platform/contracts/{contractSlug}/flows/{flowSlug}/versions/{versionId}/restore",
+    "access": "AUTHENTICATED",
+    "controller": "PlatformController",
+    "operation": "restoreVersion",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/platform/PlatformController.java",
+    "id": "PlatformController.restoreVersion",
+    "group": "Plataforma",
+    "public": false,
+    "requestSchema": "EmptyBody",
+    "responseSchema": {
+      "$ref": "#/components/schemas/FlowResponse"
+    },
+    "parameters": [
+      {
+        "name": "contractSlug",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "flowSlug",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "versionId",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/platform/contracts/empresa-exemplo/flows/empresa-exemplo/versions/11111111-1111-4111-8111-111111111111/restore",
+      "method": "POST",
+      "body-data": {}
+    },
+    "pattern": "^/api/v1/platform/contracts/[^/?]+/flows/[^/?]+/versions/[^/?]+/restore/?(?:\\?.*)?$"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/platform/contracts/{contractSlug}/help-desk/attendants",
+    "access": "AUTHENTICATED",
+    "controller": "PlatformHelpDeskController",
+    "operation": "listAttendants",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/platform/PlatformHelpDeskController.java",
+    "id": "PlatformHelpDeskController.listAttendants",
+    "group": "Atendimento",
+    "public": false,
+    "requestSchema": "EmptyBody",
+    "responseSchema": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/ContractHelpDeskAttendantResponse"
+      }
+    },
+    "parameters": [
+      {
+        "name": "contractSlug",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/platform/contracts/empresa-exemplo/help-desk/attendants",
+      "method": "GET",
+      "body-data": {}
+    },
+    "pattern": "^/api/v1/platform/contracts/[^/?]+/help-desk/attendants/?(?:\\?.*)?$"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/v1/platform/contracts/{contractSlug}/help-desk/attendants",
+    "access": "AUTHENTICATED",
+    "controller": "PlatformHelpDeskController",
+    "operation": "replaceAttendants",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/platform/PlatformHelpDeskController.java",
+    "id": "PlatformHelpDeskController.replaceAttendants",
+    "group": "Atendimento",
+    "public": false,
+    "requestSchema": "ContractHelpDeskAttendantsUpdateRequest",
+    "responseSchema": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/ContractHelpDeskAttendantResponse"
+      }
+    },
+    "parameters": [
+      {
+        "name": "contractSlug",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/platform/contracts/empresa-exemplo/help-desk/attendants",
+      "method": "PUT",
+      "body-data": {
+        "userIds": []
+      }
+    },
+    "pattern": "^/api/v1/platform/contracts/[^/?]+/help-desk/attendants/?(?:\\?.*)?$"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/platform/contracts/{contractSlug}/help-desk/close-intents",
+    "access": "AUTHENTICATED",
+    "controller": "PlatformHelpDeskController",
+    "operation": "listCloseIntents",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/platform/PlatformHelpDeskController.java",
+    "id": "PlatformHelpDeskController.listCloseIntents",
+    "group": "Atendimento",
+    "public": false,
+    "requestSchema": "EmptyBody",
+    "responseSchema": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/ContractHelpDeskCloseIntentResponse"
+      }
+    },
+    "parameters": [
+      {
+        "name": "contractSlug",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/platform/contracts/empresa-exemplo/help-desk/close-intents",
+      "method": "GET",
+      "body-data": {}
+    },
+    "pattern": "^/api/v1/platform/contracts/[^/?]+/help-desk/close-intents/?(?:\\?.*)?$"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/platform/contracts/{contractSlug}/help-desk/close-intents",
+    "access": "AUTHENTICATED",
+    "controller": "PlatformHelpDeskController",
+    "operation": "createCloseIntent",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/platform/PlatformHelpDeskController.java",
+    "id": "PlatformHelpDeskController.createCloseIntent",
+    "group": "Atendimento",
+    "public": false,
+    "requestSchema": "ContractHelpDeskCloseIntentRequest",
+    "responseSchema": {
+      "$ref": "#/components/schemas/ContractHelpDeskCloseIntentResponse"
+    },
+    "parameters": [
+      {
+        "name": "contractSlug",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/platform/contracts/empresa-exemplo/help-desk/close-intents",
+      "method": "POST",
+      "body-data": {
+        "name": "Exemplo",
+        "intentKey": "ATENDIMENTO_CONCLUIDO",
+        "enabled": true
+      }
+    },
+    "pattern": "^/api/v1/platform/contracts/[^/?]+/help-desk/close-intents/?(?:\\?.*)?$"
+  },
+  {
+    "method": "DELETE",
+    "path": "/api/v1/platform/contracts/{contractSlug}/help-desk/close-intents/{intentId}",
+    "access": "AUTHENTICATED",
+    "controller": "PlatformHelpDeskController",
+    "operation": "deleteCloseIntent",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/platform/PlatformHelpDeskController.java",
+    "id": "PlatformHelpDeskController.deleteCloseIntent",
+    "group": "Atendimento",
+    "public": false,
+    "requestSchema": "EmptyBody",
+    "responseSchema": null,
+    "parameters": [
+      {
+        "name": "contractSlug",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "intentId",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/platform/contracts/empresa-exemplo/help-desk/close-intents/11111111-1111-4111-8111-111111111111",
+      "method": "DELETE",
+      "body-data": {}
+    },
+    "pattern": "^/api/v1/platform/contracts/[^/?]+/help-desk/close-intents/[^/?]+/?(?:\\?.*)?$"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/v1/platform/contracts/{contractSlug}/help-desk/close-intents/{intentId}",
+    "access": "AUTHENTICATED",
+    "controller": "PlatformHelpDeskController",
+    "operation": "updateCloseIntent",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/platform/PlatformHelpDeskController.java",
+    "id": "PlatformHelpDeskController.updateCloseIntent",
+    "group": "Atendimento",
+    "public": false,
+    "requestSchema": "ContractHelpDeskCloseIntentRequest",
+    "responseSchema": {
+      "$ref": "#/components/schemas/ContractHelpDeskCloseIntentResponse"
+    },
+    "parameters": [
+      {
+        "name": "contractSlug",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "intentId",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/platform/contracts/empresa-exemplo/help-desk/close-intents/11111111-1111-4111-8111-111111111111",
+      "method": "PUT",
+      "body-data": {
+        "name": "Exemplo",
+        "intentKey": "ATENDIMENTO_CONCLUIDO",
+        "enabled": true
+      }
+    },
+    "pattern": "^/api/v1/platform/contracts/[^/?]+/help-desk/close-intents/[^/?]+/?(?:\\?.*)?$"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/platform/contracts/{contractSlug}/help-desk/queues",
+    "access": "AUTHENTICATED",
+    "controller": "PlatformHelpDeskController",
+    "operation": "listQueues",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/platform/PlatformHelpDeskController.java",
+    "id": "PlatformHelpDeskController.listQueues",
+    "group": "Atendimento",
+    "public": false,
+    "requestSchema": "EmptyBody",
+    "responseSchema": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/ContractHelpDeskQueueResponse"
+      }
+    },
+    "parameters": [
+      {
+        "name": "contractSlug",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/platform/contracts/empresa-exemplo/help-desk/queues",
+      "method": "GET",
+      "body-data": {}
+    },
+    "pattern": "^/api/v1/platform/contracts/[^/?]+/help-desk/queues/?(?:\\?.*)?$"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/platform/contracts/{contractSlug}/help-desk/queues",
+    "access": "AUTHENTICATED",
+    "controller": "PlatformHelpDeskController",
+    "operation": "createQueue",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/platform/PlatformHelpDeskController.java",
+    "id": "PlatformHelpDeskController.createQueue",
+    "group": "Atendimento",
+    "public": false,
+    "requestSchema": "ContractHelpDeskQueueRequest",
+    "responseSchema": {
+      "$ref": "#/components/schemas/ContractHelpDeskQueueResponse"
+    },
+    "parameters": [
+      {
+        "name": "contractSlug",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/platform/contracts/empresa-exemplo/help-desk/queues",
+      "method": "POST",
+      "body-data": {
+        "name": "Exemplo",
+        "enabled": true
+      }
+    },
+    "pattern": "^/api/v1/platform/contracts/[^/?]+/help-desk/queues/?(?:\\?.*)?$"
+  },
+  {
+    "method": "DELETE",
+    "path": "/api/v1/platform/contracts/{contractSlug}/help-desk/queues/{queueId}",
+    "access": "AUTHENTICATED",
+    "controller": "PlatformHelpDeskController",
+    "operation": "deleteQueue",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/platform/PlatformHelpDeskController.java",
+    "id": "PlatformHelpDeskController.deleteQueue",
+    "group": "Atendimento",
+    "public": false,
+    "requestSchema": "EmptyBody",
+    "responseSchema": null,
+    "parameters": [
+      {
+        "name": "contractSlug",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "queueId",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/platform/contracts/empresa-exemplo/help-desk/queues/11111111-1111-4111-8111-111111111111",
+      "method": "DELETE",
+      "body-data": {}
+    },
+    "pattern": "^/api/v1/platform/contracts/[^/?]+/help-desk/queues/[^/?]+/?(?:\\?.*)?$"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/v1/platform/contracts/{contractSlug}/help-desk/queues/{queueId}",
+    "access": "AUTHENTICATED",
+    "controller": "PlatformHelpDeskController",
+    "operation": "updateQueue",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/platform/PlatformHelpDeskController.java",
+    "id": "PlatformHelpDeskController.updateQueue",
+    "group": "Atendimento",
+    "public": false,
+    "requestSchema": "ContractHelpDeskQueueRequest",
+    "responseSchema": {
+      "$ref": "#/components/schemas/ContractHelpDeskQueueResponse"
+    },
+    "parameters": [
+      {
+        "name": "contractSlug",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "queueId",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/platform/contracts/empresa-exemplo/help-desk/queues/11111111-1111-4111-8111-111111111111",
+      "method": "PUT",
+      "body-data": {
+        "name": "Exemplo",
+        "enabled": true
+      }
+    },
+    "pattern": "^/api/v1/platform/contracts/[^/?]+/help-desk/queues/[^/?]+/?(?:\\?.*)?$"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/platform/contracts/{contractSlug}/help-desk/tickets",
+    "access": "AUTHENTICATED",
+    "controller": "PlatformHelpDeskController",
+    "operation": "listTickets",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/platform/PlatformHelpDeskController.java",
+    "id": "PlatformHelpDeskController.listTickets",
+    "group": "Atendimento",
+    "public": false,
+    "requestSchema": "EmptyBody",
+    "responseSchema": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/HelpDeskTicketResponse"
+      }
+    },
+    "parameters": [
+      {
+        "name": "contractSlug",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/platform/contracts/empresa-exemplo/help-desk/tickets",
+      "method": "GET",
+      "body-data": {}
+    },
+    "pattern": "^/api/v1/platform/contracts/[^/?]+/help-desk/tickets/?(?:\\?.*)?$"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/platform/contracts/{contractSlug}/help-desk/tickets/{ticketId}",
+    "access": "AUTHENTICATED",
+    "controller": "PlatformHelpDeskController",
+    "operation": "findTicket",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/platform/PlatformHelpDeskController.java",
+    "id": "PlatformHelpDeskController.findTicket",
+    "group": "Atendimento",
+    "public": false,
+    "requestSchema": "EmptyBody",
+    "responseSchema": {
+      "$ref": "#/components/schemas/HelpDeskTicketResponse"
+    },
+    "parameters": [
+      {
+        "name": "contractSlug",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "ticketId",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/platform/contracts/empresa-exemplo/help-desk/tickets/11111111-1111-4111-8111-111111111111",
+      "method": "GET",
+      "body-data": {}
+    },
+    "pattern": "^/api/v1/platform/contracts/[^/?]+/help-desk/tickets/[^/?]+/?(?:\\?.*)?$"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/platform/contracts/{contractSlug}/help-desk/tickets/{ticketId}/assign",
+    "access": "AUTHENTICATED",
+    "controller": "PlatformHelpDeskController",
+    "operation": "assign",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/platform/PlatformHelpDeskController.java",
+    "id": "PlatformHelpDeskController.assign",
+    "group": "Atendimento",
+    "public": false,
+    "requestSchema": "EmptyBody",
+    "responseSchema": {
+      "$ref": "#/components/schemas/HelpDeskTicketResponse"
+    },
+    "parameters": [
+      {
+        "name": "contractSlug",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "ticketId",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/platform/contracts/empresa-exemplo/help-desk/tickets/11111111-1111-4111-8111-111111111111/assign",
+      "method": "POST",
+      "body-data": {}
+    },
+    "pattern": "^/api/v1/platform/contracts/[^/?]+/help-desk/tickets/[^/?]+/assign/?(?:\\?.*)?$"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/platform/contracts/{contractSlug}/help-desk/tickets/{ticketId}/close",
+    "access": "AUTHENTICATED",
+    "controller": "PlatformHelpDeskController",
+    "operation": "close",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/platform/PlatformHelpDeskController.java",
+    "id": "PlatformHelpDeskController.close",
+    "group": "Atendimento",
+    "public": false,
+    "requestSchema": "HelpDeskTicketCloseRequest",
+    "responseSchema": {
+      "$ref": "#/components/schemas/HelpDeskTicketResponse"
+    },
+    "parameters": [
+      {
+        "name": "contractSlug",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "ticketId",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/platform/contracts/empresa-exemplo/help-desk/tickets/11111111-1111-4111-8111-111111111111/close",
+      "method": "POST",
+      "body-data": {
+        "intent": "ATENDIMENTO_CONCLUIDO"
+      }
+    },
+    "pattern": "^/api/v1/platform/contracts/[^/?]+/help-desk/tickets/[^/?]+/close/?(?:\\?.*)?$"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/platform/contracts/{contractSlug}/help-desk/tickets/{ticketId}/messages",
+    "access": "AUTHENTICATED",
+    "controller": "PlatformHelpDeskController",
+    "operation": "listMessages",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/platform/PlatformHelpDeskController.java",
+    "id": "PlatformHelpDeskController.listMessages",
+    "group": "Atendimento",
+    "public": false,
+    "requestSchema": "EmptyBody",
+    "responseSchema": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/ChannelConversationMessageResponse"
+      }
+    },
+    "parameters": [
+      {
+        "name": "contractSlug",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "ticketId",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/platform/contracts/empresa-exemplo/help-desk/tickets/11111111-1111-4111-8111-111111111111/messages",
+      "method": "GET",
+      "body-data": {}
+    },
+    "pattern": "^/api/v1/platform/contracts/[^/?]+/help-desk/tickets/[^/?]+/messages/?(?:\\?.*)?$"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/platform/contracts/{contractSlug}/help-desk/tickets/{ticketId}/messages",
+    "access": "AUTHENTICATED",
+    "controller": "PlatformHelpDeskController",
+    "operation": "sendMessage",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/platform/PlatformHelpDeskController.java",
+    "id": "PlatformHelpDeskController.sendMessage",
+    "group": "Atendimento",
+    "public": false,
+    "requestSchema": "HelpDeskTicketMessageRequest",
+    "responseSchema": {
+      "$ref": "#/components/schemas/HelpDeskTicketResponse"
+    },
+    "parameters": [
+      {
+        "name": "contractSlug",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "ticketId",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/platform/contracts/empresa-exemplo/help-desk/tickets/11111111-1111-4111-8111-111111111111/messages",
+      "method": "POST",
+      "body-data": {
+        "text": "Olá, como posso ajudar?"
+      }
+    },
+    "pattern": "^/api/v1/platform/contracts/[^/?]+/help-desk/tickets/[^/?]+/messages/?(?:\\?.*)?$"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/platform/contracts/{contractSlug}/help-desk/tickets/{ticketId}/release",
+    "access": "AUTHENTICATED",
+    "controller": "PlatformHelpDeskController",
+    "operation": "release",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/platform/PlatformHelpDeskController.java",
+    "id": "PlatformHelpDeskController.release",
+    "group": "Atendimento",
+    "public": false,
+    "requestSchema": "EmptyBody",
+    "responseSchema": {
+      "$ref": "#/components/schemas/HelpDeskTicketResponse"
+    },
+    "parameters": [
+      {
+        "name": "contractSlug",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "ticketId",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/platform/contracts/empresa-exemplo/help-desk/tickets/11111111-1111-4111-8111-111111111111/release",
+      "method": "POST",
+      "body-data": {}
+    },
+    "pattern": "^/api/v1/platform/contracts/[^/?]+/help-desk/tickets/[^/?]+/release/?(?:\\?.*)?$"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/platform/contracts/{contractSlug}/help-desk/tickets/{ticketId}/transfer",
+    "access": "AUTHENTICATED",
+    "controller": "PlatformHelpDeskController",
+    "operation": "transfer",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/platform/PlatformHelpDeskController.java",
+    "id": "PlatformHelpDeskController.transfer",
+    "group": "Atendimento",
+    "public": false,
+    "requestSchema": "HelpDeskTicketTransferRequest",
+    "responseSchema": {
+      "$ref": "#/components/schemas/HelpDeskTicketResponse"
+    },
+    "parameters": [
+      {
+        "name": "contractSlug",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "ticketId",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/platform/contracts/empresa-exemplo/help-desk/tickets/11111111-1111-4111-8111-111111111111/transfer",
+      "method": "POST",
+      "body-data": {
+        "targetUserId": "11111111-1111-4111-8111-111111111111"
+      }
+    },
+    "pattern": "^/api/v1/platform/contracts/[^/?]+/help-desk/tickets/[^/?]+/transfer/?(?:\\?.*)?$"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/public/blog/posts",
+    "access": "PUBLIC",
+    "controller": "PublicBlogController",
+    "operation": "listPublishedPosts",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/content/PublicBlogController.java",
+    "id": "PublicBlogController.listPublishedPosts",
+    "group": "Blog público",
+    "public": true,
+    "requestSchema": "EmptyBody",
+    "responseSchema": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/BlogPostSummaryResponse"
+      }
+    },
+    "parameters": [],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/public/blog/posts",
+      "method": "GET",
+      "body-data": {}
+    },
+    "pattern": "^/api/v1/public/blog/posts/?(?:\\?.*)?$"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/public/blog/posts/{slug}",
+    "access": "PUBLIC",
+    "controller": "PublicBlogController",
+    "operation": "getPublishedPost",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/content/PublicBlogController.java",
+    "id": "PublicBlogController.getPublishedPost",
+    "group": "Blog público",
+    "public": true,
+    "requestSchema": "EmptyBody",
+    "responseSchema": {
+      "$ref": "#/components/schemas/BlogPostResponse"
+    },
+    "parameters": [
+      {
+        "name": "slug",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/public/blog/posts/empresa-exemplo",
+      "method": "GET",
+      "body-data": {}
+    },
+    "pattern": "^/api/v1/public/blog/posts/[^/?]+/?(?:\\?.*)?$"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/public/blog/settings",
+    "access": "PUBLIC",
+    "controller": "PublicBlogController",
+    "operation": "getSettings",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/content/PublicBlogController.java",
+    "id": "PublicBlogController.getSettings",
+    "group": "Blog público",
+    "public": true,
+    "requestSchema": "EmptyBody",
+    "responseSchema": {
+      "$ref": "#/components/schemas/BlogSettingsResponse"
+    },
+    "parameters": [],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/public/blog/settings",
+      "method": "GET",
+      "body-data": {}
+    },
+    "pattern": "^/api/v1/public/blog/settings/?(?:\\?.*)?$"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/public/content-pages/resolve",
+    "access": "PUBLIC",
+    "controller": "PublicStaticPageController",
+    "operation": "resolve",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/content/PublicStaticPageController.java",
+    "id": "PublicStaticPageController.resolve",
+    "group": "Páginas públicas",
+    "public": true,
+    "requestSchema": "EmptyBody",
+    "responseSchema": {
+      "$ref": "#/components/schemas/StaticPageResponse"
+    },
+    "parameters": [
+      {
+        "name": "path",
+        "in": "query",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/public/content-pages/resolve?path=%2Fpagina-exemplo",
+      "method": "GET",
+      "body-data": {}
+    },
+    "pattern": "^/api/v1/public/content-pages/resolve/?(?:\\?.*)?$"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/start/company",
+    "access": "AUTHENTICATED",
+    "controller": "StartController",
+    "operation": "create",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/onboarding/StartController.java",
+    "id": "StartController.create",
+    "group": "Onboarding",
+    "public": false,
+    "requestSchema": "StartCompanyRequest",
+    "responseSchema": {
+      "$ref": "#/components/schemas/StartResult"
+    },
+    "parameters": [],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/start/company",
+      "method": "POST",
+      "body-data": {
+        "companyName": "Empresa exemplo",
+        "cnpj": "40432544000147",
+        "contactEmail": "contato@example.com",
+        "contactPhone": "1143134620",
+        "address": "Rua exemplo, 100",
+        "neighborhood": "Centro",
+        "city": "São Paulo",
+        "state": "SP",
+        "zipCode": "04709110"
+      }
+    },
+    "pattern": "^/api/v1/start/company/?(?:\\?.*)?$"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/start/slug",
+    "access": "AUTHENTICATED",
+    "controller": "StartController",
+    "operation": "slug",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/onboarding/StartController.java",
+    "id": "StartController.slug",
+    "group": "Onboarding",
+    "public": false,
+    "requestSchema": "EmptyBody",
+    "responseSchema": {
+      "$ref": "#/components/schemas/SlugResult"
+    },
+    "parameters": [
+      {
+        "name": "value",
+        "in": "query",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/start/slug?value=empresa-exemplo",
+      "method": "GET",
+      "body-data": {}
+    },
+    "pattern": "^/api/v1/start/slug/?(?:\\?.*)?$"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/users",
+    "access": "OWNER",
+    "controller": "UserAdminController",
+    "operation": "list",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/user/UserAdminController.java",
+    "id": "UserAdminController.list",
+    "group": "Usuários",
+    "public": false,
+    "requestSchema": "EmptyBody",
+    "responseSchema": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/UserProfileResponse"
+      }
+    },
+    "parameters": [],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/users",
+      "method": "GET",
+      "body-data": {}
+    },
+    "pattern": "^/api/v1/users/?(?:\\?.*)?$"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/users/active",
+    "access": "OWNER",
+    "controller": "UserAdminController",
+    "operation": "active",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/user/UserAdminController.java",
+    "id": "UserAdminController.active",
+    "group": "Usuários",
+    "public": false,
+    "requestSchema": "EmptyBody",
+    "responseSchema": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/UserProfileResponse"
+      }
+    },
+    "parameters": [],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/users/active",
+      "method": "GET",
+      "body-data": {}
+    },
+    "pattern": "^/api/v1/users/active/?(?:\\?.*)?$"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/users/pending",
+    "access": "OWNER",
+    "controller": "UserAdminController",
+    "operation": "pending",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/user/UserAdminController.java",
+    "id": "UserAdminController.pending",
+    "group": "Usuários",
+    "public": false,
+    "requestSchema": "EmptyBody",
+    "responseSchema": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/UserProfileResponse"
+      }
+    },
+    "parameters": [],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/users/pending",
+      "method": "GET",
+      "body-data": {}
+    },
+    "pattern": "^/api/v1/users/pending/?(?:\\?.*)?$"
+  },
+  {
+    "method": "DELETE",
+    "path": "/api/v1/users/{id}",
+    "access": "OWNER",
+    "controller": "UserAdminController",
+    "operation": "delete",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/user/UserAdminController.java",
+    "id": "UserAdminController.delete",
+    "group": "Usuários",
+    "public": false,
+    "requestSchema": "EmptyBody",
+    "responseSchema": null,
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/users/11111111-1111-4111-8111-111111111111",
+      "method": "DELETE",
+      "body-data": {}
+    },
+    "pattern": "^/api/v1/users/[^/?]+/?(?:\\?.*)?$"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/users/{id}/activate",
+    "access": "OWNER",
+    "controller": "UserAdminController",
+    "operation": "activate",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/user/UserAdminController.java",
+    "id": "UserAdminController.activate",
+    "group": "Usuários",
+    "public": false,
+    "requestSchema": "EmptyBody",
+    "responseSchema": {
+      "$ref": "#/components/schemas/UserProfileResponse"
+    },
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/users/11111111-1111-4111-8111-111111111111/activate",
+      "method": "POST",
+      "body-data": {}
+    },
+    "pattern": "^/api/v1/users/[^/?]+/activate/?(?:\\?.*)?$"
+  },
+  {
+    "method": "PATCH",
+    "path": "/api/v1/users/{id}/role",
+    "access": "OWNER",
+    "controller": "UserAdminController",
+    "operation": "updateRole",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/user/UserAdminController.java",
+    "id": "UserAdminController.updateRole",
+    "group": "Usuários",
+    "public": false,
+    "requestSchema": "UserRoleUpdateRequest",
+    "responseSchema": {
+      "$ref": "#/components/schemas/UserProfileResponse"
+    },
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/users/11111111-1111-4111-8111-111111111111/role",
+      "method": "PATCH",
+      "body-data": {
+        "role": "USER"
+      }
+    },
+    "pattern": "^/api/v1/users/[^/?]+/role/?(?:\\?.*)?$"
+  },
+  {
+    "method": "PATCH",
+    "path": "/api/v1/users/{id}/status",
+    "access": "OWNER",
+    "controller": "UserAdminController",
+    "operation": "updateStatus",
+    "source": "flow-bff/src/main/java/com/ativa/flowbff/web/user/UserAdminController.java",
+    "id": "UserAdminController.updateStatus",
+    "group": "Usuários",
+    "public": false,
+    "requestSchema": "UserStatusUpdateRequest",
+    "responseSchema": {
+      "$ref": "#/components/schemas/UserProfileResponse"
+    },
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/users/11111111-1111-4111-8111-111111111111/status",
+      "method": "PATCH",
+      "body-data": {
+        "active": true
+      }
+    },
+    "pattern": "^/api/v1/users/[^/?]+/status/?(?:\\?.*)?$"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/public/webchat",
+    "access": "PUBLIC",
+    "controller": "WebChatCommands",
+    "operation": "execute",
+    "source": "portal-bff/src/webchat.mjs",
+    "id": "WebChatCommands.execute",
+    "group": "Webchat HTTP",
+    "public": true,
+    "requestSchema": "WebChatCommand",
+    "responseSchema": {
+      "$ref": "#/components/schemas/WebChatEnvelope"
+    },
+    "parameters": [],
+    "asynchronous": false,
+    "example": {
+      "path": "/api/v1/public/webchat",
+      "method": "POST",
+      "body-data": {
+        "type": "connect",
+        "agentName": "agente-exemplo",
+        "contactName": "Visitante"
+      }
+    },
+    "pattern": "^/api/v1/public/webchat/?(?:\\?.*)?$"
+  },
+  {
+    "controller": "Runtime",
+    "operation": "health",
+    "method": "GET",
+    "path": "/actuator/health",
+    "access": "PUBLIC",
+    "id": "Runtime.health",
+    "group": "Runtime",
+    "public": true,
+    "requestSchema": "EmptyBody",
+    "responseSchema": {
+      "$ref": "#/components/schemas/Health"
+    },
+    "parameters": [],
+    "asynchronous": false,
+    "example": {
+      "path": "/actuator/health",
+      "method": "GET",
+      "body-data": {}
+    },
+    "pattern": "^/actuator/health/?(?:\\?.*)?$"
+  },
+  {
+    "controller": "Jobs",
+    "operation": "status",
+    "method": "GET",
+    "path": "/api/v1/jobs/{jobId}",
+    "access": "AUTHENTICATED",
+    "id": "Jobs.status",
+    "group": "Jobs",
+    "public": false,
+    "requestSchema": "EmptyBody",
+    "responseSchema": {
+      "anyOf": [
+        {
+          "$ref": "#/components/schemas/FlowAiDraftResponse"
+        },
+        {
+          "$ref": "#/components/schemas/PendingJob"
+        }
+      ]
+    },
+    "parameters": [
+      {
+        "name": "jobId",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "asynchronous": true,
+    "example": {
+      "path": "/api/v1/jobs/11111111-1111-4111-8111-111111111111",
+      "method": "GET",
+      "body-data": {}
+    },
+    "pattern": "^/api/v1/jobs/[^/?]+/?(?:\\?.*)?$"
+  }
+]

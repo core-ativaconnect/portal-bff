@@ -17,10 +17,15 @@
     "package": "serverless package",
     "deploy": "serverless deploy",
     "check": "node --check src/handler.mjs",
-    "check:aws:tables": "node scripts/check-aws-tables.mjs"
+    "check:aws:tables": "node scripts/check-aws-tables.mjs",
+    "docs:export": "node scripts/export-docs.mjs",
+    "docs:check": "node --test test/docs.test.mjs"
   },
   "devDependencies": {
     "@apidevtools/swagger-parser": "^13.0.0",
+    "@asyncapi/parser": "^3.6.3",
+    "ajv": "^8.20.0",
+    "ajv-formats": "^3.0.1",
     "serverless": "3.40.0",
     "serverless-offline": "13.9.0",
     "ws": "^8.21.3"

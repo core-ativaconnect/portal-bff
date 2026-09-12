@@ -2,6 +2,27 @@
 
 Backend Node.js 20 / Serverless Framework 3 com handlers nativos e DynamoDB.
 
+## Swagger e contratos da API
+
+- Swagger UI local: http://localhost:3001/docs (alias: /swagger).
+- Após o deploy: https://api.tiudi.com.br/portal/docs.
+- OpenAPI: /openapi.json. AsyncAPI do chat: /asyncapi.json.
+- Guia do WebSocket: /docs/websocket.html.
+
+O catálogo pesquisável permite selecionar cada comando do Studio, com campos,
+exemplo, autorização e resposta. As operações lógicas são enviadas ao endpoint
+POST /commands; elas não são anunciadas como rotas REST inexistentes.
+O Swagger principal também mostra os endpoints reais do Desk e da Meta.
+Selecione o servidor e use Authorize com o accessToken para testar chamadas
+protegidas. O token não é persistido entre recargas e a especificação não é
+enviada a validadores externos. Os arquivos do Swagger são servidos pelo BFF.
+
+Execute npm run docs:check para validar OpenAPI, exemplos, AsyncAPI e cobertura
+do catálogo. npm run docs:export gera os arquivos em docs/generated para
+importação em ferramentas externas. Os schemas ficam em src/docs/contracts.json,
+com regras do runtime em src/docs/schemas.mjs. Ao adicionar uma rota de negócio,
+atualize seu contrato; os testes falham se faltar documentação.
+
 | Cliente | Transporte local |
 | --- | --- |
 | Flow Studio | POST http://localhost:3001/commands |

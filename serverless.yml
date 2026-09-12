@@ -113,6 +113,24 @@ provider:
             - Fn::Sub: arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${self:service}-${sls:stage}-worker
 
 functions:
+  docs:
+    handler: src/docs/handler.handler
+    events:
+      - httpApi:
+          path: /docs
+          method: GET
+      - httpApi:
+          path: /docs/{proxy+}
+          method: GET
+      - httpApi:
+          path: /swagger
+          method: GET
+      - httpApi:
+          path: /openapi.json
+          method: GET
+      - httpApi:
+          path: /asyncapi.json
+          method: GET
   desk:
     handler: src/desk.handler
     events:
@@ -160,6 +178,7 @@ resources: ${file(infra/transports.yml)}
 
 package:
   patterns:
+    - '!docs/**'
     - '!test/**'
     - '!scripts/**'
     - '!infra/**'

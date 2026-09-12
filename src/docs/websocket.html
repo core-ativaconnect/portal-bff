@@ -1,0 +1,22 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Portal BFF · WebSocket</title><link rel="stylesheet" href="./style.css"></head><body>
+<main><nav><a href="../docs">Swagger HTTP</a><a href="../asyncapi.json">Baixar AsyncAPI</a></nav>
+<h1>Chat WebSocket</h1><p>Local: <code>ws://localhost:3003/ws/webchat</code>. Em produção, use o output <code>ChatWebSocketUrl</code> do deploy. A conexão WebSocket usa um host próprio; não acrescente este caminho à URL HTTP do Portal.</p>
+<h2>1. Conectar</h2><p>Abra o WebSocket e envie um connect. O canal deve existir, ter um agente WEBCHAT e pertencer a um contrato ativo.</p>
+<pre>{"type":"connect","agentName":"agente-exemplo","contactName":"Visitante"}</pre>
+<p>O servidor responde com connected, contactId e contactToken. O histórico pode chegar em envelopes messages separados. Guarde o token para reconectar; um contactId sozinho não dá acesso a uma conversa.</p>
+<h2>2. Enviar e receber</h2><pre>{"type":"message","text":"Olá, preciso de ajuda"}</pre>
+<p>O servidor usa a sessão vinculada à conexão, inclusive para escolher agente e contato. As respostas do fluxo e do atendente chegam por push. Remova duplicatas pelo id de cada mensagem.</p>
+<pre>{"type":"messages","contactId":"contato-exemplo","messages":[{"id":"mensagem-exemplo","kind":"BUSINESS","text":"Como posso ajudar?","choices":[],"list":null,"occurredAt":"2026-09-11T12:00:00.000Z"}]}</pre>
+<h2>3. Manter e retomar a sessão</h2><p>Envie ping a cada 25 segundos. O servidor responde pong. Reconecte após o fechamento, reapresentando o contactToken:</p>
+<pre>{"type":"ping"}
+{"type":"connect","agentName":"agente-exemplo","contactToken":"token-recebido-no-connected"}</pre>
+<p>O token dura 30 dias. A conexão AWS pode encerrar em até duas horas. Em erro 401, descarte o token inválido e inicie uma nova sessão. O JWT de login do Portal não é usado pelo chat público.</p>
+<h2>Mensagens do protocolo</h2><table><thead><tr><th>Direção</th><th>type</th><th>Conteúdo</th></tr></thead><tbody>
+<tr><td>Cliente → servidor</td><td>connect</td><td>agentName, contactName opcional, contactToken para retomada</td></tr>
+<tr><td>Cliente → servidor</td><td>message</td><td>text obrigatório; até 20.000 caracteres</td></tr>
+<tr><td>Cliente → servidor</td><td>ping</td><td>Sem campos adicionais</td></tr>
+<tr><td>Servidor → cliente</td><td>connected</td><td>contactId, contactToken, agente e informações do canal</td></tr>
+<tr><td>Servidor → cliente</td><td>messages</td><td>Lista com id, text, kind, choices, list e occurredAt</td></tr>
+<tr><td>Servidor → cliente</td><td>pong</td><td>Confirmação da sessão</td></tr>
+<tr><td>Servidor → cliente</td><td>error</td><td>status e message; por exemplo 400, 401, 403, 404 ou 500</td></tr>
+</tbody></table><p>O protocolo HTTP legado de webchat aceita poll. O WebSocket aceita somente connect, message e ping.</p></main></body></html>

@@ -49,20 +49,28 @@ export async function resolveDefinition(store,body,contractId) {
   const definition=JSON.parse(version?.definition_json??flow.definition_json);if(!Array.isArray(definition.actions)||!definition.actions.length)throw new HttpError(400,'O fluxo não contém ações.');
   return{flow,versionId:version?.id??flow.id,status:version?.status??'DRAFT',definition};
 }
-export async function processFlow(store,body,actor,{contractId,resumeIntent,operationId,resumeByCustomer=false}={}) {
+export async function processFlow(store,body,actor,{contractId,resumeIntent,operationId,resumeByCustomer=false,runtimeContext}={}) {
   if(operationId){const saved=await store.get('jobs',{id:operationId});if(saved?.response)return saved.response;}
-  let resolved=await resolveDefinition(store,body,contractId);const contract=must(await store.get('contracts',{id:resolved.flow.contract_id}));writable(contract);
+  let resolved=runtimeContext?.resolved??await resolveDefinition(store,body,contractId);
+  if(contractId&&resolved.flow.contract_id!==contractId)throw new HttpError(404,'Flow not found.');const contract=must(await store.get('contracts',{id:resolved.flow.contract_id}));writable(contract);
   if(!contractId&&actor?.role!=='OWNER'&&!await store.get('contract_access',{id:`${contract.id}#${actor?.id}`}))throw new HttpError(404,'Fluxo não encontrado.');
   const simulator=required(body.simulatorUserId,'Usuário da sessão',180),requestedKey=`${simulator}#${body.flowId}#${resolved.versionId}`;
-  const old=await findSession(store,contract.id,simulator,resolved.flow.id,resolved.versionId);
+  let old=runtimeContext&&'session' in runtimeContext?runtimeContext.session:await findSession(store,contract.id,simulator,resolved.flow.id,resolved.versionId);
+  if(body.start&&!old){
+    // Explicit restart may reuse a key whose session previously swapped flows.
+    const previous=await store.get('engine_sessions',{session_key:requestedKey});
+    if(previous){if(previous.contract_id!==contract.id||previous.simulator_user_id!==simulator)throw new HttpError(404,'Session not found.');old=previous;}
+  }
   const key=old?.session_key??requestedKey;
   if(!body.start&&!old)throw new HttpError(404,'Sessão não encontrada.');
   if(old?.actor_id&&actor&&old.actor_id!==actor.id&&!contractId)throw new HttpError(404,'Sessão não encontrada.');
   const token=randomUUID();let session=body.start?{session_key:key,session_id:randomUUID(),simulator_user_id:simulator,flow_id:resolved.flow.id,version_id:resolved.versionId,version_status:resolved.status,waiting_state:'NONE',user_state_json:'{}',contract_id:contract.id,actor_id:actor?.id}: {...old};
   const claim={...session,lease_token:token,lease_until:Date.now()+60000,updated_at:now()};
-  await store.transaction([store.guard(contract.id),store.putOperation('engine_sessions',claim,'attribute_not_exists(lease_until) OR lease_until < :now',{':now':Date.now()})]);
+  const claimCondition=old?'(attribute_not_exists(lease_until) OR lease_until < :now)'+(old.updated_at?' AND updated_at = :previous':' AND attribute_not_exists(updated_at)'):'attribute_not_exists(session_key)';
+  const claimValues=old?{':now':Date.now(),...(old.updated_at?{':previous':old.updated_at}:{})}:undefined;
+  await store.transaction([store.guard(contract.id),store.putOperation('engine_sessions',claim,claimCondition,claimValues)]);
   try{
-    if(!body.start)resolved=await resolveDefinition(store,{flowId:session.flow_id,versionId:session.version_id,versionMode:session.version_status},contract.id);
+    if(!body.start&&!runtimeContext?.resolved)resolved=await resolveDefinition(store,{flowId:session.flow_id,versionId:session.version_id,versionMode:session.version_status},contract.id);
     let state=JSON.parse(session.user_state_json),actions=resolved.definition.actions;
     const messages=[],actionIds=[],connectionKeys=[];let previous=null,active=null,completed=false;
     const debug=text=>messages.push({author:'system',kind:'DEBUG',text,choices:null,list:null,actionId:null});
@@ -126,7 +134,7 @@ export async function processFlow(store,body,actor,{contractId,resumeIntent,oper
     session={...session,user_state_json:JSON.stringify(state),completed,updated_at:now()};delete session.lease_token;delete session.lease_until;
     const response={flowId:session.flow_id,resolvedVersionId:session.version_id,resolvedVersionStatus:session.version_status,sessionId:session.session_id,simulatorUserId:simulator,started:body.start===true,completed,waitingState:session.waiting_state,waitingActionId:session.waiting_action_id,messages,trace:{actionIds,connectionKeys,activeActionId:active}};
     const writes=[store.guard(contract.id),store.putOperation('engine_sessions',session,'lease_token = :token',{':token':token}),sessionReferenceOperation(store,session)];
-    if(operationId)writes.push(store.putOperation('jobs',{id:operationId,contract_id:contract.id,response,expires_at:Math.floor(Date.now()/1000)+1209600},'attribute_not_exists(id)'));
+    if(operationId)writes.push(store.putOperation('jobs',{id:operationId,contract_id:contract.id,response:{...response,messages:response.messages.filter(m=>m.kind==='BUSINESS')},expires_at:Math.floor(Date.now()/1000)+1209600},'attribute_not_exists(id)'));
     await store.transaction(writes);
     return response;
   }catch(error){

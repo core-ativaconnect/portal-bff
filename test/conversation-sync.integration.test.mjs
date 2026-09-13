@@ -1,0 +1,58 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {randomUUID} from 'node:crypto';
+import {Store} from '../src/store.mjs';
+import {persistMessage,applyMetaStatus,runtimeTable} from '../src/runtime-records.mjs';
+import {syncConversation} from '../src/conversation-sync.mjs';
+import {deleteContract} from '../src/deletion.mjs';
+
+test('DynamoDB: delta sync, zero-write duplicate callbacks, stale summary repair, cursor gaps and isolation', {skip:process.env.RUN_DYNAMODB_TESTS!=='1'},async()=>{
+  const store=new Store();assert.equal(store.settings.local,true);
+  const id=randomUUID(),channelId=randomUUID(),contactId=randomUUID(),phoneId=randomUUID();
+  const channel={id:channelId,contract_id:id};
+  const message=(message_id,occurred_at)=>({message_id,occurred_at,contract_id:id,channel_id:channelId,contact_id:contactId,contact_wa_id:'5511',direction:'OUTBOUND',status:'SENT',message_text:message_id});
+  const send=store.client.send.bind(store.client);const calls=[];
+  store.client.send=async command=>{calls.push(command.constructor.name);return send(command);};
+  try{
+    await store.put('contracts',{id,slug:id,status:'ACTIVE'});await store.put('contract_channels',channel);
+    await persistMessage(store,message('old','2026-01-01T00:00:00.000Z'),phoneId);
+    assert.equal(await store.get(runtimeTable,{pk:`CONVERSATION#${channelId}#${contactId}`,sk:'REVISION'}),undefined);
+    const initial=await syncConversation(store,channel,contactId);assert.equal(initial.reset,true);assert.equal(initial.messages.length,1);
+    calls.length=0;
+    const unchanged=await syncConversation(store,channel,contactId,initial.cursor);
+    assert.deepEqual(unchanged.messages,[]);assert.deepEqual(calls,['GetCommand']);
+    await persistMessage(store,message('new','2026-01-02T00:00:00.000Z'),phoneId);
+    const callback={id:'old',recipient_id:'5511',status:'read'};
+    await applyMetaStatus(store,phoneId,callback);
+    const delta=await syncConversation(store,channel,contactId,initial.cursor);
+    assert.equal(delta.reset,false);assert.deepEqual(new Set(delta.messages.map(m=>m.message_id)),new Set(['new','old']));
+    assert.equal(delta.messages.find(m=>m.message_id==='old').status,'READ');
+    calls.length=0;await applyMetaStatus(store,phoneId,callback);
+    assert.equal(calls.filter(c=>c==='TransactWriteCommand').length,0);
+    calls.length=0;await applyMetaStatus(store,phoneId,{...callback,status:'delivered'});
+    assert.equal(calls.filter(c=>c==='TransactWriteCommand').length,0);
+    await applyMetaStatus(store,phoneId,{...callback,id:'new'});
+    const summaryKey={pk:`CHANNEL#${channelId}`,sk:`CONTACT#${contactId}`};
+    const summary=await store.get(runtimeTable,summaryKey);
+    await store.transaction([store.putOperation(runtimeTable,{...summary,status:'SENT'})]);
+    await applyMetaStatus(store,phoneId,{...callback,id:'new'});
+    assert.equal((await store.get(runtimeTable,summaryKey)).status,'READ');
+    const beforeGap=await syncConversation(store,channel,contactId);
+    await persistMessage(store,message('after-gap','2026-01-03T00:00:00.000Z'),phoneId);
+    const pk=`CONVERSATION#${channelId}#${contactId}`;
+    const head=await store.get(runtimeTable,{pk,sk:'REVISION'});
+    await store.delete(runtimeTable,{pk,sk:`CHANGE#${String(head.version).padStart(16,'0')}`});
+    assert.equal((await syncConversation(store,channel,contactId,beforeGap.cursor)).reset,true);
+    await assert.rejects(syncConversation(store,{...channel,id:'other'},contactId,delta.cursor),{status:400});
+    const expired=JSON.parse(Buffer.from(delta.cursor,'base64url'));expired.time=0;
+    assert.equal((await syncConversation(store,channel,contactId,Buffer.from(JSON.stringify(expired)).toString('base64url'))).reset,true);
+    const beforeBatch=await syncConversation(store,channel,contactId);
+    for(let i=0;i<102;i+=3)await Promise.all([i,i+1,i+2].map(n=>persistMessage(store,message(`batch-${n}`,'2025-01-01T00:00:00.000Z'),phoneId)));
+    const batch1=await syncConversation(store,channel,contactId,beforeBatch.cursor);
+    assert.equal(batch1.messages.length,100);assert.equal(batch1.hasMore,true);
+    const batch2=await syncConversation(store,channel,contactId,batch1.cursor);
+    assert.equal(batch2.messages.length,2);assert.equal(batch2.hasMore,false);
+    assert.equal(new Set([...batch1.messages,...batch2.messages].map(m=>m.message_id)).size,102);
+    assert.equal(calls.includes('ScanCommand'),false);
+  }finally{await deleteContract(store,id,id);}
+});

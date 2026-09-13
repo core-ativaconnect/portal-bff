@@ -2891,12 +2891,62 @@
     "PlatformHelpDeskController.listMessages": {
       "request": null,
       "response": {
-        "type": "array",
-        "items": {
-          "$ref": "#/components/schemas/ChannelConversationMessageResponse"
-        }
+        "oneOf": [
+          {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ChannelConversationMessageResponse"
+            }
+          },
+          {
+            "type": "object",
+            "required": [
+              "messages",
+              "cursor",
+              "reset",
+              "hasMore"
+            ],
+            "properties": {
+              "messages": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/ChannelConversationMessageResponse"
+                }
+              },
+              "cursor": {
+                "type": "string"
+              },
+              "reset": {
+                "type": "boolean"
+              },
+              "hasMore": {
+                "type": "boolean"
+              }
+            }
+          }
+        ]
       },
-      "query": []
+      "query": [
+        {
+          "name": "sync",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "boolean",
+            "default": false
+          },
+          "description": "true returns snapshot/deltas and a conversation cursor. Legacy requests return an array."
+        },
+        {
+          "name": "cursor",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Cursor from the preceding successful synchronization. Omit to request a snapshot."
+        }
+      ]
     },
     "PlatformHelpDeskController.sendMessage": {
       "request": "HelpDeskTicketMessageRequest",

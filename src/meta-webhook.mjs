@@ -73,7 +73,7 @@ export async function handler(event,_context,dependencies={}){
   }catch(error){
     if(!(error instanceof HttpError))console.error(JSON.stringify({event:'meta.ingress.failed',name:error.name}));
     return plain(error instanceof HttpError?error.status:503,error instanceof HttpError?error.message:'Webhook temporarily unavailable');
-  }
+  }finally{store.reportMetrics?.('meta.ingress');}
 }
 
 export async function processDelivery(delivery,store=new Store(),dependencies={}){
@@ -139,11 +139,15 @@ export async function processDelivery(delivery,store=new Store(),dependencies={}
       await (dependencies.send??sendText)(store,contract,channel,contact,outgoing.text||'Continuando atendimento.','BUSINESS',outgoing,deliveryContext);
       job.sent_count=index+1;await checkpoint();
     }
-    job.state='COMPLETED';delete job.lease_until;await checkpoint();
+    job.state='COMPLETED';delete job.lease_until;delete job.messages;await checkpoint();
   }catch(error){delete job.lease_until;await checkpoint().catch(()=>{});throw error;}
 }
 
 export async function worker(event){
   // Batch size 1 preserves FIFO order when a delivery needs a retry.
-  for(const record of event.Records??[])await processDelivery(JSON.parse(record.body));
+  for(const record of event.Records??[]){
+    const store=new Store(),delivery=JSON.parse(record.body);
+    try{await processDelivery(delivery,store);}
+    finally{store.reportMetrics(delivery.status?'meta.status':'meta.message');}
+  }
 }

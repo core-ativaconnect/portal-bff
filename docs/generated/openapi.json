@@ -1461,7 +1461,7 @@
                 "PlatformHelpDeskController.listMessages": {
                   "summary": "Atendimento: GET /api/v1/platform/contracts/{contractSlug}/help-desk/tickets/{ticketId}/messages",
                   "value": {
-                    "path": "/api/v1/platform/contracts/empresa-exemplo/help-desk/tickets/11111111-1111-4111-8111-111111111111/messages",
+                    "path": "/api/v1/platform/contracts/empresa-exemplo/help-desk/tickets/11111111-1111-4111-8111-111111111111/messages?sync=true",
                     "method": "GET",
                     "body-data": {}
                   }
@@ -2119,10 +2119,40 @@
                       "$ref": "#/components/schemas/HelpDeskTicketResponse"
                     },
                     {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/ChannelConversationMessageResponse"
-                      }
+                      "oneOf": [
+                        {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/ChannelConversationMessageResponse"
+                          }
+                        },
+                        {
+                          "type": "object",
+                          "required": [
+                            "messages",
+                            "cursor",
+                            "reset",
+                            "hasMore"
+                          ],
+                          "properties": {
+                            "messages": {
+                              "type": "array",
+                              "items": {
+                                "$ref": "#/components/schemas/ChannelConversationMessageResponse"
+                              }
+                            },
+                            "cursor": {
+                              "type": "string"
+                            },
+                            "reset": {
+                              "type": "boolean"
+                            },
+                            "hasMore": {
+                              "type": "boolean"
+                            }
+                          }
+                        }
+                      ]
                     },
                     {
                       "$ref": "#/components/schemas/HelpDeskTicketResponse"
@@ -4805,10 +4835,40 @@
             "access": "AUTHENTICATED",
             "requestSchema": "EmptyBody",
             "responseSchema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/components/schemas/ChannelConversationMessageResponse"
-              }
+              "oneOf": [
+                {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ChannelConversationMessageResponse"
+                  }
+                },
+                {
+                  "type": "object",
+                  "required": [
+                    "messages",
+                    "cursor",
+                    "reset",
+                    "hasMore"
+                  ],
+                  "properties": {
+                    "messages": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/ChannelConversationMessageResponse"
+                      }
+                    },
+                    "cursor": {
+                      "type": "string"
+                    },
+                    "reset": {
+                      "type": "boolean"
+                    },
+                    "hasMore": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              ]
             },
             "parameters": [
               {
@@ -4826,6 +4886,25 @@
                 "schema": {
                   "type": "string"
                 }
+              },
+              {
+                "name": "sync",
+                "in": "query",
+                "required": false,
+                "schema": {
+                  "type": "boolean",
+                  "default": false
+                },
+                "description": "true returns snapshot/deltas and a conversation cursor. Legacy requests return an array."
+              },
+              {
+                "name": "cursor",
+                "in": "query",
+                "required": false,
+                "schema": {
+                  "type": "string"
+                },
+                "description": "Cursor from the preceding successful synchronization. Omit to request a snapshot."
               }
             ],
             "asynchronous": false
@@ -6912,6 +6991,25 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "name": "sync",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false
+            },
+            "description": "true returns snapshot/deltas and a conversation cursor. Legacy requests return an array."
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Cursor from the preceding successful synchronization. Omit to request a snapshot."
           }
         ],
         "responses": {
@@ -6920,10 +7018,40 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ChannelConversationMessageResponse"
-                  }
+                  "oneOf": [
+                    {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/ChannelConversationMessageResponse"
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "messages",
+                        "cursor",
+                        "reset",
+                        "hasMore"
+                      ],
+                      "properties": {
+                        "messages": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/ChannelConversationMessageResponse"
+                          }
+                        },
+                        "cursor": {
+                          "type": "string"
+                        },
+                        "reset": {
+                          "type": "boolean"
+                        },
+                        "hasMore": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
                 }
               }
             }
@@ -17366,7 +17494,7 @@
           "path": {
             "type": "string",
             "pattern": "^/api/v1/platform/contracts/[^/?]+/help-desk/tickets/[^/?]+/messages/?(?:\\?.*)?$",
-            "example": "/api/v1/platform/contracts/empresa-exemplo/help-desk/tickets/11111111-1111-4111-8111-111111111111/messages"
+            "example": "/api/v1/platform/contracts/empresa-exemplo/help-desk/tickets/11111111-1111-4111-8111-111111111111/messages?sync=true"
           },
           "uri": {
             "type": "string",
@@ -17399,7 +17527,7 @@
           }
         ],
         "example": {
-          "path": "/api/v1/platform/contracts/empresa-exemplo/help-desk/tickets/11111111-1111-4111-8111-111111111111/messages",
+          "path": "/api/v1/platform/contracts/empresa-exemplo/help-desk/tickets/11111111-1111-4111-8111-111111111111/messages?sync=true",
           "method": "GET",
           "body-data": {}
         },
@@ -17420,13 +17548,62 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "name": "sync",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false
+            },
+            "description": "true returns snapshot/deltas and a conversation cursor. Legacy requests return an array."
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Cursor from the preceding successful synchronization. Omit to request a snapshot."
           }
         ],
         "x-response-schema": {
-          "type": "array",
-          "items": {
-            "$ref": "#/components/schemas/ChannelConversationMessageResponse"
-          }
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/ChannelConversationMessageResponse"
+              }
+            },
+            {
+              "type": "object",
+              "required": [
+                "messages",
+                "cursor",
+                "reset",
+                "hasMore"
+              ],
+              "properties": {
+                "messages": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ChannelConversationMessageResponse"
+                  }
+                },
+                "cursor": {
+                  "type": "string"
+                },
+                "reset": {
+                  "type": "boolean"
+                },
+                "hasMore": {
+                  "type": "boolean"
+                }
+              }
+            }
+          ]
         }
       },
       "Command.PlatformHelpDeskController.sendMessage": {

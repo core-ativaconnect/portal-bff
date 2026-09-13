@@ -6,23 +6,40 @@ import { HttpError } from './command.mjs';
 export class Store {
   constructor(client, settings = config()) {
     this.settings = settings;
+    this.metrics={calls:{},readUnits:0,writeUnits:0,capacityUnits:0,elapsedMs:0,failures:0};
     this.client = client ?? DynamoDBDocumentClient.from(new DynamoDBClient({
       region: settings.region, endpoint: settings.endpoint,
       ...(settings.local ? { credentials: { accessKeyId: 'local', secretAccessKey: 'local' } } : {}),
     }), { marshallOptions: { removeUndefinedValues: true } });
   }
+  async send(command){
+    if(!this.settings.collectMetrics)return this.client.send(command);
+    command.input.ReturnConsumedCapacity='TOTAL';
+    const start=Date.now(),operation=command.constructor.name;
+    this.metrics.calls[operation]=(this.metrics.calls[operation]??0)+1;
+    try{
+      const result=await this.client.send(command);
+      const values=Array.isArray(result.ConsumedCapacity)?result.ConsumedCapacity:[result.ConsumedCapacity];
+      for(const value of values){this.metrics.readUnits+=value?.ReadCapacityUnits??0;this.metrics.writeUnits+=value?.WriteCapacityUnits??0;this.metrics.capacityUnits+=value?.CapacityUnits??0;}
+      return result;
+    }catch(error){this.metrics.failures++;throw error;}
+    finally{this.metrics.elapsedMs+=Date.now()-start;}
+  }
+  reportMetrics(operation){
+    if(this.settings.collectMetrics)console.info(JSON.stringify({event:'dynamodb.usage',operation,...this.metrics}));
+  }
   table(name) {
     if(name.startsWith('engine_'))return process.env[`APP_ENGINE_DYNAMODB_${name.slice(7).toUpperCase()}_TABLE`]||`flow_${name}`;
     return this.settings.prefix + (name.startsWith('flow_bff_') ? name : `flow_bff_${name}`);
   }
-  async get(table, key) { return (await this.client.send(new GetCommand({ TableName: this.table(table), Key: key, ConsistentRead: true }))).Item; }
+  async get(table, key) { return (await this.send(new GetCommand({ TableName: this.table(table), Key: key, ConsistentRead: true }))).Item; }
   async queryPage(table, partition, value, {index, sort, prefix, from, to, after, limit=50, forward=true} = {}) {
     if (!Number.isInteger(limit) || limit < 1 || limit > 100) throw new HttpError(400,'Invalid page size.');
     const names={'#pk':partition}, values={':pk':value};
     let expression='#pk = :pk';
     if(sort && prefix !== undefined){names['#sk']=sort;values[':prefix']=prefix;expression+=' AND begins_with(#sk, :prefix)';}
     if(sort&&from!==undefined&&to!==undefined){names['#sk']=sort;values[':from']=from;values[':to']=to;expression+=' AND #sk BETWEEN :from AND :to';}
-    const page=await this.client.send(new QueryCommand({TableName:this.table(table),IndexName:index,
+    const page=await this.send(new QueryCommand({TableName:this.table(table),IndexName:index,
       ConsistentRead:!index,KeyConditionExpression:expression,ExpressionAttributeNames:names,ExpressionAttributeValues:values,
       ExclusiveStartKey:after,Limit:limit,ScanIndexForward:forward}));
     return {items:page.Items??[],nextKey:page.LastEvaluatedKey};
@@ -35,7 +52,7 @@ export class Store {
   async queryPartition(table, pk, prefix) {
     const items=[];let cursor;
     do {
-      const page=await this.client.send(new QueryCommand({TableName:this.table(table),ConsistentRead:true,
+      const page=await this.send(new QueryCommand({TableName:this.table(table),ConsistentRead:true,
         KeyConditionExpression:'pk = :pk AND begins_with(sk, :prefix)',ExpressionAttributeValues:{':pk':pk,':prefix':prefix},ExclusiveStartKey:cursor}));
       items.push(...(page.Items??[]));cursor=page.LastEvaluatedKey;
     } while(cursor);
@@ -44,14 +61,14 @@ export class Store {
   async list(table, predicate = () => true) {
     const items = []; let cursor;
     do {
-      const page = await this.client.send(new ScanCommand({ TableName: this.table(table), ConsistentRead: true, ExclusiveStartKey: cursor }));
+      const page = await this.send(new ScanCommand({ TableName: this.table(table), ConsistentRead: true, ExclusiveStartKey: cursor }));
       items.push(...(page.Items ?? []).filter(predicate)); cursor = page.LastEvaluatedKey;
     } while (cursor);
     return items;
   }
   async *scanPages(table){
     let cursor;
-    do{const page=await this.client.send(new ScanCommand({TableName:this.table(table),ConsistentRead:true,ExclusiveStartKey:cursor}));yield page.Items??[];cursor=page.LastEvaluatedKey;}while(cursor);
+    do{const page=await this.send(new ScanCommand({TableName:this.table(table),ConsistentRead:true,ExclusiveStartKey:cursor}));yield page.Items??[];cursor=page.LastEvaluatedKey;}while(cursor);
   }
   putOperation(table, item, condition, values) {
     item=indexedItem(table,item);
@@ -72,7 +89,7 @@ export class Store {
     } };
   }
   async transaction(operations) {
-    try { await this.client.send(new TransactWriteCommand({ TransactItems: operations })); }
+    try { await this.send(new TransactWriteCommand({ TransactItems: operations })); }
     catch (error) {
       if (error.name === 'TransactionCanceledException' && error.CancellationReasons?.some(r => r.Code === 'ConditionalCheckFailed')) throw new HttpError(409, 'O registro foi alterado, está em exclusão ou já existe. Atualize e tente novamente.');
       throw error;

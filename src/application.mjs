@@ -18,7 +18,11 @@ import {packageOperation, usageReport} from './billing.mjs';
 export async function contractResponse(store,contract) {
   return {...contractFields(contract),linkedUsers:await accessUsers(store,contract.id),flows:await Promise.all((await store.list('flows',f=>f.contract_id===contract.id)).map(f=>flowResponse(store,f))),channels:await Promise.all((await store.list('contract_channels',c=>c.contract_id===contract.id)).map(c=>channelResponse(store,c,contract))),aiProviders:await settingsList(store,'AiProviders',contract.id)};
 }
-export async function execute(route, command, headers, store = new Store()) {
+export async function execute(route,command,headers,store=new Store()){
+  try{return await executeOperation(route,command,headers,store);}
+  finally{store.reportMetrics?.(`${route.controller}.${route.operation}`);}
+}
+async function executeOperation(route, command, headers, store) {
   const {controller,operation,params}=route;
   const actor=route.access==='PUBLIC'&&controller!=='FlowProcessingController'?null:await authenticate(store,headers);
   if(controller==='WebChatCommands')return webchatOperation(store,command.body);

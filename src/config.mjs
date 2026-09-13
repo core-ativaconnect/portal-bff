@@ -4,6 +4,7 @@ export function config() {
   if (!secret) throw new Error('APP_JWT_SECRET is required outside local development');
   return {
     local, secret,
+    collectMetrics: Math.random() < Math.max(0,Math.min(1,Number(process.env.PORTAL_DYNAMODB_METRICS_SAMPLE_RATE||0))),
     region: process.env.AWS_REGION || 'us-east-1',
     endpoint: process.env.APP_DYNAMODB_ENDPOINT || (local ? 'http://localhost:8000' : undefined),
     prefix: process.env.APP_DYNAMODB_TABLE_PREFIX || '',

@@ -38,7 +38,7 @@ export async function runContactFlow(store, contract, channel, contact, input, o
   if (!target || !input) return null;
   const session = await findSession(store,contract.id,contact.contact_id,target.flow.id,target.versionId);
   response = await processFlow(store, {flowId: target.flow.id, versionId: target.versionId,
-    simulatorUserId: contact.contact_id, start: !session || session.completed === true, input}, null, {contractId: contract.id,operationId});
+    simulatorUserId: contact.contact_id, start: !session || session.completed === true, input}, null, {contractId: contract.id,operationId,runtimeContext:{resolved:target,session}});
   }
   await store.transaction([store.guard(contract.id), store.putOperation('engine_contacts', {...contact,
     active_flow_id: response.flowId, active_flow_version_id: response.resolvedVersionId,

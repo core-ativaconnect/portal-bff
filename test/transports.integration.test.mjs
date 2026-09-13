@@ -79,6 +79,8 @@ test('DynamoDB: WebSocket session, Desk isolation, WhatsApp processing/retry/sta
     assert.equal(swapped.flowId,targetId);
     const resumed=await invoke('/api/v1/engine/process','POST',{flowId:targetId,versionId:targetVersion,start:false,input:'Ana',simulatorUserId:suffix});
     assert.ok(resumed.messages.some(m=>m.text==='Olá Ana'));
+    const restarted=await invoke('/api/v1/engine/process','POST',{flowId:sourceId,versionId:sourceVersion,start:true,simulatorUserId:suffix});
+    assert.equal(restarted.flowId,targetId);assert.equal(restarted.waitingState,'INPUT');
   }finally{
     if(company){
       for(const row of await store.list('jobs',j=>j.contract_id===company.id))await store.delete('jobs',{id:row.id});

@@ -53,6 +53,7 @@ provider:
   environment:
     NODE_ENV: ${self:custom.nodeEnv.${sls:stage}, 'production'}
     APP_STAGE: ${sls:stage}
+    PORTAL_DYNAMODB_METRICS_SAMPLE_RATE: ${env:PORTAL_DYNAMODB_METRICS_SAMPLE_RATE, '0'}
     PORTAL_WORKER_FUNCTION: ${self:service}-${sls:stage}-worker
     APP_JWT_SECRET: ${env:APP_JWT_SECRET, ''}
     APP_JWT_EXPIRATION_MILLIS: ${env:APP_JWT_EXPIRATION_MILLIS, '86400000'}

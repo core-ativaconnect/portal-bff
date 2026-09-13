@@ -6,8 +6,8 @@ export function buildAsyncApi(){
     connect:{name:'connect',title:'Iniciar ou retomar conversa',payload:object({type:{const:'connect'},agentName:text,contactName:text,contactToken:{type:'string',description:'Token recebido em connected; necessário para retomar a conversa. contactId sozinho não autentica.'}},['type','agentName']),examples:[{payload:{type:'connect',agentName:'agente-exemplo',contactName:'Visitante'}}]},
     message:{name:'message',title:'Enviar mensagem do visitante',payload:object({type:{const:'message'},text:{type:'string',minLength:1,maxLength:20000}},['type','text']),examples:[{payload:{type:'message',text:'Olá'}}]},
     ping:{name:'ping',payload:object({type:{const:'ping'}},['type']),examples:[{payload:{type:'ping'}}]},
-    connected:{name:'connected',payload:object({type:{const:'connected'},contactId:text,contactToken:text,agentName:text,channelSlug:text,channelName:text,messages:{type:'array',items:message}},['type','contactId','contactToken'])},
-    messages:{name:'messages',payload:object({type:{const:'messages'},contactId:text,messages:{type:'array',items:message}},['type','messages'])},
+    connected:{name:'connected',payload:object({type:{const:'connected'},contactId:text,contactToken:text,agentName:text,channelSlug:text,channelName:text,unavailable:{type:'boolean',description:'Franquia MAU atingida; nenhuma resposta de conversa.'},messages:{type:'array',items:message}},['type','contactId','contactToken'])},
+    messages:{name:'messages',payload:object({type:{const:'messages'},contactId:text,unavailable:{type:'boolean',description:'Franquia MAU atingida; nenhuma resposta de conversa.'},messages:{type:'array',items:message}},['type','messages'])},
     pong:{name:'pong',payload:object({type:{const:'pong'},contactId:text},['type'])},
     error:{name:'error',payload:object({type:{const:'error'},status:{type:'integer'},message:text},['type','message'])},
   };

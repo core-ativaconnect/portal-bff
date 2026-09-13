@@ -1,5 +1,5 @@
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
-import { DynamoDBDocumentClient, GetCommand, ScanCommand, PutCommand, DeleteCommand, TransactWriteCommand } from '@aws-sdk/lib-dynamodb';
+import { DynamoDBDocumentClient, GetCommand, ScanCommand, QueryCommand, PutCommand, DeleteCommand, TransactWriteCommand } from '@aws-sdk/lib-dynamodb';
 import { config } from './config.mjs';
 import { HttpError } from './command.mjs';
 
@@ -16,6 +16,15 @@ export class Store {
     return this.settings.prefix + (name.startsWith('flow_bff_') ? name : `flow_bff_${name}`);
   }
   async get(table, key) { return (await this.client.send(new GetCommand({ TableName: this.table(table), Key: key, ConsistentRead: true }))).Item; }
+  async queryPartition(table, pk, prefix) {
+    const items=[];let cursor;
+    do {
+      const page=await this.client.send(new QueryCommand({TableName:this.table(table),ConsistentRead:true,
+        KeyConditionExpression:'pk = :pk AND begins_with(sk, :prefix)',ExpressionAttributeValues:{':pk':pk,':prefix':prefix},ExclusiveStartKey:cursor}));
+      items.push(...(page.Items??[]));cursor=page.LastEvaluatedKey;
+    } while(cursor);
+    return items;
+  }
   async list(table, predicate = () => true) {
     const items = []; let cursor;
     do {

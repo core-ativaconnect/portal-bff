@@ -966,5 +966,61 @@
     "controller": "WebChatCommands",
     "operation": "execute",
     "source": "portal-bff/src/webchat.mjs"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/packages",
+    "access": "OWNER",
+    "controller": "PackageController",
+    "operation": "list",
+    "source": "portal-bff/src/billing.mjs"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/packages",
+    "access": "OWNER",
+    "controller": "PackageController",
+    "operation": "create",
+    "source": "portal-bff/src/billing.mjs"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/packages/{id}/default",
+    "access": "OWNER",
+    "controller": "PackageController",
+    "operation": "setDefault",
+    "source": "portal-bff/src/billing.mjs"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/packages/{id}/archive",
+    "access": "OWNER",
+    "controller": "PackageController",
+    "operation": "archive",
+    "source": "portal-bff/src/billing.mjs"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/platform/contracts/{contractSlug}/usage",
+    "access": "AUTHENTICATED",
+    "controller": "BillingController",
+    "operation": "usage",
+    "source": "portal-bff/src/billing.mjs"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/v1/packages/{id}",
+    "access": "OWNER",
+    "controller": "PackageController",
+    "operation": "update",
+    "source": "portal-bff/src/billing.mjs"
+  },
+  {
+    "method": "DELETE",
+    "path": "/api/v1/packages/{id}",
+    "access": "OWNER",
+    "controller": "PackageController",
+    "operation": "delete",
+    "source": "portal-bff/src/billing.mjs"
   }
 ]

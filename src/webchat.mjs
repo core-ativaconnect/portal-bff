@@ -6,6 +6,7 @@ import { processFlow, resolveDefinition } from './engine.mjs';
 import { writable } from './contracts.mjs';
 import { customerHandoff } from './channel-runtime.mjs';
 import { sendText } from './messages.mjs';
+import {admitContact} from './billing.mjs';
 
 function key(store){return Buffer.from(store.settings.secret);}
 export async function webchatOperation(store,body){
@@ -28,6 +29,11 @@ export async function webchatOperation(store,body){
   const envelope=messages=>({type:body.type==='connect'?'connected':'messages',contactId:contact.contact_id,contactToken,agentName:channel.webchat_agent_name,channelSlug:channel.slug,channelName:channel.name,message:null,messages});
   if(body.type==='ping')return{...envelope([]),type:'pong'};
   if(!['connect','message','poll'].includes(body.type))throw new HttpError(400,'Comando de chat inválido.');
+  if(body.type==='message')required(body.text,'Mensagem',20000);
+  if(body.type==='connect'||body.type==='message') {
+    const admission=await admitContact(store,contract.id,channel,contact);
+    if(!admission.allowed)return {...envelope([]),unavailable:true};
+  }
   const links=await store.list('contract_channel_flows',l=>l.channel_id===channel.id&&l.is_primary);
   let target;
   if(contact.active_flow_id&&!contact.active_flow_completed)target=await resolveDefinition(store,{flowId:contact.active_flow_id,versionId:contact.active_flow_version_id,versionMode:'PUBLISHED'},contract.id);

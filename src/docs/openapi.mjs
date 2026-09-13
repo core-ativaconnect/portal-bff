@@ -24,7 +24,7 @@ export const commandCatalog=[...routes,...extraRoutes].map(route=>{
   const definition=contract(route);if(!definition)throw new Error(`Missing documentation for ${key(route)}`);
   const parameters=[...route.path.matchAll(/\{(\w+)\}/g)].map(m=>({name:m[1],in:'path',required:true,schema:{type:'string'}}));
   let samplePath=route.path.replace(/\{(\w+)\}/g,(_,name)=>/slug/i.test(name)?'empresa-exemplo':'11111111-1111-4111-8111-111111111111');
-  if(definition.query.length)samplePath+='?'+new URLSearchParams(definition.query.map(q=>[q.name,q.name==='path'?'/pagina-exemplo':'empresa-exemplo']));
+  if(definition.query.length)samplePath+='?'+new URLSearchParams(definition.query.map(q=>[q.name,q.name==='month'?'2026-09':q.name==='path'?'/pagina-exemplo':'empresa-exemplo']));
   const pattern='^'+route.path.split('/').map(segment=>/^\{\w+\}$/.test(segment)?'[^/?]+':escape(segment)).join('/')+'/?(?:\\?.*)?$';
   const access=route.controller==='FlowProcessingController'?'AUTHENTICATED':route.operation==='deleteChannel'?'OWNER':route.access;
   return {...route,access,id:key(route),group:groups[route.controller]??route.controller,public:auth(route),

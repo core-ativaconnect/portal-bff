@@ -16,7 +16,7 @@ test('native administration, settings and approval of a phone transfer', {skip:p
     const user=await store.get('users',{email:address});await store.put('users',{...user,role:'OWNER',role_key:'OWNER',updated_at:now()},{previous:user});
     await assert.rejects(invoke(`/api/v1/users/${user.id}/role`,'PATCH',{role:'USER'}),e=>e.status===400);
     for(let i=0;i<2;i++){
-      const contract=await invoke('/api/v1/contracts','POST',{companyName:`Test ${suffix} ${i}`,cnpj:'40432544000147',contactEmail:address,contactPhone:'1143134620',zipCode:'04709110',address:'Rua teste',neighborhood:'Centro',city:'São Paulo',state:'SP',startDate:'2026-01-01',endDate:'2030-01-01',maxFlowCount:2,maxChannelCount:2});contracts.push(contract);
+      const contract=await invoke('/api/v1/contracts','POST',{packageId:'local-development',companyName:`Test ${suffix} ${i}`,cnpj:'40432544000147',contactEmail:address,contactPhone:'1143134620',zipCode:'04709110',address:'Rua teste',neighborhood:'Centro',city:'São Paulo',state:'SP',startDate:'2026-01-01',endDate:'2030-01-01',maxFlowCount:2,maxChannelCount:2});contracts.push(contract);
     }
     const [source,target]=contracts;
     const base=`/api/v1/contracts/${source.id}`,platform=`/api/v1/platform/contracts/${source.slug}`;

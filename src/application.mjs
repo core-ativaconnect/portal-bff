@@ -13,6 +13,7 @@ import { processFlow } from './engine.mjs';
 import { aiDraft } from './ai.mjs';
 import { deleteContract } from './deletion.mjs';
 import { webchatOperation } from './webchat.mjs';
+import {packageOperation, usageReport} from './billing.mjs';
 
 export async function contractResponse(store,contract) {
   return {...contractFields(contract),linkedUsers:await accessUsers(store,contract.id),flows:await Promise.all((await store.list('flows',f=>f.contract_id===contract.id)).map(f=>flowResponse(store,f))),channels:await Promise.all((await store.list('contract_channels',c=>c.contract_id===contract.id)).map(c=>channelResponse(store,c,contract))),aiProviders:await settingsList(store,'AiProviders',contract.id)};
@@ -22,6 +23,8 @@ export async function execute(route, command, headers, store = new Store()) {
   const actor=route.access==='PUBLIC'&&controller!=='FlowProcessingController'?null:await authenticate(store,headers);
   if(controller==='WebChatCommands')return webchatOperation(store,command.body);
   if(route.access==='OWNER'&&actor.role!=='OWNER')throw new HttpError(403,'Acesso exclusivo do administrador.');
+  if(controller==='PackageController')return packageOperation(store,operation,command.body,params);
+  if(controller==='BillingController')return usageReport(store,await contractBySlug(store,params.contractSlug,actor),command.query.get('month'));
   if(controller==='AuthController')return authOperation(store,operation,command.body,actor);
   if(controller==='UserAdminController')return userOperation(store,operation,command.body,params,actor);
   if(controller==='StartController')return operation==='slug'?suggestSlug(store,command.query.get('value')):onboarding(store,command.body,actor);

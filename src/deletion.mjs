@@ -12,6 +12,7 @@ export async function deleteContract(store,id,confirmation){
     for(let i=0;i<items.length;i+=99)await store.transaction([guard(),...items.slice(i,i+99).map(item=>store.deleteOperation(table,key(item)))]);
   }
   try{
+    await remove('billing_usage',await store.list('billing_usage',row=>row.pk.startsWith(`CONTRACT#${id}#`)),row=>({pk:row.pk,sk:row.sk}));
     const channels=await store.list('contract_channels',c=>c.contract_id===id),channelIds=new Set(channels.map(c=>c.id));
     const flows=await store.list('flows',f=>f.contract_id===id),flowIds=new Set(flows.map(f=>f.id));
     const versionIds=new Set((await store.list('flow_versions',v=>flowIds.has(v.flow_id))).map(v=>v.id));

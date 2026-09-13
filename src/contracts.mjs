@@ -1,6 +1,7 @@
 import { randomUUID, createHash } from 'node:crypto';
 import { HttpError } from './command.mjs';
 import { now, must, required, email, snake, fromItem, pick } from './store.mjs';
+import {defaultPackage, selectPackage, packageFields} from './billing.mjs';
 
 export const slugify = value => value.normalize('NFD').replace(/\p{M}/gu, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 function startId(user, cnpj) {
@@ -35,24 +36,27 @@ function details(body, onboarding) {
   return item;
 }
 function limits(body) {
-  for (const field of ['maxFlowCount','maxChannelCount']) if (!Number.isInteger(body[field]) || body[field] < 0) throw new HttpError(400, `${field} inválido.`);
   for (const field of ['startDate','endDate']) if (typeof body[field] !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(body[field]) || !Number.isFinite(Date.parse(body[field])) || new Date(body[field]).toISOString().slice(0,10) !== body[field]) throw new HttpError(400, `${field} inválido.`);
   if (body.endDate < body.startDate) throw new HttpError(400, 'A data final deve ser posterior à inicial.');
-  return Object.fromEntries(['startDate','endDate','maxFlowCount','maxChannelCount'].map(k => [snake(k),body[k]]));
+  return Object.fromEntries(['startDate','endDate'].map(k => [snake(k),body[k]]));
 }
 export function accessItem(contractId, userId) {
   const timestamp = now();
   return { id: `${contractId}#${userId}`, contract_id: contractId, user_id: userId, added_at: timestamp, contract_key: contractId, user_key: userId, added_at_sort: `${timestamp}#${contractId}#${userId}` };
 }
 export async function saveContract(store, item, previous, userId) {
-  item = { ...item, updated_at: now(), all_key: 'ALL', company_name_sort: `${item.company_name.toLowerCase()}#${item.id}`, slug_key: item.slug };
+  item = { ...item, portal_revision:(previous?.portal_revision??0)+1, updated_at: now(), all_key: 'ALL', company_name_sort: `${item.company_name.toLowerCase()}#${item.id}`, slug_key: item.slug };
   if (!await available(store,item.slug,item.id)) throw new HttpError(409, 'Este slug já está em uso.');
   const operations = [
+    ...(item.package_id?[{Update:{TableName:store.table('packages'),Key:{id:item.package_id},UpdateExpression:'ADD reference_revision :one',ConditionExpression:'attribute_exists(id)',ExpressionAttributeValues:{':one':1}}}]:[]),
     store.putOperation('contracts', item, previous ? 'updated_at = :previous AND (attribute_not_exists(deletion_in_progress) OR deletion_in_progress = :no) AND (attribute_not_exists(portal_revision) OR portal_revision = :revision)' : 'attribute_not_exists(id)', previous ? { ':previous': previous.updated_at, ':no':false, ':revision':previous.portal_revision??0 } : undefined),
     store.putOperation('contracts', { id: `SLUG#${item.slug}`, contract_id: item.id }, 'attribute_not_exists(id) OR contract_id = :id', { ':id': item.id }),
   ];
   if (previous && previous.slug !== item.slug) operations.push(store.deleteOperation('contracts',{id:`SLUG#${previous.slug}`}, 'attribute_not_exists(id) OR contract_id = :id', {':id':item.id}));
-  if (userId && !await store.get('contract_access', {id:`${item.id}#${userId}`})) operations.push(store.putOperation('contract_access', accessItem(item.id,userId), 'attribute_not_exists(id)'));
+  if (userId && !await store.get('contract_access', {id:`${item.id}#${userId}`})) {
+    if ((await store.list('contract_access',a=>a.contract_id===item.id)).length >= item.max_user_count) throw new HttpError(400,'Limite de usuários do pacote atingido.');
+    operations.push(store.putOperation('contract_access', accessItem(item.id,userId), 'attribute_not_exists(id)'));
+  }
   await store.transaction(operations); return item;
 }
 export async function onboarding(store, body, actor) {
@@ -65,7 +69,8 @@ export async function onboarding(store, body, actor) {
   const days = Number(process.env.APP_ONBOARDING_DURATION_DAYS || 30);
   const policy = {startDate:start,endDate:new Date(Date.parse(start)+days*86400000).toISOString().slice(0,10),maxFlowCount:Number(process.env.APP_ONBOARDING_MAX_FLOWS ?? 1),maxChannelCount:Number(process.env.APP_ONBOARDING_MAX_CHANNELS ?? 1)};
   if (!Number.isInteger(days) || days < 1) throw new Error('Invalid onboarding duration');
-  try { await saveContract(store,{id,...fields,...limits(policy),slug,status:'ACTIVE',registration_source:'ONBOARDING',created_at:now()},null,actor.id); }
+  const plan=await defaultPackage(store);
+  try { await saveContract(store,{id,...fields,...limits(policy),...packageFields(plan),mau_tracking_started_at:now(),slug,status:'ACTIVE',registration_source:'ONBOARDING',created_at:now()},null,actor.id); }
   catch(error) { const committed = await store.get('contracts',{id}); if (!committed) throw error; writable(committed); return {id,slug:committed.slug}; }
   return {id,slug};
 }
@@ -73,25 +78,35 @@ export async function accessUsers(store, contractId) {
   const users = await store.list('users');
   return (await store.list('contract_access', a => a.contract_id === contractId)).sort((a,b)=>a.added_at.localeCompare(b.added_at)).map(a => {
     const u = users.find(u => u.id === a.user_id);
-    return u && { userId:u.id, name:u.name, email:u.email, active:u.active, addedAt:a.added_at };
+    return u && { id:u.id, userId:u.id, name:u.name, email:u.email, active:u.active, addedAt:a.added_at };
   }).filter(Boolean);
 }
 export async function contractOperation(store, operation, body, params) {
   if (operation === 'create') {
     const fields = details(body, false); const slug = (await suggestSlug(store, fields.company_name)).suggestion;
     const user = await store.get('users',{email:fields.contact_email});
-    return saveContract(store,{id:randomUUID(),...fields,...limits(body),slug,status:'ACTIVE',registration_source:'ADMIN',created_at:now()},null,user?.id);
+    const plan=await selectPackage(store,body.packageId);
+    return saveContract(store,{id:randomUUID(),...fields,...limits(body),...packageFields(plan),mau_tracking_started_at:now(),slug,status:'ACTIVE',registration_source:'ADMIN',created_at:now()},null,user?.id);
   }
   const contract = must(await store.get('contracts',{id:params.id}),'Contrato não encontrado.'); writable(contract);
   if (operation === 'listAccessUsers') return accessUsers(store,contract.id);
   if (operation === 'addAccessUser') {
     const user = must(await store.get('users',{email:email(body.email)}),'Usuário não encontrado.');
-    await store.put('contract_access',accessItem(contract.id,user.id),{create:true,contractId:contract.id});
+    const links=await store.list('contract_access',a=>a.contract_id===contract.id);
+    if(links.some(a=>a.user_id===user.id))throw new HttpError(409,'Usuário já vinculado.');
+    if(!contract.package_id||links.length>=contract.max_user_count)throw new HttpError(400,'Limite de usuários do pacote atingido ou pacote não configurado.');
+    await store.transaction([store.advanceContract(contract),store.putOperation('contract_access',accessItem(contract.id,user.id),'attribute_not_exists(id)')]);
     return (await accessUsers(store,contract.id)).find(u => u.userId === user.id);
   }
-  if (operation === 'removeAccessUser') { await store.delete('contract_access',{id:`${contract.id}#${params.userId}`},contract.id); return null; }
+  if (operation === 'removeAccessUser') { await store.transaction([store.advanceContract(contract),store.deleteOperation('contract_access',{id:`${contract.id}#${params.userId}`})]); return null; }
   let changed = {...contract};
-  if (operation === 'update') changed = {...changed,...details(body,false),...limits(body)};
+  if (operation === 'update') {
+    let plan=await selectPackage(store,body.packageId??contract.package_id,!body.packageId||body.packageId===contract.package_id);
+    if(plan.id===contract.package_id)plan={...plan,name:contract.package_name,maxMau:contract.max_mau,maxUserCount:contract.max_user_count,maxFlowCount:contract.max_flow_count,maxChannelCount:contract.max_channel_count,monthlyPriceCents:contract.monthly_price_cents};
+    const [users,flows,channels]=await Promise.all([store.list('contract_access',a=>a.contract_id===contract.id),store.list('flows',f=>f.contract_id===contract.id),store.list('contract_channels',c=>c.contract_id===contract.id)]);
+    if(users.length>plan.maxUserCount||flows.length>plan.maxFlowCount||channels.length>(plan.maxChannelCount??contract.max_channel_count))throw new HttpError(400,'O pacote não comporta os usuários, fluxos ou canais atuais. Reduza o uso antes de trocar.');
+    changed = {...changed,...details(body,false),...limits(body),...packageFields(plan),mau_tracking_started_at:contract.mau_tracking_started_at??now()};
+  }
   else if (operation === 'updateSlug') { changed.slug = slugify(required(body.slug,'Slug',80)); if (!changed.slug) throw new HttpError(400,'Slug inválido.'); }
   else if (operation === 'block' || operation === 'unblock') changed.status = operation === 'block' ? 'BLOCKED' : 'ACTIVE';
   else throw new Error(`Unknown contract operation ${operation}`);
@@ -100,5 +115,5 @@ export async function contractOperation(store, operation, body, params) {
 }
 
 export function contractFields(contract) {
-  return { ...pick(fromItem(contract),['id','companyName','slug','cnpj','contactEmail','contactPhone','address','neighborhood','city','state','zipCode','startDate','endDate','maxFlowCount','maxChannelCount','status','createdAt','updatedAt']),registrationSource:contract.registration_source ?? 'UNKNOWN',deletionInProgress:contract.deletion_in_progress ?? false };
+  return { ...pick(fromItem(contract),['id','companyName','slug','cnpj','contactEmail','contactPhone','address','neighborhood','city','state','zipCode','startDate','endDate','maxFlowCount','maxChannelCount','status','createdAt','updatedAt','packageId','packageName','maxMau','maxUserCount','monthlyPriceCents']),registrationSource:contract.registration_source ?? 'UNKNOWN',deletionInProgress:contract.deletion_in_progress ?? false };
 }

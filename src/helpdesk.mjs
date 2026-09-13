@@ -1,7 +1,8 @@
 import { HttpError } from './command.mjs';
-import { must, now, fromItem, pick } from './store.mjs';
+import { must, now, fromItem, pick, required } from './store.mjs';
 import { conversation, sendText } from './messages.mjs';
 import { processFlow } from './engine.mjs';
+import {admitContact} from './billing.mjs';
 const fields=['id','contractId','contractSlug','ticketNumber','queueId','queueName','channelId','channelSlug','channelName','channelType','contactId','contactName','contactUserId','contactWaId','status','assignedUserId','assignedUserName','assignedUserEmail','closeReason','closeIntent','openedAt','assignedAt','closedAt','updatedAt'];
 export const ticketResponse=(item,messages=[])=>({...Object.fromEntries(fields.map(key=>[key,fromItem(item)[key]??null])),messages});
 async function canAttend(store,contractId,userId){const attendants=await store.list('contract_help_desk_attendants',a=>a.contract_id===contractId&&a.enabled);if(attendants.length&&!attendants.some(a=>a.user_id===userId&&a.active))throw new HttpError(403,'Usuário não configurado como atendente.');}
@@ -13,6 +14,11 @@ export async function helpdeskOperation(store,operation,body,params,actor,contra
   if(operation==='listMessages')return conversation(store,channel,ticket.contact_id);
   if(ticket.status==='CLOSED'){if(operation==='close')return ticketResponse(ticket);throw new HttpError(400,'Ticket já encerrado.');}
   await canAttend(store,contract.id,actor.id);
+  if(operation==='sendMessage') {
+    required(body.text,'Mensagem',20000);
+    const contact=must(await store.get('engine_contacts',{contact_id:ticket.contact_id}));
+    if(!(await admitContact(store,contract.id,channel,contact)).allowed)throw new HttpError(403,'Limite de MAU atingido para novos contatos neste mês.');
+  }
   let updated={...ticket,updated_at:now()};
   const assign=user=>{updated={...updated,status:'IN_PROGRESS',assigned_user_id:user.id,assigned_user_name:user.name,assigned_user_email:user.email,assigned_at:now()};};
   if(operation==='release'){updated.status='OPEN';updated.assigned_user_id=null;updated.assigned_user_name=null;updated.assigned_user_email=null;updated.assigned_at=null;}
@@ -24,6 +30,7 @@ export async function helpdeskOperation(store,operation,body,params,actor,contra
     const intent=String(body.intent??'').trim().replace(/[- ]/g,'_').toUpperCase(),intents=await store.list('contract_help_desk_close_intents',i=>i.contract_id===contract.id&&i.enabled);
     if(!intent||!(intents.length?intents.some(i=>i.intent_key===intent):intent==='ATENDIMENTO_CONCLUIDO'))throw new HttpError(400,'Tag de encerramento inválida.');
     const contact=must(await store.get('engine_contacts',{contact_id:ticket.contact_id}));
+    if(!(await admitContact(store,contract.id,channel,contact)).allowed)throw new HttpError(403,'Limite de MAU atingido para retomar este contato neste mês.');
     const response=await processFlow(store,{flowId:ticket.flow_id,versionId:ticket.flow_version_id,simulatorUserId:ticket.contact_id,start:false},actor,{contractId:contract.id,resumeIntent:intent});
     for(const message of response.messages.filter(m=>m.kind==='BUSINESS'))if(message.text)await sendText(store,contract,channel,contact,message.text,'BUSINESS',message);
     updated.status='CLOSED';updated.close_reason='ATTENDANT';updated.close_intent=intent;updated.closed_at=now();

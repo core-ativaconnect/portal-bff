@@ -236,6 +236,10 @@
             "channelName": {
               "type": "string"
             },
+            "unavailable": {
+              "type": "boolean",
+              "description": "Franquia MAU atingida; nenhuma resposta de conversa."
+            },
             "messages": {
               "type": "array",
               "items": {
@@ -298,6 +302,10 @@
             },
             "contactId": {
               "type": "string"
+            },
+            "unavailable": {
+              "type": "boolean",
+              "description": "Franquia MAU atingida; nenhuma resposta de conversa."
             },
             "messages": {
               "type": "array",

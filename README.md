@@ -1,5 +1,8 @@
 # Portal BFF
 
+Pacotes SaaS, franquias de MAU e dashboard de consumo: veja [docs/saas-mau.md](docs/saas-mau.md),
+incluindo a migração necessária dos contratos existentes antes de ativar o novo backend.
+
 Backend Node.js 20 / Serverless Framework 3 com handlers nativos e DynamoDB.
 
 ## Swagger e contratos da API

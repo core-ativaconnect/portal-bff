@@ -11,3 +11,14 @@ for(const definition of tables){
   try{await client.send(new DescribeTableCommand({TableName}));console.log(`Existing: ${TableName}`);}
   catch(error){if(error.name!=='ResourceNotFoundException')throw error;await client.send(new CreateTableCommand({...definition,TableName}));await waitUntilTableExists({client,maxWaitTime:30,minDelay:1},{TableName});console.log(`Created: ${TableName}`);}
 }
+
+// Local development only: production packages must be configured by an administrator.
+const {DynamoDBDocumentClient,PutCommand,UpdateCommand}=await import('@aws-sdk/lib-dynamodb');
+const document=DynamoDBDocumentClient.from(client);
+const packageTable=(process.env.APP_DYNAMODB_TABLE_PREFIX||'')+'flow_bff_packages';
+for(const item of [{id:'local-development',name:'Desenvolvimento local',maxMau:1000,maxUserCount:10,maxFlowCount:1,maxChannelCount:1,monthlyPriceCents:0,currency:'BRL',active:true}, {id:'DEFAULT',packageId:'local-development'}]) {
+  try {await document.send(new PutCommand({TableName:packageTable,Item:item,ConditionExpression:'attribute_not_exists(id)'}));}
+  catch(error){if(error.name!=='ConditionalCheckFailedException')throw error;}
+}
+try {await document.send(new UpdateCommand({TableName:packageTable,Key:{id:'local-development'},UpdateExpression:'SET maxChannelCount = :limit',ExpressionAttributeValues:{':limit':1},ConditionExpression:'attribute_exists(id) AND attribute_not_exists(maxChannelCount)'}));}
+catch(error){if(error.name!=='ConditionalCheckFailedException')throw error;}

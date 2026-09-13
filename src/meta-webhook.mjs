@@ -4,6 +4,7 @@ import { Store, must, now } from './store.mjs';
 import { HttpError } from './command.mjs';
 import { runContactFlow } from './channel-runtime.mjs';
 import { sendText } from './messages.mjs';
+import {admitContact} from './billing.mjs';
 
 const hash = value => createHash('sha256').update(value).digest('hex');
 const same = (a,b) => typeof a === 'string' && typeof b === 'string' && Buffer.byteLength(a) === Buffer.byteLength(b) && timingSafeEqual(Buffer.from(a),Buffer.from(b));
@@ -100,6 +101,8 @@ export async function processDelivery(delivery,store=new Store(),dependencies={}
   await store.transaction([store.guard(contract.id),store.putOperation('jobs',job,'attribute_not_exists(lease_until) OR lease_until < :now',{':now':timestamp})]);
   const checkpoint=async()=>{await store.transaction([store.guard(contract.id),store.putOperation('jobs',job,'lease = :lease',{':lease':lease})]);};
   try{
+    const admission=await admitContact(store,contract.id,channel,{wa_id:message.from},job.created_at);
+    if(!admission.allowed){job.state='COMPLETED';job.blocked_reason='MAU_LIMIT';delete job.lease_until;await checkpoint();return;}
     let contact=(await store.list('engine_contacts',c=>(c.wa_id===message.from||c.user_id===message.from)&&(!c.channel_id||c.channel_id===channel.id)))[0];
     if(!contact){contact={contact_id:hash(`${channel.id}:${message.from}`),channel_id:channel.id,user_id:message.from,wa_id:message.from,username:delivery.profile?.name??message.from,created_at:now(),updated_at:now()};
       await store.transaction([store.guard(contract.id),store.putOperation('engine_contacts',contact)]);}

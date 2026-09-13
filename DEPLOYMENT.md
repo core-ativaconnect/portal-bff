@@ -142,3 +142,9 @@ O pacote local não altera callback da Meta, DNS nem clientes já publicados.
 
 Referências: [WebSockets no Serverless](https://www.serverless.com/framework/docs/providers/aws/events/websocket)
 e [WebSockets no CloudFront](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/distribution-working-with.websockets.html).
+## Migração de pacotes e MAU
+
+Antes de publicar esta versão, provisione as duas novas tabelas e associe os
+contratos existentes aos pacotes conforme [docs/saas-mau.md](docs/saas-mau.md).
+Contratos sem pacote ficam sem atendimento; o onboarding exige um pacote padrão.
+O script de migração faz uma previsão por padrão e somente grava com `--apply`.

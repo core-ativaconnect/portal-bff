@@ -73,6 +73,20 @@ const metaChange=object({field:string,value:metaValue},['field','value']);
 const metaEntry=object({id:string,changes:{type:'array',items:metaChange}},['id','changes']);
 schemas.MetaWebhook=object({object:{type:'string',enum:['whatsapp_business_account']},entry:{type:'array',items:metaEntry}},['object','entry']);
 
+const count={type:'integer',minimum:0};
+schemas.PackageRequest=object({name:{type:'string',maxLength:120},maxMau:count,maxUserCount:{type:'integer',minimum:1},maxFlowCount:count,maxChannelCount:count,monthlyPriceCents:count},['name','maxMau','maxUserCount','maxFlowCount','maxChannelCount','monthlyPriceCents']);
+schemas.SubscriptionPackage=object({...schemas.PackageRequest.properties,id:string,active:boolean,isDefault:boolean,currency:{type:'string',enum:['BRL']}});
+schemas.DailyUsage=object({date:{type:'string',format:'date'},newMau:count,activeUsers:count,cumulativeMau:count});
+schemas.MonthlyUsage=object({month:string,mau:count});
+schemas.UsageReport=object({month:string,timezone:string,mau:count,limit:{...count,nullable:true},remaining:{...count,nullable:true},packageId:{...string,nullable:true},packageName:{...string,nullable:true},monthlyPriceCents:{...count,nullable:true},maxUserCount:{...count,nullable:true},maxFlowCount:{...count,nullable:true},maxChannelCount:{...count,nullable:true},trackingStartedAt:{...string,nullable:true},daily:{type:'array',items:ref('DailyUsage')},history:{type:'array',items:ref('MonthlyUsage')}});
+for(const operation of ['create','update','setDefault','archive'])operationContracts[`PackageController.${operation}`]={request:['create','update'].includes(operation)?'PackageRequest':null,response:ref('SubscriptionPackage'),query:[]};
+operationContracts['PackageController.list']={request:null,response:{type:'array',items:ref('SubscriptionPackage')},query:[]};
+operationContracts['BillingController.usage']={request:null,response:ref('UsageReport'),query:[{name:'month',in:'query',required:false,schema:{type:'string',pattern:'^\\d{4}-(0[1-9]|1[0-2])$'},description:'Mês YYYY-MM, horário de Brasília. Padrão: mês atual.'}]};
+schemas.ContractRequest.properties.packageId={type:'string',description:'Pacote que define MAU, usuários e fluxos.'};
+schemas.ContractRequest.required=schemas.ContractRequest.required.filter(k=>!['maxFlowCount','maxChannelCount'].includes(k)).concat('packageId');
+for(const name of ['ContractResponse','ManagedContractResponse'])if(schemas[name])Object.assign(schemas[name].properties,{packageId:string,packageName:string,maxMau:count,maxUserCount:count,monthlyPriceCents:count});
+schemas.WebChatEnvelope.properties.unavailable={type:'boolean',description:'Franquia MAU atingida; nenhuma resposta de conversa é enviada.'};
+
 export function exampleFor(name){
   if(!name)return{};
   const explicit={
@@ -100,3 +114,5 @@ export function exampleFor(name){
   const schema=schemas[name];if(schema.enum)return schema.enum[0];
   return Object.fromEntries((schema.required??Object.keys(schema.properties??{})).map(field=>[field,example(schema.properties[field],field)]));
 }
+
+operationContracts['PackageController.delete']={request:null,response:null,query:[]};

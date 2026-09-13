@@ -2543,22 +2543,139 @@
     "PlatformChannelController.listContacts": {
       "request": null,
       "response": {
-        "type": "array",
-        "items": {
-          "$ref": "#/components/schemas/ChannelConversationContactResponse"
-        }
+        "oneOf": [
+          {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ChannelConversationContactResponse"
+            }
+          },
+          {
+            "type": "object",
+            "required": [
+              "items",
+              "nextCursor"
+            ],
+            "properties": {
+              "items": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/ChannelConversationContactResponse"
+                }
+              },
+              "nextCursor": {
+                "type": "string",
+                "nullable": true
+              }
+            }
+          }
+        ]
       },
-      "query": []
+      "query": [
+        {
+          "name": "paged",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "boolean",
+            "default": false
+          },
+          "description": "Use true for a bounded page with items and nextCursor."
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100,
+            "default": 50
+          }
+        },
+        {
+          "name": "cursor",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Opaque nextCursor returned by the previous page; omit on the first request."
+        },
+        {
+          "name": "contactId",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Look up a single conversation summary within this channel."
+        }
+      ]
     },
     "PlatformChannelController.listConversation": {
       "request": null,
       "response": {
-        "type": "array",
-        "items": {
-          "$ref": "#/components/schemas/ChannelConversationMessageResponse"
-        }
+        "oneOf": [
+          {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ChannelConversationMessageResponse"
+            }
+          },
+          {
+            "type": "object",
+            "required": [
+              "items",
+              "nextCursor"
+            ],
+            "properties": {
+              "items": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/ChannelConversationMessageResponse"
+                }
+              },
+              "nextCursor": {
+                "type": "string",
+                "nullable": true
+              }
+            }
+          }
+        ]
       },
-      "query": []
+      "query": [
+        {
+          "name": "paged",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "boolean",
+            "default": false
+          },
+          "description": "Use true for a bounded page with items and nextCursor."
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100,
+            "default": 50
+          }
+        },
+        {
+          "name": "cursor",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Opaque nextCursor returned by the previous page; omit on the first request."
+        }
+      ]
     },
     "PlatformChannelController.updateFlows": {
       "request": "ChannelFlowBindingsRequest",

@@ -2,26 +2,40 @@ import { randomUUID } from 'node:crypto';
 import { HttpError } from './command.mjs';
 import { must, now, pick, fromItem, required } from './store.mjs';
 import { graph } from './whatsapp.mjs';
+import {persistMessage,conversationPage,conversationKey,pageOptions,pageResult,runtimeTable} from './runtime-records.mjs';
 export function messageResponse(item){return{...pick(fromItem(item),['messageId','direction','messageKind','messageType','messagePayloadJson','status','contactId','contactName','contactUserId','contactWaId','occurredAt']),text:item.message_text??''};}
-export async function conversation(store,channel,contactId){return(await store.list('engine_messages',m=>m.channel_id===channel.id&&m.contact_id===contactId)).sort((a,b)=>a.occurred_at.localeCompare(b.occurred_at)).map(messageResponse);}
-export async function channelMessages(store,operation,params,contract){
-  const channel=must((await store.list('contract_channels',c=>c.contract_id===contract.id&&c.slug===params.channelSlug))[0]);
-  if(operation==='listConversation')return conversation(store,channel,params.contactId);
-  const messages=(await store.list('engine_messages',m=>m.channel_id===channel.id)).sort((a,b)=>b.occurred_at.localeCompare(a.occurred_at)),seen=new Set();
-  return messages.filter(m=>{if(seen.has(m.contact_id))return false;seen.add(m.contact_id);return true;}).map(m=>({contactId:m.contact_id,name:m.contact_name,userId:m.contact_user_id,waId:m.contact_wa_id,lastDirection:m.direction,lastMessagePreview:m.message_text,lastStatus:m.status,lastOccurredAt:m.occurred_at,conversationPath:`/plataform/${contract.slug}/canais/${channel.slug}/contatos/${m.contact_id}`}));
+export async function conversation(store,channel,contactId){return(await store.query('engine_messages','contact_id',contactId).then(rows=>rows.filter(m=>m.channel_id===channel.id))).sort((a,b)=>a.occurred_at.localeCompare(b.occurred_at)).map(messageResponse);}
+export async function channelMessages(store,operation,params,contract,query){
+  const channel=must((await store.query('contract_channels','contract_key',contract.id,{index:'contract_name-index'}).then(rows=>rows.filter(c=>c.slug===params.channelSlug)))[0]);
+  if(operation==='listConversation'){
+    if(query?.get('paged')==='true'){const scope=conversationKey(channel.id,params.contactId);const page=await conversationPage(store,channel,params.contactId,pageOptions(query,scope));return pageResult(page.items.map(messageResponse),page.nextKey,scope);}
+    return conversation(store,channel,params.contactId);
+  }
+  const scope=`CHANNEL#${channel.id}`;
+  const selected=query?.get('contactId')?await store.get(runtimeTable,{pk:scope,sk:`CONTACT#${query.get('contactId')}`}):null;
+  const page=query?.get('contactId')?{items:selected?[selected]:[],nextKey:undefined}:query?.get('paged')==='true'?await store.queryPage(runtimeTable,'list_pk',scope,{index:'list-index',forward:false,...pageOptions(query,scope)}):null;
+  const messages=page?page.items:(await store.query(runtimeTable,'list_pk',scope,{index:'list-index',forward:false})),seen=new Set();
+  const items=messages.filter(m=>{if(seen.has(m.contact_id))return false;seen.add(m.contact_id);return true;}).map(m=>({contactId:m.contact_id,name:m.contact_name,userId:m.contact_user_id,waId:m.contact_wa_id,lastDirection:m.direction,lastMessagePreview:m.message_text,lastStatus:m.status,lastOccurredAt:m.occurred_at,conversationPath:`/plataform/${contract.slug}/canais/${channel.slug}/contatos/${m.contact_id}`}));
+  return page?pageResult(items,page.nextKey,scope):items;
 }
-export async function sendText(store,contract,channel,contact,text,kind='BUSINESS',flowMessage){
-  text=required(text,'Mensagem',20000);let messageId=randomUUID(),status='SENT';
+export async function sendText(store,contract,channel,contact,text,kind='BUSINESS',flowMessage,deliveryContext={}){
+  text=required(text,'Mensagem',20000);let messageId=randomUUID(),status='SENT',phoneId;
   if(channel.type==='WHATSAPP'){
-    const phone=must(await store.get('whatsapp_phone_numbers',{id:channel.whatsapp_phone_number_id}));
-    const waba=must(await store.get('whatsapp_wabas',{id:phone.waba_config_id})),app=must(await store.get('whatsapp_apps',{id:waba.app_config_id}));
+    // Cache only within this delivery, never across requests or contracts.
+    deliveryContext.transport??=(async()=>{
+      const phone=must(await store.get('whatsapp_phone_numbers',{id:channel.whatsapp_phone_number_id}));
+      const waba=must(await store.get('whatsapp_wabas',{id:phone.waba_config_id}));
+      return {phone,app:must(await store.get('whatsapp_apps',{id:waba.app_config_id}))};
+    })();
+    const {phone,app}=await deliveryContext.transport;
+    phoneId=phone.id;
     const payload=metaMessage(flowMessage??{text});
     const response=await graph(`${encodeURIComponent(phone.meta_phone_number_id)}/messages`,app.access_token,{method:'POST',body:{messaging_product:'whatsapp',to:contact.wa_id||contact.user_id,...payload}});
     messageId=must(response.messages?.[0]?.id,'A Meta não confirmou a mensagem.');
   }
   const timestamp=now(),item={contact_id:contact.contact_id,message_id:messageId,contract_id:contract.id,contract_slug:contract.slug,channel_id:channel.id,channel_slug:channel.slug,direction:'OUTBOUND',message_kind:kind,message_type:'text',message_text:text,message_payload_json:JSON.stringify({text:{body:text}}),contact_user_id:contact.user_id,contact_wa_id:contact.wa_id,contact_name:contact.username||contact.name,status,occurred_at:timestamp,updated_at:timestamp};
   if(flowMessage)item.message_payload_json=JSON.stringify(flowMessage);
-  await store.transaction([store.guard(contract.id),store.putOperation('engine_messages',item,'attribute_not_exists(message_id)')]);
+  await persistMessage(store,item,phoneId);
   if(channel.type==='WEBCHAT'){
     const {broadcast}=await import('./websocket.mjs');
     await broadcast(store,channel.id,contact.contact_id,{id:messageId,kind,text,choices:flowMessage?.choices??[],list:flowMessage?.list??null,occurredAt:timestamp});

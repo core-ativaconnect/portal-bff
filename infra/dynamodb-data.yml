@@ -1219,6 +1219,42 @@ Resources:
           Projection:
             ProjectionType: ALL
     DependsOn: FlowEngineContactsTable
+  FlowBffRuntimeRecordsTable:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      TableName:
+        Fn::Sub: ${TablePrefix}flow_bff_runtime_records
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: pk
+          AttributeType: S
+        - AttributeName: sk
+          AttributeType: S
+        - AttributeName: list_pk
+          AttributeType: S
+        - AttributeName: list_sk
+          AttributeType: S
+      KeySchema:
+        - AttributeName: pk
+          KeyType: HASH
+        - AttributeName: sk
+          KeyType: RANGE
+      GlobalSecondaryIndexes:
+        - IndexName: list-index
+          KeySchema:
+            - AttributeName: list_pk
+              KeyType: HASH
+            - AttributeName: list_sk
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+      TimeToLiveSpecification:
+        AttributeName: expires_at
+        Enabled: true
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
   FlowBffJobsTable:
     Type: AWS::DynamoDB::Table
     DeletionPolicy: Retain

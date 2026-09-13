@@ -145,7 +145,7 @@ test('DynamoDB: exhausted MAU stops Meta processing and webchat replies without 
     const delivery={phoneId,wabaId:'test',message:{id:randomUUID(),from:'5511999999999',type:'text',text:{body:'Hello'}}};
     await processDelivery(delivery,store,{runFlow:async()=>{called=true;},send:async()=>{called=true;}});
     await processDelivery(delivery,store,{runFlow:async()=>{called=true;}});assert.equal(called,false);
-    await processDelivery({phoneId,wabaId:'test',status:{id:'unknown',recipient_id:'5511999999999',status:'read'}},store);
+    await assert.rejects(processDelivery({phoneId,wabaId:'test',status:{id:'unknown',recipient_id:'5511999999999',status:'read'}},store),{status:503});
     const connected=await webchatOperation(store,{type:'connect',agentName:webId});contactId=connected.contactId;
     assert.equal(connected.unavailable,true);assert.deepEqual(connected.messages,[]);
     const response=await webchatOperation(store,{type:'message',agentName:webId,contactToken:connected.contactToken,text:'Hello'});

@@ -7,11 +7,12 @@ import { writable } from './contracts.mjs';
 import { customerHandoff } from './channel-runtime.mjs';
 import { sendText } from './messages.mjs';
 import {admitContact} from './billing.mjs';
+import {findSession,activeTicket,saveTicket,persistMessage} from './runtime-records.mjs';
 
 function key(store){return Buffer.from(store.settings.secret);}
 export async function webchatOperation(store,body){
   const agent=required(body.agentName,'Agente',120);
-  const channel=must((await store.list('contract_channels',c=>c.type==='WEBCHAT'&&c.webchat_agent_name?.toLowerCase()===agent.toLowerCase()))[0]);
+  const channel=must((await store.query('contract_channels','webchat_agent_key',agent.toLowerCase(),{index:'webchat_agent-index'}).then(rows=>rows.filter(c=>c.type==='WEBCHAT')))[0]);
   const contract=must(await store.get('contracts',{id:channel.contract_id}));writable(contract);
   const today=new Date().toISOString().slice(0,10);
   if(contract.status!=='ACTIVE'||contract.start_date>today||contract.end_date<today)throw new HttpError(403,'Canal indisponível.');
@@ -34,15 +35,15 @@ export async function webchatOperation(store,body){
     const admission=await admitContact(store,contract.id,channel,contact);
     if(!admission.allowed)return {...envelope([]),unavailable:true};
   }
-  const links=await store.list('contract_channel_flows',l=>l.channel_id===channel.id&&l.is_primary);
+  const links=await store.query('contract_channel_flows','channel_key',channel.id,{index:'channel-index'}).then(rows=>rows.filter(l=>l.is_primary));
   let target;
   if(contact.active_flow_id&&!contact.active_flow_completed)target=await resolveDefinition(store,{flowId:contact.active_flow_id,versionId:contact.active_flow_version_id,versionMode:'PUBLISHED'},contract.id);
   else if(links[0])target=await resolveDefinition(store,{flowId:links[0].flow_id,versionMode:'PUBLISHED'},contract.id);
-  const session=target?(await store.get('engine_sessions',{session_key:`${contact.contact_id}#${target.flow.id}#${target.versionId}`})??(await store.list('engine_sessions',s=>s.simulator_user_id===contact.contact_id&&s.flow_id===target.flow.id&&s.version_id===target.versionId&&s.contract_id===contract.id))[0]):null;
-  const ticket=(await store.list('helpdesk_tickets',t=>t.channel_id===channel.id&&t.contact_id===contact.contact_id&&t.status!=='CLOSED'))[0];
+  const session=target?await findSession(store,contract.id,contact.contact_id,target.flow.id,target.versionId):null;
+  const ticket=await activeTicket(store,channel.id,contact.contact_id);
   if(body.type==='message'){
     const timestamp=now(),id=randomUUID(),text=required(body.text,'Mensagem',20000);
-    await store.transaction([store.guard(contract.id),store.putOperation('engine_messages',{contact_id:contact.contact_id,message_id:id,contract_id:contract.id,contract_slug:contract.slug,channel_id:channel.id,channel_slug:channel.slug,direction:'INBOUND',message_kind:'USER',message_type:'webchat_text',message_text:text,contact_name:contact.username,contact_user_id:contact.user_id,status:'RECEIVED',occurred_at:timestamp,updated_at:timestamp},'attribute_not_exists(message_id)')]);
+    await persistMessage(store,{contact_id:contact.contact_id,message_id:id,contract_id:contract.id,contract_slug:contract.slug,channel_id:channel.id,channel_slug:channel.slug,direction:'INBOUND',message_kind:'USER',message_type:'webchat_text',message_text:text,contact_name:contact.username,contact_user_id:contact.user_id,status:'RECEIVED',occurred_at:timestamp,updated_at:timestamp});
   }
   let response;
   if(ticket&&body.type==='message'){
@@ -54,16 +55,16 @@ export async function webchatOperation(store,body){
     const updated={...contact,active_flow_id:response.flowId,active_flow_version_id:response.resolvedVersionId,active_flow_completed:response.completed,updated_at:now()};
     await store.transaction([store.guard(contract.id),store.putOperation('engine_contacts',updated)]);
     for(const message of response.messages.filter(m=>m.kind==='BUSINESS')){
-      const id=randomUUID(),timestamp=now();await store.transaction([store.guard(contract.id),store.putOperation('engine_messages',{contact_id:contact.contact_id,message_id:id,contract_id:contract.id,contract_slug:contract.slug,channel_id:channel.id,channel_slug:channel.slug,direction:'OUTBOUND',message_kind:'BUSINESS',message_type:'webchat_text',message_text:message.text,message_payload_json:JSON.stringify(message),contact_name:contact.username,contact_user_id:contact.user_id,status:'SENT',occurred_at:timestamp,updated_at:timestamp},'attribute_not_exists(message_id)')]);
+      const id=randomUUID(),timestamp=now();await persistMessage(store,{contact_id:contact.contact_id,message_id:id,contract_id:contract.id,contract_slug:contract.slug,channel_id:channel.id,channel_slug:channel.slug,direction:'OUTBOUND',message_kind:'BUSINESS',message_type:'webchat_text',message_text:message.text,message_payload_json:JSON.stringify(message),contact_name:contact.username,contact_user_id:contact.user_id,status:'SENT',occurred_at:timestamp,updated_at:timestamp});
     }
     if(response.waitingState==='HUMAN_HANDOFF'){
       const definition=await resolveDefinition(store,{flowId:response.flowId,versionId:response.resolvedVersionId},contract.id);
-      const action=definition.definition.actions.find(a=>a.id===response.waitingActionId),queues=await store.list('contract_help_desk_queues',q=>q.contract_id===contract.id&&q.enabled);
+      const action=definition.definition.actions.find(a=>a.id===response.waitingActionId),queues=await store.query('contract_help_desk_queues','contract_key',contract.id,{index:'contract_name-index'}).then(rows=>rows.filter(q=>q.enabled));
       const queue=must(action?.config?.queueId?queues.find(q=>q.id===action.config.queueId):queues.length===1?queues[0]:null,'Configure a fila de atendimento do fluxo.');
       const id=randomUUID(),timestamp=now();const newTicket={id,contract_id:contract.id,contract_slug:contract.slug,ticket_number:Date.now(),queue_id:queue.id,queue_name:queue.name,channel_id:channel.id,channel_slug:channel.slug,channel_name:channel.name,channel_type:'WEBCHAT',contact_id:contact.contact_id,contact_name:contact.username,contact_user_id:contact.user_id,flow_id:response.flowId,flow_version_id:response.resolvedVersionId,waiting_action_id:response.waitingActionId,status:'OPEN',opened_at:timestamp,updated_at:timestamp,channel_contact_key:`${channel.id}#${contact.contact_id}`};
-      await store.put('helpdesk_tickets',newTicket,{create:true,contractId:contract.id});
+      await saveTicket(store,newTicket,{create:true,contractId:contract.id});
     }
   }
-  const records=(await store.list('engine_messages',m=>m.channel_id===channel.id&&m.contact_id===contact.contact_id&&m.direction==='OUTBOUND'&&(!body.since||m.occurred_at>=body.since))).sort((a,b)=>a.occurred_at.localeCompare(b.occurred_at));
+  const records=(await store.query('engine_messages','contact_id',contact.contact_id).then(rows=>rows.filter(m=>m.channel_id===channel.id&&m.direction==='OUTBOUND'&&(!body.since||m.occurred_at>=body.since)))).sort((a,b)=>a.occurred_at.localeCompare(b.occurred_at));
   return envelope(records.map(m=>{let payload={};try{payload=JSON.parse(m.message_payload_json??'{}');}catch{}return{id:m.message_id,kind:m.message_kind,text:m.message_text,choices:payload.choices??[],list:payload.list??null,actionId:payload.actionId??null,occurredAt:m.occurred_at};}));
 }

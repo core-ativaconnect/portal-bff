@@ -43,7 +43,7 @@ export async function execute(route, command, headers, store = new Store()) {
   else if(controller==='FlowController')contract=must(await store.get('contracts',{id:must(await store.get('flows',{id:params.id})).contract_id}));
   else if(controller==='ChannelController')contract=must(await store.get('contracts',{id:params.contractId??must(await store.get('contract_channels',{id:params.channelId})).contract_id}));
   if(['getContract','findBySlug'].includes(operation))return contractResponse(store,contract);
-  if(controller==='PlatformChannelController'&&['listContacts','listConversation'].includes(operation))return channelMessages(store,operation,params,contract);
+  if(controller==='PlatformChannelController'&&['listContacts','listConversation'].includes(operation))return channelMessages(store,operation,params,contract,command.query);
   if(controller==='ChannelController'||controller==='PlatformChannelController')return channelOperation(store,operation,command.body,params,actor,contract);
   if(operation==='generateAiDraft')return aiDraft(store,command.body,params,actor,contract);
   const kind=operation.includes('AiProvider')?'AiProviders':operation.includes('EmailConnection')?'EmailConnections':operation.includes('CloseIntent')?'CloseIntents':operation.includes('Queue')?'Queues':operation.includes('Attendant')?'Attendants':null;
@@ -51,7 +51,7 @@ export async function execute(route, command, headers, store = new Store()) {
     const result=await settingsOperation(store,kind,operation,command.body,params,contract);
     return controller==='PlatformController'&&operation==='listAiProviders'?result.filter(p=>p.enabled):result;
   }
-  if(controller==='PlatformHelpDeskController')return helpdeskOperation(store,operation,command.body,params,actor,contract);
+  if(controller==='PlatformHelpDeskController')return helpdeskOperation(store,operation,command.body,params,actor,contract,command.query);
   if(operation.includes('Waba')&&contract)return wabaLinkOperation(store,operation,command.body,params,contract);
   if(operation==='listFlows')return Promise.all((await store.list('flows',f=>f.contract_id===contract.id)).map(f=>flowResponse(store,f)));
   if(controller==='FlowController'||['createFlow','getFlow','saveDraft','publishFlow','listVersions','restoreVersion'].includes(operation))return flowOperation(store,operation,command.body,params,actor,contract);

@@ -16,6 +16,22 @@ export class Store {
     return this.settings.prefix + (name.startsWith('flow_bff_') ? name : `flow_bff_${name}`);
   }
   async get(table, key) { return (await this.client.send(new GetCommand({ TableName: this.table(table), Key: key, ConsistentRead: true }))).Item; }
+  async queryPage(table, partition, value, {index, sort, prefix, from, to, after, limit=50, forward=true} = {}) {
+    if (!Number.isInteger(limit) || limit < 1 || limit > 100) throw new HttpError(400,'Invalid page size.');
+    const names={'#pk':partition}, values={':pk':value};
+    let expression='#pk = :pk';
+    if(sort && prefix !== undefined){names['#sk']=sort;values[':prefix']=prefix;expression+=' AND begins_with(#sk, :prefix)';}
+    if(sort&&from!==undefined&&to!==undefined){names['#sk']=sort;values[':from']=from;values[':to']=to;expression+=' AND #sk BETWEEN :from AND :to';}
+    const page=await this.client.send(new QueryCommand({TableName:this.table(table),IndexName:index,
+      ConsistentRead:!index,KeyConditionExpression:expression,ExpressionAttributeNames:names,ExpressionAttributeValues:values,
+      ExclusiveStartKey:after,Limit:limit,ScanIndexForward:forward}));
+    return {items:page.Items??[],nextKey:page.LastEvaluatedKey};
+  }
+  async query(table, partition, value, options={}) {
+    const items=[];let after;
+    do{const page=await this.queryPage(table,partition,value,{...options,after});items.push(...page.items);after=page.nextKey;}while(after);
+    return items;
+  }
   async queryPartition(table, pk, prefix) {
     const items=[];let cursor;
     do {
@@ -33,7 +49,12 @@ export class Store {
     } while (cursor);
     return items;
   }
+  async *scanPages(table){
+    let cursor;
+    do{const page=await this.client.send(new ScanCommand({TableName:this.table(table),ConsistentRead:true,ExclusiveStartKey:cursor}));yield page.Items??[];cursor=page.LastEvaluatedKey;}while(cursor);
+  }
   putOperation(table, item, condition, values) {
+    item=indexedItem(table,item);
     const stored=Object.fromEntries(Object.entries(item).filter(([,value])=>value!==null&&value!==undefined));
     return { Put: { TableName: this.table(table), Item: stored, ...(condition ? { ConditionExpression: condition } : {}), ...(values ? { ExpressionAttributeValues: values } : {}) } };
   }
@@ -68,6 +89,24 @@ export class Store {
     const op = this.deleteOperation(table, key);
     await this.transaction(contractId ? [this.guard(contractId), op] : [op]);
   }
+}
+
+// Keep the attributes used by runtime queries populated on every new write.
+// The migration applies the same rules to records written by older versions.
+export function indexedItem(table,item){
+  const row={...item};
+  if(table==='whatsapp_wabas'&&row.waba_id)row.waba_id_key=row.waba_id.toLowerCase();
+  if(table==='whatsapp_apps'&&row.verify_token)row.verify_token_key=row.verify_token.toLowerCase();
+  if(table==='whatsapp_phone_numbers'&&row.meta_phone_number_id)row.meta_phone_key=row.meta_phone_number_id;
+  if(table==='contract_channels'){
+    if(row.whatsapp_phone_number_id)row.phone_key=row.whatsapp_phone_number_id;else delete row.phone_key;
+    if(row.contract_id){row.contract_key=row.contract_id;row.name_sort=`${(row.name??'').toLowerCase()}#${row.id}`;}
+    if(row.webchat_agent_name)row.webchat_agent_key=row.webchat_agent_name.toLowerCase();
+  }
+  if(table==='contract_channel_flows'&&row.channel_id){row.channel_key=row.channel_id;row.created_at_sort=`${row.created_at??''}#${row.id}`;}
+  if(table==='contract_help_desk_queues'&&row.contract_id){row.contract_key=row.contract_id;row.name_sort=`${(row.name??'').toLowerCase()}#${row.id}`;}
+  if(table==='flow_versions'&&row.flow_id){row.flow_key=row.flow_id;row.version_sort=String(row.version_number??0).padStart(9,'0');}
+  return row;
 }
 
 export const now = () => new Date().toISOString();

@@ -2,6 +2,7 @@ import { randomUUID } from 'node:crypto';
 import { HttpError } from './command.mjs';
 import { must, required, now } from './store.mjs';
 import { writable } from './contracts.mjs';
+import {findSession,sessionReferenceOperation} from './runtime-records.mjs';
 import { externalRequest } from './network.mjs';
 import { executeScript } from './scripts.mjs';
 import { askAi, aiJson } from './ai.mjs';
@@ -43,7 +44,8 @@ export async function resolveDefinition(store,body,contractId) {
   const flow=must(await store.get('flows',{id:required(body.flowId,'Fluxo',36)}),'Fluxo não encontrado.');
   if(contractId&&flow.contract_id!==contractId)throw new HttpError(404,'Fluxo não encontrado.');
   let version;if(body.versionId&&body.versionId!==flow.id){version=must(await store.get('flow_versions',{id:body.versionId}));if(version.flow_id!==flow.id)throw new HttpError(404,'Versão não encontrada.');}
-  else if(body.versionMode&&body.versionMode!=='DRAFT')version=must((await store.list('flow_versions',v=>v.flow_id===flow.id&&v.status===body.versionMode&&(body.versionMode!=='PUBLISHED'||v.is_current))).sort((a,b)=>b.version_number-a.version_number)[0],'Versão indisponível.');
+  else if(body.versionMode==='PUBLISHED'&&flow.published_version_id){version=must(await store.get('flow_versions',{id:flow.published_version_id}));if(version.flow_id!==flow.id||version.status!=='PUBLISHED'||!version.is_current)throw new HttpError(409,'Published version changed.');}
+  else if(body.versionMode&&body.versionMode!=='DRAFT')version=must((await store.query('flow_versions','flow_key',flow.id,{index:'flow_version-index'}).then(rows=>rows.filter(v=>v.status===body.versionMode&&(body.versionMode!=='PUBLISHED'||v.is_current)))).sort((a,b)=>b.version_number-a.version_number)[0],'Versão indisponível.');
   const definition=JSON.parse(version?.definition_json??flow.definition_json);if(!Array.isArray(definition.actions)||!definition.actions.length)throw new HttpError(400,'O fluxo não contém ações.');
   return{flow,versionId:version?.id??flow.id,status:version?.status??'DRAFT',definition};
 }
@@ -52,7 +54,7 @@ export async function processFlow(store,body,actor,{contractId,resumeIntent,oper
   let resolved=await resolveDefinition(store,body,contractId);const contract=must(await store.get('contracts',{id:resolved.flow.contract_id}));writable(contract);
   if(!contractId&&actor?.role!=='OWNER'&&!await store.get('contract_access',{id:`${contract.id}#${actor?.id}`}))throw new HttpError(404,'Fluxo não encontrado.');
   const simulator=required(body.simulatorUserId,'Usuário da sessão',180),requestedKey=`${simulator}#${body.flowId}#${resolved.versionId}`;
-  const old=await store.get('engine_sessions',{session_key:requestedKey})??(!body.start?(await store.list('engine_sessions',s=>s.simulator_user_id===simulator&&s.flow_id===resolved.flow.id&&s.version_id===resolved.versionId&&s.contract_id===contract.id))[0]:undefined);
+  const old=await findSession(store,contract.id,simulator,resolved.flow.id,resolved.versionId);
   const key=old?.session_key??requestedKey;
   if(!body.start&&!old)throw new HttpError(404,'Sessão não encontrada.');
   if(old?.actor_id&&actor&&old.actor_id!==actor.id&&!contractId)throw new HttpError(404,'Sessão não encontrada.');
@@ -123,7 +125,7 @@ export async function processFlow(store,body,actor,{contractId,resumeIntent,oper
     if(!session.waiting_action_id){completed=true;debug('Fim do fluxo.');}
     session={...session,user_state_json:JSON.stringify(state),completed,updated_at:now()};delete session.lease_token;delete session.lease_until;
     const response={flowId:session.flow_id,resolvedVersionId:session.version_id,resolvedVersionStatus:session.version_status,sessionId:session.session_id,simulatorUserId:simulator,started:body.start===true,completed,waitingState:session.waiting_state,waitingActionId:session.waiting_action_id,messages,trace:{actionIds,connectionKeys,activeActionId:active}};
-    const writes=[store.guard(contract.id),store.putOperation('engine_sessions',session,'lease_token = :token',{':token':token})];
+    const writes=[store.guard(contract.id),store.putOperation('engine_sessions',session,'lease_token = :token',{':token':token}),sessionReferenceOperation(store,session)];
     if(operationId)writes.push(store.putOperation('jobs',{id:operationId,contract_id:contract.id,response,expires_at:Math.floor(Date.now()/1000)+1209600},'attribute_not_exists(id)'));
     await store.transaction(writes);
     return response;

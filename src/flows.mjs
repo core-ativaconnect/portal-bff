@@ -19,7 +19,7 @@ async function writeVersion(store,flow,previous,actor,status='DRAFT',contract) {
   const number=Math.max(0,...versions.map(v=>v.version_number))+1;
   const current=versions.filter(v=>v.status===status&&v.is_current);
   const version={id:randomUUID(),flow_id:flow.id,version_number:number,status,is_current:true,definition_json:flow.definition_json,created_by_user_id:actor.id,created_by_name:actor.name,created_by_email:actor.email,created_at:now(),flow_key:flow.id,version_sort:String(number).padStart(9,'0'),flow_status_current_key:`${flow.id}#${status}#true`};
-  const updated={...flow,updated_at:now(),revision:(previous?.revision??0)+1};
+  const updated={...flow,updated_at:now(),revision:(previous?.revision??0)+1,...(status==='PUBLISHED'?{published_version_id:version.id}:{})};
   const condition=previous ? 'attribute_exists(id) AND (attribute_not_exists(revision) OR revision = :revision)' : 'attribute_not_exists(id)';
   const operations=[store.advanceContract(contract),store.putOperation('flows',updated,condition,previous?{':revision':previous.revision??0}:undefined),store.putOperation('flow_versions',version,'attribute_not_exists(id)')];
   for(const old of current) operations.push(store.putOperation('flow_versions',{...old,status:status==='PUBLISHED'?'ARCHIVED':old.status,is_current:false,flow_status_current_key:`${flow.id}#${status==='PUBLISHED'?'ARCHIVED':old.status}#false`}));

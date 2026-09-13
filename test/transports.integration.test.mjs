@@ -7,6 +7,7 @@ import {parseCommand} from '../src/command.mjs';
 import {resolveRoute} from '../src/router.mjs';
 import {handler as websocket,broadcast} from '../src/websocket.mjs';
 import {handler as desk} from '../src/desk.mjs';
+import {persistMessage} from '../src/runtime-records.mjs';
 import {processDelivery} from '../src/meta-webhook.mjs';
 import {deleteContract} from '../src/deletion.mjs';
 
@@ -50,7 +51,7 @@ test('DynamoDB: WebSocket session, Desk isolation, WhatsApp processing/retry/sta
     await store.put('whatsapp_phone_numbers',{id:phoneId,waba_config_id:wabaId,meta_phone_number_id:suffix},{create:true});
     await store.put('contract_channels',{id:waChannelId,contract_id:company.id,slug:'whatsapp',name:'WhatsApp',type:'WHATSAPP',status:'CONNECTED',whatsapp_phone_number_id:phoneId},{create:true,contractId:company.id});
     await store.put('contract_channel_flows',{id:`wa-${suffix}`,channel_id:waChannelId,flow_id:flow.id,is_primary:true},{create:true,contractId:company.id});
-    const send=async(_s,contract,ch,contact,text)=>{deliveries.push(text);await store.transaction([store.putOperation('engine_messages',{contact_id:contact.contact_id,message_id:`out-${deliveries.length}`,channel_id:ch.id,contract_id:contract.id,direction:'OUTBOUND',contact_wa_id:contact.wa_id,status:'SENT'})]);};
+    const send=async(_s,contract,ch,contact,text)=>{deliveries.push(text);await persistMessage(store,{contact_id:contact.contact_id,message_id:`out-${deliveries.length}`,channel_id:ch.id,contract_id:contract.id,direction:'OUTBOUND',contact_wa_id:contact.wa_id,status:'SENT',occurred_at:now()},phoneId);};
     const message={phoneId,wabaId,message:{id:`in-${suffix}`,from:`55${suffix}`,type:'text',text:{body:'Oi'}}};
     await processDelivery(message,store,{send});await processDelivery(message,store,{send});
     assert.deepEqual(deliveries,['Qual seu nome?']);

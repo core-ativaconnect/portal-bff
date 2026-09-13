@@ -1174,7 +1174,7 @@
                 "PlatformChannelController.listContacts": {
                   "summary": "Canais da plataforma: GET /api/v1/platform/contracts/{contractSlug}/channels/{channelSlug}/contacts",
                   "value": {
-                    "path": "/api/v1/platform/contracts/empresa-exemplo/channels/empresa-exemplo/contacts",
+                    "path": "/api/v1/platform/contracts/empresa-exemplo/channels/empresa-exemplo/contacts?paged=true&limit=50",
                     "method": "GET",
                     "body-data": {}
                   }
@@ -1182,7 +1182,7 @@
                 "PlatformChannelController.listConversation": {
                   "summary": "Canais da plataforma: GET /api/v1/platform/contracts/{contractSlug}/channels/{channelSlug}/contacts/{contactId}/messages",
                   "value": {
-                    "path": "/api/v1/platform/contracts/empresa-exemplo/channels/empresa-exemplo/contacts/11111111-1111-4111-8111-111111111111/messages",
+                    "path": "/api/v1/platform/contracts/empresa-exemplo/channels/empresa-exemplo/contacts/11111111-1111-4111-8111-111111111111/messages?paged=true&limit=50",
                     "method": "GET",
                     "body-data": {}
                   }
@@ -1965,16 +1965,62 @@
                       "$ref": "#/components/schemas/ChannelResponse"
                     },
                     {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/ChannelConversationContactResponse"
-                      }
+                      "oneOf": [
+                        {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/ChannelConversationContactResponse"
+                          }
+                        },
+                        {
+                          "type": "object",
+                          "required": [
+                            "items",
+                            "nextCursor"
+                          ],
+                          "properties": {
+                            "items": {
+                              "type": "array",
+                              "items": {
+                                "$ref": "#/components/schemas/ChannelConversationContactResponse"
+                              }
+                            },
+                            "nextCursor": {
+                              "type": "string",
+                              "nullable": true
+                            }
+                          }
+                        }
+                      ]
                     },
                     {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/ChannelConversationMessageResponse"
-                      }
+                      "oneOf": [
+                        {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/ChannelConversationMessageResponse"
+                          }
+                        },
+                        {
+                          "type": "object",
+                          "required": [
+                            "items",
+                            "nextCursor"
+                          ],
+                          "properties": {
+                            "items": {
+                              "type": "array",
+                              "items": {
+                                "$ref": "#/components/schemas/ChannelConversationMessageResponse"
+                              }
+                            },
+                            "nextCursor": {
+                              "type": "string",
+                              "nullable": true
+                            }
+                          }
+                        }
+                      ]
                     },
                     {
                       "$ref": "#/components/schemas/ChannelResponse"
@@ -3817,10 +3863,33 @@
             "access": "AUTHENTICATED",
             "requestSchema": "EmptyBody",
             "responseSchema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/components/schemas/ChannelConversationContactResponse"
-              }
+              "oneOf": [
+                {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ChannelConversationContactResponse"
+                  }
+                },
+                {
+                  "type": "object",
+                  "required": [
+                    "items",
+                    "nextCursor"
+                  ],
+                  "properties": {
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/ChannelConversationContactResponse"
+                      }
+                    },
+                    "nextCursor": {
+                      "type": "string",
+                      "nullable": true
+                    }
+                  }
+                }
+              ]
             },
             "parameters": [
               {
@@ -3838,6 +3907,45 @@
                 "schema": {
                   "type": "string"
                 }
+              },
+              {
+                "name": "paged",
+                "in": "query",
+                "required": false,
+                "schema": {
+                  "type": "boolean",
+                  "default": false
+                },
+                "description": "Use true for a bounded page with items and nextCursor."
+              },
+              {
+                "name": "limit",
+                "in": "query",
+                "required": false,
+                "schema": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 100,
+                  "default": 50
+                }
+              },
+              {
+                "name": "cursor",
+                "in": "query",
+                "required": false,
+                "schema": {
+                  "type": "string"
+                },
+                "description": "Opaque nextCursor returned by the previous page; omit on the first request."
+              },
+              {
+                "name": "contactId",
+                "in": "query",
+                "required": false,
+                "schema": {
+                  "type": "string"
+                },
+                "description": "Look up a single conversation summary within this channel."
               }
             ],
             "asynchronous": false
@@ -3849,10 +3957,33 @@
             "access": "AUTHENTICATED",
             "requestSchema": "EmptyBody",
             "responseSchema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/components/schemas/ChannelConversationMessageResponse"
-              }
+              "oneOf": [
+                {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ChannelConversationMessageResponse"
+                  }
+                },
+                {
+                  "type": "object",
+                  "required": [
+                    "items",
+                    "nextCursor"
+                  ],
+                  "properties": {
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/ChannelConversationMessageResponse"
+                      }
+                    },
+                    "nextCursor": {
+                      "type": "string",
+                      "nullable": true
+                    }
+                  }
+                }
+              ]
             },
             "parameters": [
               {
@@ -3878,6 +4009,36 @@
                 "schema": {
                   "type": "string"
                 }
+              },
+              {
+                "name": "paged",
+                "in": "query",
+                "required": false,
+                "schema": {
+                  "type": "boolean",
+                  "default": false
+                },
+                "description": "Use true for a bounded page with items and nextCursor."
+              },
+              {
+                "name": "limit",
+                "in": "query",
+                "required": false,
+                "schema": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 100,
+                  "default": 50
+                }
+              },
+              {
+                "name": "cursor",
+                "in": "query",
+                "required": false,
+                "schema": {
+                  "type": "string"
+                },
+                "description": "Opaque nextCursor returned by the previous page; omit on the first request."
               }
             ],
             "asynchronous": false
@@ -15046,7 +15207,7 @@
           "path": {
             "type": "string",
             "pattern": "^/api/v1/platform/contracts/[^/?]+/channels/[^/?]+/contacts/?(?:\\?.*)?$",
-            "example": "/api/v1/platform/contracts/empresa-exemplo/channels/empresa-exemplo/contacts"
+            "example": "/api/v1/platform/contracts/empresa-exemplo/channels/empresa-exemplo/contacts?paged=true&limit=50"
           },
           "uri": {
             "type": "string",
@@ -15079,7 +15240,7 @@
           }
         ],
         "example": {
-          "path": "/api/v1/platform/contracts/empresa-exemplo/channels/empresa-exemplo/contacts",
+          "path": "/api/v1/platform/contracts/empresa-exemplo/channels/empresa-exemplo/contacts?paged=true&limit=50",
           "method": "GET",
           "body-data": {}
         },
@@ -15100,13 +15261,75 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "name": "paged",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false
+            },
+            "description": "Use true for a bounded page with items and nextCursor."
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 50
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Opaque nextCursor returned by the previous page; omit on the first request."
+          },
+          {
+            "name": "contactId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Look up a single conversation summary within this channel."
           }
         ],
         "x-response-schema": {
-          "type": "array",
-          "items": {
-            "$ref": "#/components/schemas/ChannelConversationContactResponse"
-          }
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/ChannelConversationContactResponse"
+              }
+            },
+            {
+              "type": "object",
+              "required": [
+                "items",
+                "nextCursor"
+              ],
+              "properties": {
+                "items": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ChannelConversationContactResponse"
+                  }
+                },
+                "nextCursor": {
+                  "type": "string",
+                  "nullable": true
+                }
+              }
+            }
+          ]
         }
       },
       "Command.PlatformChannelController.listConversation": {
@@ -15117,7 +15340,7 @@
           "path": {
             "type": "string",
             "pattern": "^/api/v1/platform/contracts/[^/?]+/channels/[^/?]+/contacts/[^/?]+/messages/?(?:\\?.*)?$",
-            "example": "/api/v1/platform/contracts/empresa-exemplo/channels/empresa-exemplo/contacts/11111111-1111-4111-8111-111111111111/messages"
+            "example": "/api/v1/platform/contracts/empresa-exemplo/channels/empresa-exemplo/contacts/11111111-1111-4111-8111-111111111111/messages?paged=true&limit=50"
           },
           "uri": {
             "type": "string",
@@ -15150,7 +15373,7 @@
           }
         ],
         "example": {
-          "path": "/api/v1/platform/contracts/empresa-exemplo/channels/empresa-exemplo/contacts/11111111-1111-4111-8111-111111111111/messages",
+          "path": "/api/v1/platform/contracts/empresa-exemplo/channels/empresa-exemplo/contacts/11111111-1111-4111-8111-111111111111/messages?paged=true&limit=50",
           "method": "GET",
           "body-data": {}
         },
@@ -15179,13 +15402,66 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "name": "paged",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false
+            },
+            "description": "Use true for a bounded page with items and nextCursor."
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 50
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Opaque nextCursor returned by the previous page; omit on the first request."
           }
         ],
         "x-response-schema": {
-          "type": "array",
-          "items": {
-            "$ref": "#/components/schemas/ChannelConversationMessageResponse"
-          }
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/ChannelConversationMessageResponse"
+              }
+            },
+            {
+              "type": "object",
+              "required": [
+                "items",
+                "nextCursor"
+              ],
+              "properties": {
+                "items": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ChannelConversationMessageResponse"
+                  }
+                },
+                "nextCursor": {
+                  "type": "string",
+                  "nullable": true
+                }
+              }
+            }
+          ]
         }
       },
       "Command.PlatformChannelController.updateFlows": {

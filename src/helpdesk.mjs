@@ -3,15 +3,21 @@ import { must, now, fromItem, pick, required } from './store.mjs';
 import { conversation, sendText } from './messages.mjs';
 import { processFlow } from './engine.mjs';
 import {admitContact} from './billing.mjs';
+import {saveTicket} from './runtime-records.mjs';
+import {syncConversation} from './conversation-sync.mjs';
+import {messageResponse} from './messages.mjs';
 const fields=['id','contractId','contractSlug','ticketNumber','queueId','queueName','channelId','channelSlug','channelName','channelType','contactId','contactName','contactUserId','contactWaId','status','assignedUserId','assignedUserName','assignedUserEmail','closeReason','closeIntent','openedAt','assignedAt','closedAt','updatedAt'];
 export const ticketResponse=(item,messages=[])=>({...Object.fromEntries(fields.map(key=>[key,fromItem(item)[key]??null])),messages});
 async function canAttend(store,contractId,userId){const attendants=await store.list('contract_help_desk_attendants',a=>a.contract_id===contractId&&a.enabled);if(attendants.length&&!attendants.some(a=>a.user_id===userId&&a.active))throw new HttpError(403,'Usuário não configurado como atendente.');}
-export async function helpdeskOperation(store,operation,body,params,actor,contract){
-  if(operation==='listTickets')return(await store.list('helpdesk_tickets',t=>t.contract_id===contract.id)).sort((a,b)=>b.updated_at.localeCompare(a.updated_at)).map(t=>ticketResponse(t));
+export async function helpdeskOperation(store,operation,body,params,actor,contract,query){
+  if(operation==='listTickets')return(await store.query('helpdesk_tickets','contract_id',contract.id,{index:'contract_id-updated_at-index'})).sort((a,b)=>b.updated_at.localeCompare(a.updated_at)).map(t=>ticketResponse(t));
   const ticket=must(await store.get('helpdesk_tickets',{id:params.ticketId}));if(ticket.contract_id!==contract.id)throw new HttpError(404,'Ticket não encontrado.');
   const channel=must(await store.get('contract_channels',{id:ticket.channel_id}));
   if(operation==='findTicket')return ticketResponse(ticket,await conversation(store,channel,ticket.contact_id));
-  if(operation==='listMessages')return conversation(store,channel,ticket.contact_id);
+  if(operation==='listMessages'){
+    if(query?.get('sync')==='true'){const result=await syncConversation(store,channel,ticket.contact_id,query.get('cursor'));return {...result,messages:result.messages.map(messageResponse)};}
+    return conversation(store,channel,ticket.contact_id);
+  }
   if(ticket.status==='CLOSED'){if(operation==='close')return ticketResponse(ticket);throw new HttpError(400,'Ticket já encerrado.');}
   await canAttend(store,contract.id,actor.id);
   if(operation==='sendMessage') {
@@ -36,7 +42,7 @@ export async function helpdeskOperation(store,operation,body,params,actor,contra
     updated.status='CLOSED';updated.close_reason='ATTENDANT';updated.close_intent=intent;updated.closed_at=now();
   }
   // Compare-and-swap stops simultaneous agents from overwriting each other's assignments.
-  await store.put('helpdesk_tickets',updated,{previous:ticket,contractId:contract.id});
+  await saveTicket(store,updated,{previous:ticket,contractId:contract.id});
   if(operation==='sendMessage'){const contact=must(await store.get('engine_contacts',{contact_id:ticket.contact_id}));await sendText(store,contract,channel,contact,body.text);}
   return ticketResponse(updated,['sendMessage','close'].includes(operation)?await conversation(store,channel,ticket.contact_id):[]);
 }

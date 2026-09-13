@@ -21,7 +21,7 @@ test('Desk uses REST bodies, preserves query and excludes Studio/admin operation
 });
 
 const rows={whatsapp_apps:[{id:'app',app_id:'123',verify_token:'verify'}],whatsapp_wabas:[{id:'waba',waba_id:'456',app_config_id:'app'}],whatsapp_phone_numbers:[{id:'phone',meta_phone_number_id:'789',waba_config_id:'waba'}]};
-const store={list:async(table,predicate)=>rows[table].filter(predicate),get:async(table,key)=>rows[table].find(r=>r.id===key.id)};
+const store={query:async(table,partition,value)=>rows[table].filter(r=>({waba_id_key:r.waba_id,meta_phone_key:r.meta_phone_number_id,verify_token_key:r.verify_token?.toLowerCase()})[partition]===value),list:async(table,predicate)=>rows[table].filter(predicate),get:async(table,key)=>rows[table].find(r=>r.id===key.id)};
 const payload={object:'whatsapp_business_account',entry:[{id:'456',changes:[{field:'messages',value:{metadata:{phone_number_id:'789'},contacts:[{wa_id:'5511',profile:{name:'Visitor'}}],messages:[{id:'m1',from:'5511',type:'text',text:{body:'Oi'}}],statuses:[{id:'out1',recipient_id:'5511',status:'delivered'}]}}]}]};
 const signed=body=>({requestContext:{http:{method:'POST'}},body,headers:{'X-Hub-Signature-256':`sha256=${createHmac('sha256','secret').update(body).digest('hex')}`}});
 

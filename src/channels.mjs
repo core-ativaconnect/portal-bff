@@ -1,3 +1,4 @@
+import {assertPublishable} from './flow-validation.mjs';
 import { randomUUID } from 'node:crypto';
 import { HttpError } from './command.mjs';
 import { must, now, required, fromItem, pick } from './store.mjs';
@@ -91,7 +92,7 @@ export async function channelOperation(store,operation,body,params,actor,contrac
   if(operation==='updatePhone')return bindPhone(store,channel,contract,body.whatsAppPhoneNumberId,actor);
   if(operation==='updateFlows') {
     const links=await store.list(linksTable,l=>l.channel_id===channel.id),operations=[store.advanceContract(contract),...links.map(l=>store.deleteOperation(linksTable,{id:l.id}))];
-    if(body.primaryFlowId){const flow=must(await store.get('flows',{id:body.primaryFlowId}));if(flow.contract_id!==contract.id)throw new HttpError(400,'Fluxo não pertence ao contrato.');const id=randomUUID(),timestamp=now();operations.push(store.putOperation(linksTable,{id,channel_id:channel.id,flow_id:flow.id,is_primary:true,created_at:timestamp,channel_key:channel.id,created_at_sort:`${timestamp}#${id}`}));}
+    if(body.primaryFlowId){const flow=must(await store.get('flows',{id:body.primaryFlowId}));if(flow.contract_id!==contract.id)throw new HttpError(400,'Fluxo não pertence ao contrato.');if(flow.published_version_id){const version=must(await store.get('flow_versions',{id:flow.published_version_id}));await assertPublishable(store,{...flow,definition_json:version.definition_json},contract.id,{channelTypes:[channel.type]});}const id=randomUUID(),timestamp=now();operations.push(store.putOperation(linksTable,{id,channel_id:channel.id,flow_id:flow.id,is_primary:true,created_at:timestamp,channel_key:channel.id,created_at_sort:`${timestamp}#${id}`}));}
     if(operations.length>1)await store.transaction(operations);return channelResponse(store,channel,contract);
   }
   if(operation==='deleteChannel') {

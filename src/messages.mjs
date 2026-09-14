@@ -19,7 +19,7 @@ export async function channelMessages(store,operation,params,contract,query){
   return page?pageResult(items,page.nextKey,scope):items;
 }
 export async function sendText(store,contract,channel,contact,text,kind='BUSINESS',flowMessage,deliveryContext={}){
-  text=required(text,'Mensagem',20000);let messageId=randomUUID(),status='SENT',phoneId;
+  text=required(text,'Mensagem',20000);const payload=metaMessage(flowMessage??{text});let messageId=randomUUID(),status='SENT',phoneId;
   if(channel.type==='WHATSAPP'){
     // Cache only within this delivery, never across requests or contracts.
     deliveryContext.transport??=(async()=>{
@@ -29,11 +29,10 @@ export async function sendText(store,contract,channel,contact,text,kind='BUSINES
     })();
     const {phone,app}=await deliveryContext.transport;
     phoneId=phone.id;
-    const payload=metaMessage(flowMessage??{text});
     const response=await graph(`${encodeURIComponent(phone.meta_phone_number_id)}/messages`,app.access_token,{method:'POST',body:{messaging_product:'whatsapp',to:contact.wa_id||contact.user_id,...payload}});
     messageId=must(response.messages?.[0]?.id,'A Meta não confirmou a mensagem.');
   }
-  const timestamp=now(),item={contact_id:contact.contact_id,message_id:messageId,contract_id:contract.id,contract_slug:contract.slug,channel_id:channel.id,channel_slug:channel.slug,direction:'OUTBOUND',message_kind:kind,message_type:'text',message_text:text,message_payload_json:JSON.stringify({text:{body:text}}),contact_user_id:contact.user_id,contact_wa_id:contact.wa_id,contact_name:contact.username||contact.name,status,occurred_at:timestamp,updated_at:timestamp};
+  const timestamp=now(),item={contact_id:contact.contact_id,message_id:messageId,contract_id:contract.id,contract_slug:contract.slug,channel_id:channel.id,channel_slug:channel.slug,direction:'OUTBOUND',message_kind:kind,message_type:payload.type==='interactive'?payload.interactive.type:payload.type,message_text:text,message_payload_json:JSON.stringify({text:{body:text}}),contact_user_id:contact.user_id,contact_wa_id:contact.wa_id,contact_name:contact.username||contact.name,status,occurred_at:timestamp,updated_at:timestamp};
   if(flowMessage)item.message_payload_json=JSON.stringify(flowMessage);
   await persistMessage(store,item,phoneId);
   if(channel.type==='WEBCHAT'){
@@ -44,6 +43,7 @@ export async function sendText(store,contract,channel,contact,text,kind='BUSINES
 }
 
 export function metaMessage(message){
+  if(message.channelPayload)return message.channelPayload;
   const text=message.text||'Continuando atendimento.';
   if(message.list?.sections?.length)return{type:'interactive',interactive:{type:'list',body:{text:text.slice(0,1024)},action:{button:(message.list.buttonText||'Ver opções').slice(0,20),sections:message.list.sections.map((section,s)=>({title:(section.title||'Opções').slice(0,24),rows:section.rows.map((row,r)=>({id:`row_${s}_${r}`,title:row.title.slice(0,24),...(row.description?{description:row.description.slice(0,72)}:{})}))}))}}};
   if(message.choices?.length)return{type:'interactive',interactive:{type:'button',body:{text:text.slice(0,1024)},action:{buttons:message.choices.slice(0,3).map((title,i)=>({type:'reply',reply:{id:`button_${i}`,title:title.slice(0,20)}}))}}};

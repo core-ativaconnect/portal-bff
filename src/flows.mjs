@@ -2,6 +2,7 @@ import { randomUUID } from 'node:crypto';
 import { HttpError } from './command.mjs';
 import { must, now, required, pick, fromItem } from './store.mjs';
 import { slugify, writable } from './contracts.mjs';
+import {assertPublishable} from './flow-validation.mjs';
 
 function versionResponse(item) { return {...pick(fromItem(item),['id','versionNumber','status','createdAt','createdByUserId','createdByName','createdByEmail']),current:item.is_current}; }
 export async function flowResponse(store,flow) {
@@ -46,7 +47,11 @@ export async function flowOperation(store,operation,body,params,actor,contract) 
     for(const row of [...bindings.map(item=>({table:'contract_channel_flows',item})),...(await store.list('flow_versions',v=>v.flow_id===flow.id)).map(item=>({table:'flow_versions',item}))]) await store.delete(row.table,{id:row.item.id},contract.id);
     await store.delete('flows',{id:flow.id},contract.id);return null;
   }
-  if (['publish','publishFlow'].includes(operation)) return writeVersion(store,flow,flow,actor,'PUBLISHED',contract);
+  if (['publish','publishFlow'].includes(operation)) {
+    const candidate={...flow,definition_json:definition(body.definitionJson,flow.definition_json)};
+    await assertPublishable(store,candidate,contract.id);
+    return writeVersion(store,candidate,flow,actor,'PUBLISHED',contract);
+  }
   let updated={...flow};
   if (operation==='restoreVersion') {
     const version=must(await store.get('flow_versions',{id:params.versionId}));

@@ -6,6 +6,9 @@ import {findSession,sessionReferenceOperation} from './runtime-records.mjs';
 import { externalRequest } from './network.mjs';
 import { executeScript } from './scripts.mjs';
 import { askAi, aiJson } from './ai.mjs';
+import {richMessage, decorateInteractive} from './flow-content.mjs';
+import {metaMessage} from './messages.mjs';
+import {sendFlowEmail} from './flow-email.mjs';
 
 const safeKeys=path=>String(path).replace(/^user\./,'').split('.').filter(Boolean);
 export function variable(state,path) {let value=state;for(const key of safeKeys(path)){if(['__proto__','constructor','prototype'].includes(key))return undefined;value=value?.[key];}return value;}
@@ -27,7 +30,13 @@ function interaction(config,state) {
     }).filter(s=>s.rows.length);list={buttonText:interpolate(config.listButtonText||'Ver opções',state),sections};
   }
   const text=[config.header?.type==='text'&&config.header.text?`*${interpolate(config.header.text,state)}*`:null,interpolate(config.message,state),config.footerText?`_${interpolate(config.footerText,state)}_`:null].filter(Boolean).join('\n');
-  return{text,choices,list,items};
+  const payload = richMessage(config, value => interpolate(value,state));
+  const output = {text: text || (config.mediaCaption ? interpolate(config.mediaCaption,state) : ['image','document','audio','contacts'].includes(config.messageType) ? `[${config.messageType}]` : ''), choices,list,items};
+  if (payload || ['button','list'].includes(config.messageType)) {
+    const wire = payload ?? metaMessage({...output, text: interpolate(config.message,state)});
+    output.channelPayload = decorateInteractive(wire,config,value=>interpolate(value,state));
+  }
+  return output;
 }
 async function matches(value,operator,expected) {
   if(operator==='equals')return value===expected;if(operator==='notEquals')return value!==expected;
@@ -95,7 +104,7 @@ export async function processFlow(store,body,actor,{contractId,resumeIntent,oper
       active=action.id;if(!actionIds.includes(active))actionIds.push(active);if(previous)connectionKeys.push(`${previous}|${active}`);
       let next=action.nextActionId??null;
       if(['interaction','input','atendimento'].includes(action.type)){
-        const output=interaction(c,state);messages.push({author:'bot',kind:'BUSINESS',text:output.text,choices:output.choices,list:output.list,actionId:active});
+        const output=interaction(c,state);messages.push({author:'bot',kind:'BUSINESS',text:output.text,choices:output.choices,list:output.list,...(output.channelPayload?{channelPayload:output.channelPayload}:{}),actionId:active});
         if(action.type==='atendimento'||action.type==='input'||output.choices.length){session.waiting_action_id=active;session.waiting_state=action.type==='atendimento'?'HUMAN_HANDOFF':output.choices.length?'CHOICE':'INPUT';break;}
       }else if(action.type==='router')next=await router(action,state);
       else if(action.type==='typescript'){const result=await executeScript(c.script??'',state);if(result.ok)state=result.user;for(const log of result.logs)debug(`console: ${log}`);if(!result.ok)debug(`Erro no script: ${result.error}`);}
@@ -107,7 +116,10 @@ export async function processFlow(store,body,actor,{contractId,resumeIntent,oper
           response=await externalRequest(url,{method:c.method??'GET',headers,body:requestBody,timeout:5000});debug(`Consulta concluída (status ${response.status}).`);
         }catch(error){debug(`Não foi possível consultar a API. ${error.message}`);}
         if(c.responseBodyVariable)setVariable(state,c.responseBodyVariable,response.data);if(c.responseStatusVariable)setVariable(state,c.responseStatusVariable,response.status);
-      }else if(action.type==='email')debug(`Simulação de email para ${interpolate(c.to,state)}: ${interpolate(c.subject,state)}`);
+      }else if(action.type==='email'){
+        if (!contractId) debug(`Simulação de e-mail (sem envio): ${interpolate(c.subject,state)}`);
+        else { await sendFlowEmail(store,contract.id,c,value=>interpolate(value,state)); debug('E-mail enviado.'); }
+      }
       else if(action.type==='flow_swap'){
         resolved=await resolveDefinition(store,{flowId:c.targetFlowId,versionMode:session.version_status==='PUBLISHED'?'PUBLISHED':'DRAFT'},contract.id);actions=resolved.definition.actions;
         if(!actions.some(a=>a.id===c.targetActionId))throw new HttpError(400,'Ação de destino não encontrada.');

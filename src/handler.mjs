@@ -39,6 +39,7 @@ export async function handler(event) {
       timestamp: new Date().toISOString(), status,
       message: error instanceof HttpError ? error.message : 'Erro interno no portal-bff.',
       path: command?.rawPath ?? '/commands',
+      ...(error instanceof HttpError && error.issues ? {issues:error.issues} : {}),
     });
   }
 }

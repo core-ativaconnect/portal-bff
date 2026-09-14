@@ -1050,7 +1050,9 @@
                   "value": {
                     "path": "/api/v1/flows/11111111-1111-4111-8111-111111111111/publish",
                     "method": "POST",
-                    "body-data": {}
+                    "body-data": {
+                      "definitionJson": "exemplo"
+                    }
                   }
                 },
                 "FlowController.listVersions": {
@@ -1309,7 +1311,9 @@
                   "value": {
                     "path": "/api/v1/platform/contracts/empresa-exemplo/flows/empresa-exemplo/publish",
                     "method": "POST",
-                    "body-data": {}
+                    "body-data": {
+                      "definitionJson": "exemplo"
+                    }
                   }
                 },
                 "PlatformController.listVersions": {
@@ -2318,6 +2322,16 @@
           },
           "409": {
             "description": "Conflito ou registro em exclusão",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Fluxo inválido para publicação; consulte issues",
             "content": {
               "application/json": {
                 "schema": {
@@ -3521,7 +3535,7 @@
             "method": "POST",
             "path": "/api/v1/flows/{id}/publish",
             "access": "OWNER",
-            "requestSchema": "EmptyBody",
+            "requestSchema": "FlowPublishRequest",
             "responseSchema": {
               "$ref": "#/components/schemas/FlowResponse"
             },
@@ -4374,7 +4388,7 @@
             "method": "POST",
             "path": "/api/v1/platform/contracts/{contractSlug}/flows/{flowSlug}/publish",
             "access": "AUTHENTICATED",
-            "requestSchema": "EmptyBody",
+            "requestSchema": "FlowPublishRequest",
             "responseSchema": {
               "$ref": "#/components/schemas/FlowResponse"
             },
@@ -5501,6 +5515,16 @@
               }
             }
           },
+          "422": {
+            "description": "Fluxo inválido para publicação; consulte issues",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
           "500": {
             "description": "Falha interna",
             "content": {
@@ -5643,6 +5667,16 @@
               }
             }
           },
+          "422": {
+            "description": "Fluxo inválido para publicação; consulte issues",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
           "500": {
             "description": "Falha interna",
             "content": {
@@ -5766,6 +5800,16 @@
           },
           "409": {
             "description": "Conflito ou registro em exclusão",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Fluxo inválido para publicação; consulte issues",
             "content": {
               "application/json": {
                 "schema": {
@@ -5903,6 +5947,16 @@
           },
           "409": {
             "description": "Conflito ou registro em exclusão",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Fluxo inválido para publicação; consulte issues",
             "content": {
               "application/json": {
                 "schema": {
@@ -6051,6 +6105,16 @@
               }
             }
           },
+          "422": {
+            "description": "Fluxo inválido para publicação; consulte issues",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
           "500": {
             "description": "Falha interna",
             "content": {
@@ -6183,6 +6247,16 @@
           },
           "409": {
             "description": "Conflito ou registro em exclusão",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Fluxo inválido para publicação; consulte issues",
             "content": {
               "application/json": {
                 "schema": {
@@ -6331,6 +6405,16 @@
               }
             }
           },
+          "422": {
+            "description": "Fluxo inválido para publicação; consulte issues",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
           "500": {
             "description": "Falha interna",
             "content": {
@@ -6463,6 +6547,16 @@
           },
           "409": {
             "description": "Conflito ou registro em exclusão",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Fluxo inválido para publicação; consulte issues",
             "content": {
               "application/json": {
                 "schema": {
@@ -6616,6 +6710,16 @@
               }
             }
           },
+          "422": {
+            "description": "Fluxo inválido para publicação; consulte issues",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
           "500": {
             "description": "Falha interna",
             "content": {
@@ -6761,6 +6865,16 @@
               }
             }
           },
+          "422": {
+            "description": "Fluxo inválido para publicação; consulte issues",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
           "500": {
             "description": "Falha interna",
             "content": {
@@ -6898,6 +7012,16 @@
           },
           "409": {
             "description": "Conflito ou registro em exclusão",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Fluxo inválido para publicação; consulte issues",
             "content": {
               "application/json": {
                 "schema": {
@@ -7116,6 +7240,16 @@
               }
             }
           },
+          "422": {
+            "description": "Fluxo inválido para publicação; consulte issues",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
           "500": {
             "description": "Falha interna",
             "content": {
@@ -7251,6 +7385,16 @@
           },
           "409": {
             "description": "Conflito ou registro em exclusão",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Fluxo inválido para publicação; consulte issues",
             "content": {
               "application/json": {
                 "schema": {
@@ -7417,6 +7561,16 @@
               }
             }
           },
+          "422": {
+            "description": "Fluxo inválido para publicação; consulte issues",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
           "500": {
             "description": "Falha interna",
             "content": {
@@ -7554,6 +7708,16 @@
           },
           "409": {
             "description": "Conflito ou registro em exclusão",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Fluxo inválido para publicação; consulte issues",
             "content": {
               "application/json": {
                 "schema": {
@@ -10265,6 +10429,28 @@
           },
           "path": {
             "type": "string"
+          },
+          "issues": {
+            "type": "array",
+            "description": "Problemas de publicação (HTTP 422).",
+            "items": {
+              "type": "object",
+              "properties": {
+                "actionId": {
+                  "type": "string",
+                  "nullable": true
+                },
+                "actionName": {
+                  "type": "string"
+                },
+                "field": {
+                  "type": "string"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
           }
         },
         "required": [
@@ -10819,6 +11005,15 @@
             "items": {
               "$ref": "#/components/schemas/MonthlyUsage"
             }
+          }
+        }
+      },
+      "FlowPublishRequest": {
+        "type": "object",
+        "properties": {
+          "definitionJson": {
+            "type": "string",
+            "description": "Definição atual do editor. Se omitida, publica o rascunho salvo."
           }
         }
       },
@@ -14388,7 +14583,7 @@
             ]
           },
           "body-data": {
-            "$ref": "#/components/schemas/EmptyBody"
+            "$ref": "#/components/schemas/FlowPublishRequest"
           }
         },
         "required": [
@@ -14409,7 +14604,9 @@
         "example": {
           "path": "/api/v1/flows/11111111-1111-4111-8111-111111111111/publish",
           "method": "POST",
-          "body-data": {}
+          "body-data": {
+            "definitionJson": "exemplo"
+          }
         },
         "x-access": "OWNER",
         "x-logical-parameters": [
@@ -16368,7 +16565,7 @@
             ]
           },
           "body-data": {
-            "$ref": "#/components/schemas/EmptyBody"
+            "$ref": "#/components/schemas/FlowPublishRequest"
           }
         },
         "required": [
@@ -16389,7 +16586,9 @@
         "example": {
           "path": "/api/v1/platform/contracts/empresa-exemplo/flows/empresa-exemplo/publish",
           "method": "POST",
-          "body-data": {}
+          "body-data": {
+            "definitionJson": "exemplo"
+          }
         },
         "x-access": "AUTHENTICATED",
         "x-logical-parameters": [

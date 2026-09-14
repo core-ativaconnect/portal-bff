@@ -18,7 +18,7 @@ const auth=r=>r.access==='PUBLIC'&&r.controller!=='FlowProcessingController';
 const contract=r=>operationContracts[key(r)]??extras[key(r)];
 const needsJob=r=>r.controller==='ContractDeleteController'||r.operation==='generateAiDraft'||r.controller==='Jobs';
 const content=schema=>({'application/json':{schema}});
-const errorResponses=()=>Object.fromEntries([400,401,403,404,405,409,500,502,503,504].map(code=>[code,{description:({400:'Entrada inválida',401:'Autenticação ausente ou inválida',403:'Acesso negado',404:'Recurso ou comando não encontrado',405:'Método não permitido',409:'Conflito ou registro em exclusão',500:'Falha interna',502:'Falha da integração externa',503:'Serviço indisponível',504:'Tempo de execução excedido'})[code],content:content(ref('ApiError'))}]));
+const errorResponses=()=>Object.fromEntries([400,401,403,404,405,409,422,500,502,503,504].map(code=>[code,{description:({400:'Entrada inválida',401:'Autenticação ausente ou inválida',403:'Acesso negado',404:'Recurso ou comando não encontrado',405:'Método não permitido',409:'Conflito ou registro em exclusão',422:'Fluxo inválido para publicação; consulte issues',500:'Falha interna',502:'Falha da integração externa',503:'Serviço indisponível',504:'Tempo de execução excedido'})[code],content:content(ref('ApiError'))}]));
 
 export const commandCatalog=[...routes,...extraRoutes].map(route=>{
   const definition=contract(route);if(!definition)throw new Error(`Missing documentation for ${key(route)}`);

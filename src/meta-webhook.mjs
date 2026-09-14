@@ -6,8 +6,11 @@ import { runContactFlow } from './channel-runtime.mjs';
 import { sendText } from './messages.mjs';
 import {applyMetaStatus, persistMessage, updateSummary} from './runtime-records.mjs';
 import {admitContact} from './billing.mjs';
+import {trace} from './channel-debug.mjs';
 
 const hash = value => createHash('sha256').update(value).digest('hex');
+const traceId=(phoneId,eventId)=>`wa-${hash(`${phoneId}:${eventId}`).slice(0,16)}`;
+const serviceLog=(event,fields={})=>console.info(JSON.stringify({service:'meta-webhook',event,...fields}));
 const same = (a,b) => typeof a === 'string' && typeof b === 'string' && Buffer.byteLength(a) === Buffer.byteLength(b) && timingSafeEqual(Buffer.from(a),Buffer.from(b));
 const plain = (statusCode, body) => ({statusCode,headers:{'content-type':'text/plain; charset=utf-8','cache-control':'no-store'},body});
 export const inboundText = message => message.text?.body ?? message.button?.text ?? message.button?.payload
@@ -30,11 +33,11 @@ export async function deliveries(store, payload, raw, signature, secrets) {
       const phone=must((await store.query('whatsapp_phone_numbers','meta_phone_key',phoneId,{index:'meta_phone-index'}).then(rows=>rows.filter(p=>p.waba_config_id===waba.id)))[0]);
       for(const message of value.messages??[]){
         if(!message.id||!message.from)throw new HttpError(400,'Mensagem Meta inválida.');
-        result.push({phoneId:phone.id,wabaId:waba.id,message,profile:value.contacts?.find(c=>c.wa_id===message.from)?.profile});
+        result.push({phoneId:phone.id,wabaId:waba.id,traceId:traceId(phone.id,message.id),message,profile:value.contacts?.find(c=>c.wa_id===message.from)?.profile});
       }
       for(const status of value.statuses??[]){
         if(!status.id||!status.recipient_id)throw new HttpError(400,'Status Meta inválido.');
-        result.push({phoneId:phone.id,wabaId:waba.id,status});
+        result.push({phoneId:phone.id,wabaId:waba.id,traceId:traceId(phone.id,status.id),status});
       }
     }
   }
@@ -58,8 +61,13 @@ export async function handler(event,_context,dependencies={}){
     const signature=Object.entries(event.headers??{}).find(([key])=>key.toLowerCase()==='x-hub-signature-256')?.[1];
     const secrets=dependencies.secrets??JSON.parse(process.env.APP_WHATSAPP_META_APP_SECRETS||'{}');
     const events=await deliveries(store,payload,raw,signature,secrets);
+    serviceLog('webhook.validated',{requestId:event.requestContext?.requestId??null,deliveries:events.length});
     // All entries are authenticated before any is accepted for processing.
     for(const delivery of events){
+      // The diagnostic lookup is best-effort: it must never prevent Meta from
+      // receiving its acknowledgement or a delivery from entering the queue.
+      const channel=await channelForPhone(store,delivery.phoneId).catch(()=>null);
+      await trace(store,channel,'webhook.validated',{traceId:delivery.traceId,kind:delivery.status?'STATUS':'MESSAGE'});
       if(dependencies.enqueue)await dependencies.enqueue(delivery);
       else if(process.env.IS_OFFLINE)await processDelivery(delivery,store);
       else{
@@ -68,6 +76,8 @@ export async function handler(event,_context,dependencies={}){
         await new SQSClient({region:store.settings.region}).send(new SendMessageCommand({QueueUrl:process.env.PORTAL_META_QUEUE_URL,
           MessageBody:body,MessageGroupId:hash(`${delivery.phoneId}:${delivery.message?.from??delivery.status.recipient_id}`),MessageDeduplicationId:hash(body)}));
       }
+      await trace(store,channel,'webhook.queued',{traceId:delivery.traceId,transport:process.env.IS_OFFLINE?'INLINE':'SQS'});
+      serviceLog('webhook.queued',{traceId:delivery.traceId,kind:delivery.status?'STATUS':'MESSAGE'});
     }
     return plain(200,'EVENT_RECEIVED');
   }catch(error){
@@ -76,17 +86,33 @@ export async function handler(event,_context,dependencies={}){
   }finally{store.reportMetrics?.('meta.ingress');}
 }
 
+async function channelForPhone(store,phoneId){
+  const candidates=await store.query('contract_channels','phone_key',phoneId,{index:'phone-index'});
+  for(const candidate of candidates){
+    const channel=await store.get('contract_channels',{id:candidate.id});
+    if(channel?.type==='WHATSAPP'&&channel.whatsapp_phone_number_id===phoneId)return channel;
+  }
+  return null;
+}
+
 export async function processDelivery(delivery,store=new Store(),dependencies={}){
   const phone=must(await store.get('whatsapp_phone_numbers',{id:delivery.phoneId}));
   if(phone.waba_config_id!==delivery.wabaId)throw new HttpError(409,'Vínculo WABA alterado.');
-  if(delivery.status)return applyMetaStatus(store,phone.id,delivery.status);
-  const candidates=await store.query('contract_channels','phone_key',phone.id,{index:'phone-index'});
-  let channel;
-  for(const candidate of candidates){
-    const current=await store.get('contract_channels',{id:candidate.id});
-    if(current?.type==='WHATSAPP'&&current.whatsapp_phone_number_id===phone.id){channel=current;break;}
+  serviceLog('worker.started',{traceId:delivery.traceId,kind:delivery.status?'STATUS':'MESSAGE'});
+  if(delivery.status){
+    const ref=await store.get('runtime_records',{pk:`META#${phone.id}`,sk:`MESSAGE#${delivery.status.id}`});
+    const channel=ref?await store.get('contract_channels',{id:ref.channel_id}):null;
+    await trace(store,channel,'worker.started',{traceId:delivery.traceId,kind:'STATUS'});
+    await trace(store,channel,'whatsapp.status.received',{traceId:delivery.traceId,messageId:delivery.status.id,status:delivery.status.status,recipientId:delivery.status.recipient_id,errors:delivery.status.errors??[]});
+    const result=await applyMetaStatus(store,phone.id,delivery.status);
+    await trace(store,channel,'whatsapp.status.applied',{traceId:delivery.traceId,messageId:delivery.status.id,status:delivery.status.status});
+    serviceLog('worker.completed',{traceId:delivery.traceId,kind:'STATUS'});
+    return result;
   }
-  if(!channel){if(candidates.length)throw new HttpError(503,'Channel binding is updating.');return;}
+  const channel=await channelForPhone(store,phone.id);
+  if(!channel){const candidates=await store.query('contract_channels','phone_key',phone.id,{index:'phone-index'});if(candidates.length)throw new HttpError(503,'Channel binding is updating.');return;}
+  await trace(store,channel,'worker.started',{traceId:delivery.traceId,kind:'MESSAGE'});
+  await trace(store,channel,'webhook.message.received',{traceId:delivery.traceId,messageId:delivery.message.id,from:delivery.message.from,type:delivery.message.type});
   const contract=must(await store.get('contracts',{id:channel.contract_id}));
   const today=now().slice(0,10);
   if(contract.deletion_in_progress||contract.status!=='ACTIVE'||contract.start_date>today||contract.end_date<today)return;
@@ -112,12 +138,13 @@ export async function processDelivery(delivery,store=new Store(),dependencies={}
   };
   try{
     const admission=await admitContact(store,contract.id,channel,{wa_id:message.from},job.created_at);
-    if(!admission.allowed){job.state='COMPLETED';job.blocked_reason='MAU_LIMIT';delete job.lease_until;await checkpoint();return;}
+    if(!admission.allowed){await trace(store,channel,'flow.blocked',{reason:'MAU_LIMIT'});job.state='COMPLETED';job.blocked_reason='MAU_LIMIT';delete job.lease_until;await checkpoint();return;}
     let contact=await store.get('engine_contacts',{contact_id:hash(`${channel.id}:${message.from}`)});
     if(!contact)contact=(await store.query('engine_contacts','wa_id',message.from,{index:'wa_id-index'})).find(c=>!c.channel_id||c.channel_id===channel.id);
     if(!contact)contact=(await store.query('engine_contacts','user_id',message.from,{index:'user_id-index'})).find(c=>!c.channel_id||c.channel_id===channel.id);
     if(!contact){contact={contact_id:hash(`${channel.id}:${message.from}`),channel_id:channel.id,user_id:message.from,wa_id:message.from,username:delivery.profile?.name??message.from,created_at:now(),updated_at:now()};
       await store.transaction([store.guard(contract.id),store.putOperation('engine_contacts',contact)]);}
+    await trace(store,channel,'contact.resolved',{contactId:contact.contact_id,created:!contact.created_at?false:contact.created_at===contact.updated_at});
     const existing=await store.get('engine_messages',{contact_id:contact.contact_id,message_id:message.id});
     if(!existing){
       await persistMessage(store,{
@@ -128,19 +155,22 @@ export async function processDelivery(delivery,store=new Store(),dependencies={}
         occurred_at:message.timestamp?new Date(Number(message.timestamp)*1000).toISOString():now(),updated_at:now()});
     }
     if(existing)await updateSummary(store,existing);
+    await trace(store,channel,'message.persisted',{traceId:delivery.traceId,messageId:message.id,direction:'INBOUND',existing:!!existing});
     if(!job.processed){
       const response=await (dependencies.runFlow??runContactFlow)(store,contract,channel,contact,inboundText(message),`${id}-engine`);
+      await trace(store,channel,'flow.processed',{traceId:delivery.traceId,flowId:response?.flowId??null,completed:response?.completed??null,waitingState:response?.waitingState??null,outboundMessages:response?.messages?.filter(m=>m.kind==='BUSINESS').length??0});
       job.processed=true;job.messages=response?.messages.filter(m=>m.kind==='BUSINESS')??[];job.sent_count=0;
       await checkpoint();
     }
-    const deliveryContext={};
+    const deliveryContext={traceId:delivery.traceId};
     for(let index=job.sent_count;index<job.messages.length;index++){
       const outgoing=job.messages[index];
       await (dependencies.send??sendText)(store,contract,channel,contact,outgoing.text||'Continuando atendimento.','BUSINESS',outgoing,deliveryContext);
       job.sent_count=index+1;await checkpoint();
     }
     job.state='COMPLETED';delete job.lease_until;delete job.messages;await checkpoint();
-  }catch(error){delete job.lease_until;await checkpoint().catch(()=>{});throw error;}
+    await trace(store,channel,'delivery.completed',{traceId:delivery.traceId,jobId:id});serviceLog('worker.completed',{traceId:delivery.traceId,kind:'MESSAGE'});
+  }catch(error){await trace(store,channel,'delivery.failed',{traceId:delivery.traceId,jobId:id,message:error?.message??'Erro desconhecido',status:error?.status??null});serviceLog('worker.failed',{traceId:delivery.traceId,status:error?.status??500});delete job.lease_until;await checkpoint().catch(()=>{});throw error;}
 }
 
 export async function worker(event){

@@ -593,6 +593,22 @@
   },
   {
     "method": "GET",
+    "path": "/api/v1/platform/contracts/{contractSlug}/channels/{channelSlug}/debug/traces",
+    "access": "AUTHENTICATED",
+    "controller": "PlatformChannelController",
+    "operation": "listDebugTraces",
+    "source": "channel diagnostics"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/v1/platform/contracts/{contractSlug}/channels/{channelSlug}/debug",
+    "access": "AUTHENTICATED",
+    "controller": "PlatformChannelController",
+    "operation": "setDebug",
+    "source": "channel diagnostics"
+  },
+  {
+    "method": "GET",
     "path": "/api/v1/platform/contracts/{contractSlug}/channels/{channelSlug}/contacts/{contactId}/messages",
     "access": "AUTHENTICATED",
     "controller": "PlatformChannelController",

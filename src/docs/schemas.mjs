@@ -116,3 +116,8 @@ export function exampleFor(name){
 }
 
 operationContracts['PackageController.delete']={request:null,response:null,query:[]};
+
+// Publication accepts the current editor snapshot; omission publishes the saved draft.
+schemas.FlowPublishRequest = {type:'object',properties:{definitionJson:{type:'string',description:'Definição atual do editor. Se omitida, publica o rascunho salvo.'}}};
+for(const key of ['FlowController.publish','PlatformController.publishFlow']) operationContracts[key].request='FlowPublishRequest';
+schemas.ApiError.properties.issues={type:'array',description:'Problemas de publicação (HTTP 422).',items:{type:'object',properties:{actionId:{type:'string',nullable:true},actionName:{type:'string'},field:{type:'string'},message:{type:'string'}}}};

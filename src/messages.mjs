@@ -3,6 +3,7 @@ import { HttpError } from './command.mjs';
 import { must, now, pick, fromItem, required } from './store.mjs';
 import { graph } from './whatsapp.mjs';
 import {persistMessage,conversationPage,conversationKey,pageOptions,pageResult,runtimeTable} from './runtime-records.mjs';
+import {trace} from './channel-debug.mjs';
 export function messageResponse(item){return{...pick(fromItem(item),['messageId','direction','messageKind','messageType','messagePayloadJson','status','contactId','contactName','contactUserId','contactWaId','occurredAt']),text:item.message_text??''};}
 export async function conversation(store,channel,contactId){return(await store.query('engine_messages','contact_id',contactId).then(rows=>rows.filter(m=>m.channel_id===channel.id))).sort((a,b)=>a.occurred_at.localeCompare(b.occurred_at)).map(messageResponse);}
 export async function channelMessages(store,operation,params,contract,query){
@@ -29,12 +30,17 @@ export async function sendText(store,contract,channel,contact,text,kind='BUSINES
     })();
     const {phone,app}=await deliveryContext.transport;
     phoneId=phone.id;
-    const response=await graph(`${encodeURIComponent(phone.meta_phone_number_id)}/messages`,app.access_token,{method:'POST',body:{messaging_product:'whatsapp',to:contact.wa_id||contact.user_id,...payload}});
-    messageId=must(response.messages?.[0]?.id,'A Meta não confirmou a mensagem.');
+    await trace(store,channel,'whatsapp.send.request',{traceId:deliveryContext.traceId??null,to:contact.wa_id||contact.user_id,messageType:payload.type});
+    try{
+      const response=await graph(`${encodeURIComponent(phone.meta_phone_number_id)}/messages`,app.access_token,{method:'POST',body:{messaging_product:'whatsapp',to:contact.wa_id||contact.user_id,...payload}});
+      messageId=must(response.messages?.[0]?.id,'A Meta não confirmou a mensagem.');
+      await trace(store,channel,'whatsapp.send.accepted',{traceId:deliveryContext.traceId??null,messageId,messageType:payload.type});
+    }catch(error){await trace(store,channel,'whatsapp.send.failed',{traceId:deliveryContext.traceId??null,message:error?.message??'Erro desconhecido',status:error?.status??null});throw error;}
   }
   const timestamp=now(),item={contact_id:contact.contact_id,message_id:messageId,contract_id:contract.id,contract_slug:contract.slug,channel_id:channel.id,channel_slug:channel.slug,direction:'OUTBOUND',message_kind:kind,message_type:payload.type==='interactive'?payload.interactive.type:payload.type,message_text:text,message_payload_json:JSON.stringify({text:{body:text}}),contact_user_id:contact.user_id,contact_wa_id:contact.wa_id,contact_name:contact.username||contact.name,status,occurred_at:timestamp,updated_at:timestamp};
   if(flowMessage)item.message_payload_json=JSON.stringify(flowMessage);
   await persistMessage(store,item,phoneId);
+  await trace(store,channel,'message.persisted',{traceId:deliveryContext.traceId??null,messageId,direction:'OUTBOUND',status});
   if(channel.type==='WEBCHAT'){
     const {broadcast}=await import('./websocket.mjs');
     await broadcast(store,channel.id,contact.contact_id,{id:messageId,kind,text,choices:flowMessage?.choices??[],list:flowMessage?.list??null,occurredAt:timestamp});

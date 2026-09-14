@@ -4,6 +4,7 @@ import { HttpError } from './command.mjs';
 import { must, now, required, fromItem, pick } from './store.mjs';
 import { slugify, writable } from './contracts.mjs';
 import { phoneResponse, wabaResponse } from './whatsapp.mjs';
+import {listTraces} from './channel-debug.mjs';
 
 const table='contract_channels',linksTable='contract_channel_flows',transferTable='whatsapp_phone_transfer_requests';
 export async function channelPhone(store,phone) {
@@ -27,7 +28,7 @@ export async function channelResponse(store,channel,contract) {
   for(const link of links){const flow=await store.get('flows',{id:link.flow_id});if(flow)flows.push({id:link.id,flowId:flow.id,name:flow.name,slug:flow.slug,path:`/plataform/${contract.slug}/fluxos/${flow.slug}`,primary:link.is_primary,linkedAt:link.created_at});}
   const phone=channel.whatsapp_phone_number_id?await store.get('whatsapp_phone_numbers',{id:channel.whatsapp_phone_number_id}):null;
   const pending=(await store.list(transferTable,t=>t.target_channel_id===channel.id&&t.status==='PENDING'))[0];
-  return{...pick(fromItem(channel),['id','contractId','name','slug','type','status','createdAt','updatedAt']),contractSlug:contract.slug,path:`/plataform/${contract.slug}/canais/${channel.slug}`,flowsPath:`/plataform/${contract.slug}/canais/${channel.slug}/fluxos`,agentName:channel.webchat_agent_name??null,whatsAppPhoneNumber:await channelPhone(store,phone),pendingTransferRequest:pending?await transferResponse(store,pending):null,linkedFlowCount:flows.length,primaryFlow:flows.find(f=>f.primary)??null,flows};
+  return{...pick(fromItem(channel),['id','contractId','name','slug','type','status','createdAt','updatedAt']),contractSlug:contract.slug,path:`/plataform/${contract.slug}/canais/${channel.slug}`,flowsPath:`/plataform/${contract.slug}/canais/${channel.slug}/fluxos`,agentName:channel.webchat_agent_name??null,debugEnabled:!!channel.debug_enabled,whatsAppPhoneNumber:await channelPhone(store,phone),pendingTransferRequest:pending?await transferResponse(store,pending):null,linkedFlowCount:flows.length,primaryFlow:flows.find(f=>f.primary)??null,flows};
 }
 function channelItem(item){return{...item,updated_at:now(),contract_key:item.contract_id,name_sort:`${item.name.toLowerCase()}#${item.id}`,contract_slug_key:`${item.contract_id}#${item.slug}`,phone_key:item.whatsapp_phone_number_id??undefined,webchat_agent_key:item.webchat_agent_name?.toLowerCase()};}
 function reserveAgent(store,item){return store.putOperation(table,{id:`AGENT#${item.webchat_agent_key}`,channel_id:item.id,owner_contract_id:item.contract_id},'attribute_not_exists(id) OR channel_id = :id',{':id':item.id});}
@@ -89,6 +90,12 @@ export async function channelOperation(store,operation,body,params,actor,contrac
   const channel=must(params.channelSlug?(await store.list(table,c=>c.contract_id===contract.id&&c.slug===params.channelSlug))[0]:await store.get(table,{id:params.channelId}));
   if(channel.contract_id!==contract.id)throw new HttpError(404,'Canal não encontrado.');
   if(operation==='find')return channelResponse(store,channel,contract);
+  if(operation==='listDebugTraces')return listTraces(store,channel,body?.limit);
+  if(operation==='setDebug'){
+    const updated=channelItem({...channel,debug_enabled:body?.enabled===true});
+    await store.transaction([store.advanceContract(contract),store.putOperation(table,updated,'updated_at = :previous',{':previous':channel.updated_at})]);
+    return channelResponse(store,updated,contract);
+  }
   if(operation==='updatePhone')return bindPhone(store,channel,contract,body.whatsAppPhoneNumberId,actor);
   if(operation==='updateFlows') {
     const links=await store.list(linksTable,l=>l.channel_id===channel.id),operations=[store.advanceContract(contract),...links.map(l=>store.deleteOperation(linksTable,{id:l.id}))];

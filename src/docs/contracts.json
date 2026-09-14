@@ -2677,6 +2677,16 @@
         }
       ]
     },
+    "PlatformChannelController.listDebugTraces": {
+      "request": null,
+      "response": {"type":"array","items":{"type":"object","properties":{"id":{"type":"string"},"timestamp":{"type":"string"},"event":{"type":"string"},"details":{"type":"object"}}}},
+      "query": []
+    },
+    "PlatformChannelController.setDebug": {
+      "request": null,
+      "response": {"$ref":"#/components/schemas/ChannelResponse"},
+      "query": []
+    },
     "PlatformChannelController.updateFlows": {
       "request": "ChannelFlowBindingsRequest",
       "response": {

@@ -17,7 +17,7 @@ test('webchat, human handoff, assignment, messaging, release and closure without
     await invoke(`${base}/help-desk/attendants`,'PUT',{userIds:[auth.user.id]});
     const tag=await invoke(`${base}/help-desk/close-intents`,'POST',{name:'Resolvido',intentKey:'RESOLVIDO',enabled:true});
     const queue=await invoke(`${base}/help-desk/queues`,'POST',{name:'Suporte',tagKeys:[tag.intentKey],attendantUserIds:[auth.user.id],enabled:true});
-    const definition={actions:[{id:'desk',type:'atendimento',config:{message:'Aguarde um atendente.',queueId:queue.id,intentVariable:'user.reason',attendantFinishActionId:'done'},nextActionId:null},{id:'done',type:'interaction',config:{message:'Encerrado: {{user.reason}}'},nextActionId:null}]};
+    const definition={entryActionId:'desk',actions:[{id:'desk',type:'atendimento',config:{message:'Aguarde um atendente.',queueId:queue.id,intentVariable:'user.reason',attendantFinishActionId:'done'},nextActionId:null},{id:'done',type:'interaction',config:{message:'Encerrado: {{user.reason}}'},nextActionId:null}]};
     const flow=await invoke(`${base}/flows`,'POST',{name:'Atendimento',definitionJson:JSON.stringify(definition)});await invoke(`${base}/flows/${flow.slug}/publish`,'POST');
     const agentName=`desk-agent-${suffix}`,channel=await invoke(`${base}/channels`,'POST',{name:'Chat',type:'WEBCHAT',agentName});await invoke(`${base}/channels/${channel.slug}/flows`,'PUT',{primaryFlowId:flow.id});
     const chat=await invoke('/api/v1/public/webchat','POST',{type:'connect',agentName,contactName:'Visitante'},null);contactId=chat.contactId;assert.ok(chat.contactToken);assert.ok(chat.messages.some(m=>m.text==='Aguarde um atendente.'));

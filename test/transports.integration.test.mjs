@@ -23,7 +23,7 @@ test('DynamoDB: WebSocket session, Desk isolation, WhatsApp processing/retry/sta
     const base=`/api/v1/platform/contracts/${company.slug}`;
     await invoke(`${base}/help-desk/attendants`,'PUT',{userIds:[auth.user.id]});
     const queue=await invoke(`${base}/help-desk/queues`,'POST',{name:'Support',enabled:true,attendantUserIds:[auth.user.id],tagKeys:[]});
-    const definition={actions:[{id:'ask',type:'input',config:{message:'Qual seu nome?',userVariable:'user.name'},nextActionId:'desk'},
+    const definition={entryActionId:'ask',actions:[{id:'ask',type:'input',config:{message:'Qual seu nome?',userVariable:'user.name'},nextActionId:'desk'},
       {id:'desk',type:'atendimento',config:{message:'Aguarde {{user.name}}',queueId:queue.id},nextActionId:null}]};
     const flow=await invoke(`${base}/flows`,'POST',{name:'Support',definitionJson:JSON.stringify(definition)});
     await invoke(`${base}/flows/${flow.slug}/publish`,'POST');

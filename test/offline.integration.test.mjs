@@ -32,7 +32,7 @@ test('Offline: real HTTP Desk and WebSocket receive an attendant reply and recon
     const base=`/api/v1/platform/contracts/${company.slug}`;
     await call(`${base}/help-desk/attendants`,'PUT',{userIds:[auth.user.id]});
     const queue=await call(`${base}/help-desk/queues`,'POST',{name:'Support',enabled:true,attendantUserIds:[auth.user.id]});
-    const flow=await call(`${base}/flows`,'POST',{name:'Desk',definitionJson:JSON.stringify({actions:[{id:'desk',type:'atendimento',config:{message:'Aguarde atendimento',queueId:queue.id},nextActionId:null}]})});
+    const flow=await call(`${base}/flows`,'POST',{name:'Desk',definitionJson:JSON.stringify({entryActionId:'desk',actions:[{id:'desk',type:'atendimento',config:{message:'Aguarde atendimento',queueId:queue.id},nextActionId:null}]})});
     await call(`${base}/flows/${flow.slug}/publish`,'POST');
     const agentName=`live-${suffix}`,channel=await call(`${base}/channels`,'POST',{name:'Chat',type:'WEBCHAT',agentName});
     await call(`${base}/channels/${channel.slug}/flows`,'PUT',{primaryFlowId:flow.id});

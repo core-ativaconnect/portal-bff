@@ -19,7 +19,7 @@ test('native portal: tenant isolation, flows, versions, engine, channels and cas
     await assert.rejects(invoke('/api/v1/contracts'),e=>e.status===403);
     other=await invoke('/api/v1/auth/register','POST',{name:'Other tenant',email:`other-${address}`,password:'password-123'});
     await assert.rejects(invoke(base,'GET',{},other),e=>e.status===404);
-    const definition={name:'Teste',actions:[{id:'ask',type:'input',config:{message:'Qual seu nome?',userVariable:'user.name'},nextActionId:'script'},{id:'script',type:'typescript',config:{script:'user.greeting = "Olá " + user.name;'},nextActionId:'answer'},{id:'answer',type:'interaction',config:{message:'{{user.greeting}}'},nextActionId:null}]};
+    const definition={name:'Teste',entryActionId:'ask',actions:[{id:'ask',type:'input',config:{message:'Qual seu nome?',userVariable:'user.name'},nextActionId:'script'},{id:'script',type:'typescript',config:{script:'user.greeting = "Olá " + user.name;'},nextActionId:'answer'},{id:'answer',type:'interaction',config:{message:'{{user.greeting}}'},nextActionId:null}]};
     const flow=await invoke(`${base}/flows`,'POST',{name:'Teste',definitionJson:JSON.stringify(definition)});
     assert.equal(flow.versions.length,1);assert.equal(flow.draftVersion.status,'DRAFT');
     await assert.rejects(invoke(`${base}/flows`,'POST',{name:'Extra'}),e=>e.status===400);

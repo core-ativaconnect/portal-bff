@@ -11,7 +11,7 @@ const object=(properties,required=[])=>({type:'object',properties,...(required.l
 
 const requiredFields={
   BlogPostRequest:['slug','title','pillar','audience','author'],BlogImportRequest:['posts'],BlogSettingsRequest:['navigation'],BlogMenuItemRequest:['label','href'],
-  StaticPageRequest:['path','title'],WhatsAppAppRequest:['name','appId','accessToken','verifyToken'],WhatsAppWabaRequest:['name','wabaId','appConfigId'],
+  StaticPageRequest:['path','title'],WhatsAppAppRequest:['name','appId','accessToken','verifyToken','appSecret'],WhatsAppWabaRequest:['name','wabaId','appConfigId'],
   LoginRequest:['email','password'],RegisterRequest:['name','email','password'],ChannelRequest:['name','type'],ChannelUpdateRequest:['name'],ChannelPhoneBindingRequest:['whatsAppPhoneNumberId'],
   ContractRequest:['companyName','cnpj','contactEmail','contactPhone','address','neighborhood','city','state','zipCode','startDate','endDate','maxFlowCount','maxChannelCount'],
   ContractAccessRequest:['email'],ContractAiProviderRequest:['name','providerType','model','apiKey','maxInputTokens','maxOutputTokens','temperature','enabled'],
@@ -39,6 +39,7 @@ schemas.ContractEmailConnectionRequest.description='GMAIL e OUTLOOK usam presets
 schemas.ChannelUpdateRequest.description='Ao atualizar WEBCHAT, informe agentName; ao atualizar WHATSAPP, informe whatsAppPhoneNumberId.';
 prop('WhatsAppAppRequest','accessToken',{writeOnly:true,format:'password'});
 prop('WhatsAppAppRequest','verifyToken',{writeOnly:true});
+prop('WhatsAppAppRequest','appSecret',{writeOnly:true,format:'password'});
 prop('ContractAiProviderRequest','apiKey',{writeOnly:true,format:'password'});
 prop('UserRoleUpdateRequest','role',{enum:['OWNER','USER']});
 for(const name of ['BlogPostRequest','BlogPostResponse','BlogPostSummaryResponse']){

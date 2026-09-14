@@ -43,7 +43,7 @@ export async function whatsappOperation(store,operation,body,params) {
     return{wabaId:waba.waba_id,wabaName:waba.name,appId:app.app_id,appName:app.name,importedCount,updatedCount,totalSynced:synced.length,syncedAt:now(),phoneNumbers:synced};
   }
   const apps=operation.endsWith('Apps')||operation.endsWith('App'),table=apps?'whatsapp_apps':'whatsapp_wabas';
-  const response=async item=>apps?pick(fromItem(item),['id','name','appId','accessToken','verifyToken','createdAt','updatedAt']):wabaResponse(store,item);
+  const response=async item=>apps?{...pick(fromItem(item),['id','name','appId','createdAt','updatedAt']),hasAccessToken:!!item.access_token,hasVerifyToken:!!item.verify_token,hasAppSecret:!!item.app_secret}:wabaResponse(store,item);
   if(operation.startsWith('list'))return Promise.all((await store.list(table)).sort((a,b)=>a.name.localeCompare(b.name)).map(response));
   const id=params.appId??params.wabaId,old=id?must(await store.get(table,{id})):null;
   if(operation.startsWith('delete')) {
@@ -55,7 +55,13 @@ export async function whatsappOperation(store,operation,body,params) {
   if((await store.list(table,i=>i[field].toLowerCase()===externalId.toLowerCase()&&i.id!==id)).length)throw new HttpError(409,'Identificador já cadastrado.');
   const item={...old,id:id??randomUUID(),name,[field]:externalId,created_at:old?.created_at??now(),updated_at:now(),all_key:'ALL',[`${field}_key`]:externalId.toLowerCase()};
   item.name_sort=`${name.toLowerCase()}#${item.id}`;
-  if(apps){item.access_token=required(body.accessToken,'Access token',4096);item.verify_token=required(body.verifyToken,'Verify token',255);item.verify_token_key=item.verify_token.toLowerCase();}
+  if(apps){
+    item.access_token=body.accessToken?.trim()?required(body.accessToken,'Access token',4096):old?.access_token;
+    item.verify_token=body.verifyToken?.trim()?required(body.verifyToken,'Verify token',255):old?.verify_token;
+    item.app_secret=body.appSecret?.trim()?required(body.appSecret,'App secret',4096):old?.app_secret;
+    if(!item.access_token||!item.verify_token||!item.app_secret)throw new HttpError(400,'Access token, verify token e App secret são obrigatórios no cadastro.');
+    item.verify_token_key=item.verify_token.toLowerCase();
+  }
   else{item.app_config_id=must(await store.get('whatsapp_apps',{id:required(body.appConfigId,'App',36)})).id;item.app_key=item.app_config_id;}
   await store.put(table,item,{create:!old,previous:old});return response(item);
 }

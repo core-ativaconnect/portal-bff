@@ -30,7 +30,7 @@ export async function deliveries(store, payload, raw, signature, secrets) {
   for(const entry of payload.entry){
     const waba=must((await store.query('whatsapp_wabas','waba_id_key',entry.id,{index:'waba_id-index'}))[0]);
     const app=must(await store.get('whatsapp_apps',{id:waba.app_config_id}));
-    const secret=secrets[app.app_id];
+    const secret=app.app_secret??secrets[app.app_id];
     if(!secret||!same(signature,`sha256=${createHmac('sha256',secret).update(raw).digest('hex')}`))throw new HttpError(403,'Assinatura Meta inválida.');
     for(const change of entry.changes??[]){
       if(change.field!=='messages')continue;

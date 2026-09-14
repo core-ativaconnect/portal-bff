@@ -26,8 +26,8 @@
     "@asyncapi/parser": "^3.6.3",
     "ajv": "^8.20.0",
     "ajv-formats": "^3.0.1",
-    "serverless": "3.40.0",
-    "serverless-offline": "13.9.0",
+    "serverless": "4.42.0",
+    "serverless-offline": "14.8.1",
     "ws": "^8.21.3"
   },
   "dependencies": {

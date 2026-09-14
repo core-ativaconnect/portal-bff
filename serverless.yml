@@ -1,5 +1,5 @@
 service: portal-bff
-frameworkVersion: '3'
+frameworkVersion: '4'
 configValidationMode: error
 useDotenv: true
 

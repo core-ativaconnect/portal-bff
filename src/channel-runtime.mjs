@@ -2,7 +2,7 @@ import { randomUUID, createHash } from 'node:crypto';
 import { must, now } from './store.mjs';
 import { processFlow, resolveDefinition } from './engine.mjs';
 import { executeScript } from './scripts.mjs';
-import {activeTicket,saveTicket,findSession} from './runtime-records.mjs';
+import {activeTicket,saveTicket,findSession,sessionExpired} from './runtime-records.mjs';
 
 export async function customerHandoff(store,contract,channel,contact,input,ticket,operationId){
   const resolved=await resolveDefinition(store,{flowId:ticket.flow_id,versionId:ticket.flow_version_id},contract.id);
@@ -37,8 +37,9 @@ export async function runContactFlow(store, contract, channel, contact, input, o
     : links[0] ? await resolveDefinition(store, {flowId: links[0].flow_id, versionMode: 'PUBLISHED'}, contract.id) : null;
   if (!target || !input) return null;
   const session = await findSession(store,contract.id,contact.contact_id,target.flow.id,target.versionId);
+  const expired=sessionExpired(session,channel.session_timeout_minutes??1440);
   response = await processFlow(store, {flowId: target.flow.id, versionId: target.versionId,
-    simulatorUserId: contact.contact_id, start: !session || session.completed === true, input}, null, {contractId: contract.id,operationId,runtimeContext:{resolved:target,session}});
+    simulatorUserId: contact.contact_id, start: expired || session.completed === true, input}, null, {contractId: contract.id,operationId,runtimeContext:{resolved:target,session:expired?undefined:session}});
   }
   await store.transaction([store.guard(contract.id), store.putOperation('engine_contacts', {...contact,
     active_flow_id: response.flowId, active_flow_version_id: response.resolvedVersionId,

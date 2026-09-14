@@ -33,6 +33,7 @@ prop('FlowProcessingRequest','simulatorUserId',{maxLength:180,example:'simulador
 prop('FlowProcessingRequest','input',{maxLength:20000});
 prop('ChannelRequest','type',{enum:['WEBCHAT','WHATSAPP']});
 prop('ChannelRequest','agentName',{description:'Obrigatório para WEBCHAT; nome único do agente.'});
+for(const name of ['ChannelRequest','ChannelUpdateRequest'])schemas[name].properties.sessionTimeoutMinutes={type:'integer',minimum:1,maximum:43200,description:'Tempo de inatividade do canal antes de reiniciar o fluxo. Padrão: 1440 minutos.'};
 prop('ChannelFlowBindingsRequest','primaryFlowId',{nullable:true,description:'Fluxo principal publicado; null remove o vínculo principal.'});
 prop('ContractEmailConnectionRequest','secret',{format:'password',writeOnly:true,description:'Obrigatório ao criar. Omitir na atualização mantém o segredo salvo.'});
 schemas.ContractEmailConnectionRequest.description='GMAIL e OUTLOOK usam presets SMTP. Para SMTP, informe host, port e security.';

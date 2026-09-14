@@ -7,15 +7,16 @@ import {sendFlowEmail} from '../src/flow-email.mjs';
 
 const action = (type = 'interaction', config = {message: 'Olá'}) => ({id: 'start', name: 'Início', type, config, nextActionId: null});
 test('publication identifies broken routes, unreachable actions and unsupported content by action', () => {
-  assert.deepEqual(validateFlow({actions: [action()]}), []);
-  const issues = validateFlow({actions: [
+  assert.deepEqual(validateFlow({entryActionId: 'start', actions: [action()]}), []);
+  assert.ok(validateFlow({actions: [action()]}).some(i => i.field === 'entryActionId'));
+  const issues = validateFlow({entryActionId: 'start', actions: [
     {...action('router', {routes: [{nextActionId: 'missing', condition: {userVariable: 'user.x', operator: 'regex', value: '['}}]}), nextActionId: 'absent'},
     {...action('interaction', {messageType: 'carousel'}), id: 'orphan'},
   ]});
   for (const field of ['nextActionId', 'routes', 'routes.regex', 'messageType', 'connections']) assert.ok(issues.some(i => i.field === field), field);
   assert.ok(issues.every(i => i.actionId && i.message));
-  assert.ok(validateFlow({actions: [action('interaction', {messageType: 'image', mediaLink: 'file:///etc/passwd'})]}).some(i => i.field === 'mediaLink'));
-  assert.ok(validateFlow({actions: [action('interaction', {messageType: 'image', mediaLink: 'https://example.com/a.png'})]}, {channelTypes: ['WEBCHAT']}).some(i => i.field === 'messageType'));
+  assert.ok(validateFlow({entryActionId: 'start', actions: [action('interaction', {messageType: 'image', mediaLink: 'file:///etc/passwd'})]}).some(i => i.field === 'mediaLink'));
+  assert.ok(validateFlow({entryActionId: 'start', actions: [action('interaction', {messageType: 'image', mediaLink: 'https://example.com/a.png'})]}, {channelTypes: ['WEBCHAT']}).some(i => i.field === 'messageType'));
 });
 
 test('publication rejects foreign/disabled resources and a missing published flow destination', async () => {

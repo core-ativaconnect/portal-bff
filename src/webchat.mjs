@@ -7,7 +7,7 @@ import { writable } from './contracts.mjs';
 import { customerHandoff } from './channel-runtime.mjs';
 import { sendText } from './messages.mjs';
 import {admitContact} from './billing.mjs';
-import {findSession,activeTicket,saveTicket,persistMessage} from './runtime-records.mjs';
+import {findSession,sessionExpired,activeTicket,saveTicket,persistMessage} from './runtime-records.mjs';
 
 function key(store){return Buffer.from(store.settings.secret);}
 export async function webchatOperation(store,body){
@@ -40,6 +40,7 @@ export async function webchatOperation(store,body){
   if(contact.active_flow_id&&!contact.active_flow_completed)target=await resolveDefinition(store,{flowId:contact.active_flow_id,versionId:contact.active_flow_version_id,versionMode:'PUBLISHED'},contract.id);
   else if(links[0])target=await resolveDefinition(store,{flowId:links[0].flow_id,versionMode:'PUBLISHED'},contract.id);
   const session=target?await findSession(store,contract.id,contact.contact_id,target.flow.id,target.versionId):null;
+  const expired=sessionExpired(session,channel.session_timeout_minutes??1440);
   const ticket=await activeTicket(store,channel.id,contact.contact_id);
   if(body.type==='message'){
     const timestamp=now(),id=randomUUID(),text=required(body.text,'Mensagem',20000);
@@ -51,7 +52,7 @@ export async function webchatOperation(store,body){
     for(const message of resumed?.messages.filter(m=>m.kind==='BUSINESS')??[])if(message.text)await sendText(store,contract,channel,contact,message.text,'BUSINESS',message);
   }
   if(target&&!ticket&&body.type!=='poll'&&(body.type==='message'||!session)){
-    response=await processFlow(store,{flowId:target.flow.id,versionId:target.versionId,simulatorUserId:contact.contact_id,start:!session||session.completed===true,input:body.text},null,{contractId:contract.id});
+    response=await processFlow(store,{flowId:target.flow.id,versionId:target.versionId,simulatorUserId:contact.contact_id,start:expired||session.completed===true,input:body.text},null,{contractId:contract.id,runtimeContext:{resolved:target,session:expired?undefined:session}});
     const updated={...contact,active_flow_id:response.flowId,active_flow_version_id:response.resolvedVersionId,active_flow_completed:response.completed,updated_at:now()};
     await store.transaction([store.guard(contract.id),store.putOperation('engine_contacts',updated)]);
     for(const message of response.messages.filter(m=>m.kind==='BUSINESS')){

@@ -100,7 +100,9 @@ export function validateFlow(document, {channelTypes = []} = {}) {
     if (a.type === 'ai_agent') requireField(a, 'providerConfigId', c.providerConfigId);
   }
   const roots = actions.filter(object).filter(a => a.systemRole === 'global_router');
-  const entry = actions.find(a => object(a) && a.systemRole !== 'global_router');
+  const configuredEntry = actions.find(a => a.id === document.entryActionId && a.systemRole !== 'global_router');
+  if (!configuredEntry) issue(null, 'entryActionId', 'Configure o ponto de entrada global com uma ação válida.');
+  const entry = configuredEntry ?? actions.find(a => object(a) && a.systemRole !== 'global_router');
   if (!entry) issue(null, 'actions', 'Adicione uma ação inicial além do roteador global.');
   const seen = new Set(), pending = [...roots.map(a => a.id), ...(entry ? [entry.id] : [])];
   while (pending.length) { const id = pending.pop(); if (seen.has(id)) continue; seen.add(id); pending.push(...(graph.get(id) ?? [])); }

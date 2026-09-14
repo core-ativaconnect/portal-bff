@@ -84,7 +84,9 @@ export async function processFlow(store,body,actor,{contractId,resumeIntent,oper
     const messages=[],actionIds=[],connectionKeys=[];let previous=null,active=null,completed=false;
     const debug=text=>messages.push({author:'system',kind:'DEBUG',text,choices:null,list:null,actionId:null});
     const global=actions.find(a=>a.systemRole==='global_router'&&a.type==='router');
-    let current=body.start?(actions.find(a=>a.systemRole!=='global_router')??actions[0]).id:null;
+    const configuredEntry=actions.find(a=>a.id===resolved.definition.entryActionId&&a.systemRole!=='global_router');
+    // Published versions created before entryActionId existed retain the prior first-action behavior.
+    let current=body.start?(configuredEntry??actions.find(a=>a.systemRole!=='global_router')??actions[0]).id:null;
     if(!body.start){
       const waiting=must(actions.find(a=>a.id===session.waiting_action_id),'A sessão não aguarda entrada.');previous=waiting.id;
       if(session.waiting_state==='HUMAN_HANDOFF'&&!resumeIntent&&!resumeByCustomer)throw new HttpError(409,'A conversa está em atendimento humano.');

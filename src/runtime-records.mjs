@@ -13,6 +13,11 @@ export async function findSession(store,contractId,userId,flowId,versionId){
   const session=await store.get('engine_sessions',{session_key:ref?.session_key??`${userId}#${flowId}#${versionId}`});
   return session?.contract_id===contractId&&session.simulator_user_id===userId&&session.flow_id===flowId&&session.version_id===versionId?session:undefined;
 }
+export function sessionExpired(session, timeoutMinutes, clock=Date.now()){
+  if(!session)return true;
+  const updated=Date.parse(session.updated_at??session.created_at??'');
+  return !Number.isFinite(updated)||clock-updated>=timeoutMinutes*60_000;
+}
 export function sessionReferenceOperation(store,session){
   return store.putOperation(runtimeTable,{...sessionReferenceKey(session.contract_id,session.simulator_user_id,session.flow_id,session.version_id),contract_id:session.contract_id,session_key:session.session_key});
 }

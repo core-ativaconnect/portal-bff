@@ -11,6 +11,12 @@ import {trace} from './channel-debug.mjs';
 const hash = value => createHash('sha256').update(value).digest('hex');
 const traceId=(phoneId,eventId)=>`wa-${hash(`${phoneId}:${eventId}`).slice(0,16)}`;
 const serviceLog=(event,fields={})=>console.info(JSON.stringify({service:'meta-webhook',event,...fields}));
+const rawSnapshot=delivery=>{
+  // Raw Meta event, retained only by the opt-in channel trace. Never emit this
+  // payload in CloudWatch because it can contain customer text and media URLs.
+  const raw=JSON.stringify(delivery.status??delivery.message??{}),maxBytes=30000;
+  return {rawPayload:raw.slice(0,maxBytes),rawPayloadBytes:Buffer.byteLength(raw),rawPayloadTruncated:raw.length>maxBytes};
+};
 const same = (a,b) => typeof a === 'string' && typeof b === 'string' && Buffer.byteLength(a) === Buffer.byteLength(b) && timingSafeEqual(Buffer.from(a),Buffer.from(b));
 const plain = (statusCode, body) => ({statusCode,headers:{'content-type':'text/plain; charset=utf-8','cache-control':'no-store'},body});
 export const inboundText = message => message.text?.body ?? message.button?.text ?? message.button?.payload
@@ -46,8 +52,10 @@ export async function deliveries(store, payload, raw, signature, secrets) {
 
 export async function handler(event,_context,dependencies={}){
   const store=dependencies.store??new Store();
+  const startedAt=Date.now(),requestId=event.requestContext?.requestId??null;
   try{
     const method=event.requestContext?.http?.method??event.httpMethod;
+    serviceLog('webhook.received',{requestId,method,bodyBytes:Buffer.byteLength(event.body??''),bodySha256:method==='POST'?hash(event.body??''):null,base64:!!event.isBase64Encoded});
     if(method==='GET'){
       const query=event.queryStringParameters??Object.fromEntries(new URLSearchParams(event.rawQueryString));
       if(query['hub.mode']!=='subscribe'||!query['hub.challenge']||!query['hub.verify_token'])throw new HttpError(403,'Webhook verification rejected');
@@ -61,13 +69,15 @@ export async function handler(event,_context,dependencies={}){
     const signature=Object.entries(event.headers??{}).find(([key])=>key.toLowerCase()==='x-hub-signature-256')?.[1];
     const secrets=dependencies.secrets??JSON.parse(process.env.APP_WHATSAPP_META_APP_SECRETS||'{}');
     const events=await deliveries(store,payload,raw,signature,secrets);
-    serviceLog('webhook.validated',{requestId:event.requestContext?.requestId??null,deliveries:events.length});
+    serviceLog('webhook.validated',{requestId,deliveries:events.length,durationMs:Date.now()-startedAt});
     // All entries are authenticated before any is accepted for processing.
     for(const delivery of events){
       // The diagnostic lookup is best-effort: it must never prevent Meta from
       // receiving its acknowledgement or a delivery from entering the queue.
       const channel=await channelForPhone(store,delivery.phoneId).catch(()=>null);
       await trace(store,channel,'webhook.validated',{traceId:delivery.traceId,kind:delivery.status?'STATUS':'MESSAGE'});
+      await trace(store,channel,'webhook.meta_raw_payload',{traceId:delivery.traceId,kind:delivery.status?'STATUS':'MESSAGE',...rawSnapshot(delivery)});
+      delivery.enqueuedAt=now();
       if(dependencies.enqueue)await dependencies.enqueue(delivery);
       else if(process.env.IS_OFFLINE)await processDelivery(delivery,store);
       else{
@@ -77,11 +87,12 @@ export async function handler(event,_context,dependencies={}){
           MessageBody:body,MessageGroupId:hash(`${delivery.phoneId}:${delivery.message?.from??delivery.status.recipient_id}`),MessageDeduplicationId:hash(body)}));
       }
       await trace(store,channel,'webhook.queued',{traceId:delivery.traceId,transport:process.env.IS_OFFLINE?'INLINE':'SQS'});
-      serviceLog('webhook.queued',{traceId:delivery.traceId,kind:delivery.status?'STATUS':'MESSAGE'});
+      serviceLog('webhook.queued',{requestId,traceId:delivery.traceId,kind:delivery.status?'STATUS':'MESSAGE',durationMs:Date.now()-startedAt});
     }
+    serviceLog('webhook.acknowledged',{requestId,status:200,deliveries:events.length,durationMs:Date.now()-startedAt});
     return plain(200,'EVENT_RECEIVED');
   }catch(error){
-    if(!(error instanceof HttpError))console.error(JSON.stringify({event:'meta.ingress.failed',name:error.name}));
+    console.error(JSON.stringify({service:'meta-webhook',event:'webhook.failed',requestId,status:error instanceof HttpError?error.status:503,name:error?.name??'Error',message:error?.message??null,durationMs:Date.now()-startedAt}));
     return plain(error instanceof HttpError?error.status:503,error instanceof HttpError?error.message:'Webhook temporarily unavailable');
   }finally{store.reportMetrics?.('meta.ingress');}
 }
@@ -96,9 +107,10 @@ async function channelForPhone(store,phoneId){
 }
 
 export async function processDelivery(delivery,store=new Store(),dependencies={}){
+  const startedAt=Date.now(),queueWaitMs=delivery.enqueuedAt?Math.max(0,startedAt-Date.parse(delivery.enqueuedAt)):null;
   const phone=must(await store.get('whatsapp_phone_numbers',{id:delivery.phoneId}));
   if(phone.waba_config_id!==delivery.wabaId)throw new HttpError(409,'Vínculo WABA alterado.');
-  serviceLog('worker.started',{traceId:delivery.traceId,kind:delivery.status?'STATUS':'MESSAGE'});
+  serviceLog('worker.started',{traceId:delivery.traceId,kind:delivery.status?'STATUS':'MESSAGE',queueWaitMs});
   if(delivery.status){
     const ref=await store.get('runtime_records',{pk:`META#${phone.id}`,sk:`MESSAGE#${delivery.status.id}`});
     const channel=ref?await store.get('contract_channels',{id:ref.channel_id}):null;
@@ -106,16 +118,16 @@ export async function processDelivery(delivery,store=new Store(),dependencies={}
     await trace(store,channel,'whatsapp.status.received',{traceId:delivery.traceId,messageId:delivery.status.id,status:delivery.status.status,recipientId:delivery.status.recipient_id,errors:delivery.status.errors??[]});
     const result=await applyMetaStatus(store,phone.id,delivery.status);
     await trace(store,channel,'whatsapp.status.applied',{traceId:delivery.traceId,messageId:delivery.status.id,status:delivery.status.status});
-    serviceLog('worker.completed',{traceId:delivery.traceId,kind:'STATUS'});
+    serviceLog('worker.completed',{traceId:delivery.traceId,kind:'STATUS',durationMs:Date.now()-startedAt});
     return result;
   }
   const channel=await channelForPhone(store,phone.id);
-  if(!channel){const candidates=await store.query('contract_channels','phone_key',phone.id,{index:'phone-index'});if(candidates.length)throw new HttpError(503,'Channel binding is updating.');return;}
+  if(!channel){const candidates=await store.query('contract_channels','phone_key',phone.id,{index:'phone-index'});if(candidates.length)throw new HttpError(503,'Channel binding is updating.');serviceLog('worker.dropped',{traceId:delivery.traceId,reason:'CHANNEL_NOT_BOUND'});return;}
   await trace(store,channel,'worker.started',{traceId:delivery.traceId,kind:'MESSAGE'});
   await trace(store,channel,'webhook.message.received',{traceId:delivery.traceId,messageId:delivery.message.id,from:delivery.message.from,type:delivery.message.type});
   const contract=must(await store.get('contracts',{id:channel.contract_id}));
   const today=now().slice(0,10);
-  if(contract.deletion_in_progress||contract.status!=='ACTIVE'||contract.start_date>today||contract.end_date<today)return;
+  if(contract.deletion_in_progress||contract.status!=='ACTIVE'||contract.start_date>today||contract.end_date<today){serviceLog('worker.dropped',{traceId:delivery.traceId,reason:'CONTRACT_INACTIVE',contractStatus:contract.status});return;}
   const message=delivery.message,id=`meta-${hash(`${phone.id}:${message.id}`)}`;
   let job=await store.get('jobs',{id});
   if(job?.state==='COMPLETED')return;
@@ -169,8 +181,8 @@ export async function processDelivery(delivery,store=new Store(),dependencies={}
       job.sent_count=index+1;await checkpoint();
     }
     job.state='COMPLETED';delete job.lease_until;delete job.messages;await checkpoint();
-    await trace(store,channel,'delivery.completed',{traceId:delivery.traceId,jobId:id});serviceLog('worker.completed',{traceId:delivery.traceId,kind:'MESSAGE'});
-  }catch(error){await trace(store,channel,'delivery.failed',{traceId:delivery.traceId,jobId:id,message:error?.message??'Erro desconhecido',status:error?.status??null});serviceLog('worker.failed',{traceId:delivery.traceId,status:error?.status??500});delete job.lease_until;await checkpoint().catch(()=>{});throw error;}
+    await trace(store,channel,'delivery.completed',{traceId:delivery.traceId,jobId:id});serviceLog('worker.completed',{traceId:delivery.traceId,kind:'MESSAGE',durationMs:Date.now()-startedAt,outboundMessages:job.sent_count});
+  }catch(error){await trace(store,channel,'delivery.failed',{traceId:delivery.traceId,jobId:id,message:error?.message??'Erro desconhecido',status:error?.status??null,meta:error?.meta??null});serviceLog('worker.failed',{traceId:delivery.traceId,status:error?.status??500,name:error?.name??'Error',message:error?.message??null,meta:error?.meta??null,durationMs:Date.now()-startedAt});delete job.lease_until;await checkpoint().catch(()=>{});throw error;}
 }
 
 export async function worker(event){

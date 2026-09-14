@@ -35,7 +35,7 @@ export async function sendText(store,contract,channel,contact,text,kind='BUSINES
       const response=await graph(`${encodeURIComponent(phone.meta_phone_number_id)}/messages`,app.access_token,{method:'POST',body:{messaging_product:'whatsapp',to:contact.wa_id||contact.user_id,...payload}});
       messageId=must(response.messages?.[0]?.id,'A Meta não confirmou a mensagem.');
       await trace(store,channel,'whatsapp.send.accepted',{traceId:deliveryContext.traceId??null,messageId,messageType:payload.type});
-    }catch(error){await trace(store,channel,'whatsapp.send.failed',{traceId:deliveryContext.traceId??null,message:error?.message??'Erro desconhecido',status:error?.status??null});throw error;}
+    }catch(error){await trace(store,channel,'whatsapp.send.failed',{traceId:deliveryContext.traceId??null,message:error?.message??'Erro desconhecido',status:error?.status??null,meta:error?.meta??null});throw error;}
   }
   const timestamp=now(),item={contact_id:contact.contact_id,message_id:messageId,contract_id:contract.id,contract_slug:contract.slug,channel_id:channel.id,channel_slug:channel.slug,direction:'OUTBOUND',message_kind:kind,message_type:payload.type==='interactive'?payload.interactive.type:payload.type,message_text:text,message_payload_json:JSON.stringify({text:{body:text}}),contact_user_id:contact.user_id,contact_wa_id:contact.wa_id,contact_name:contact.username||contact.name,status,occurred_at:timestamp,updated_at:timestamp};
   if(flowMessage)item.message_payload_json=JSON.stringify(flowMessage);

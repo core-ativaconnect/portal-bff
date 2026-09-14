@@ -4,9 +4,22 @@ import { must, required, now, fromItem, pick } from './store.mjs';
 const phoneFields=['id','wabaConfigId','metaPhoneNumberId','verifiedName','displayPhoneNumber','qualityRating','codeVerificationStatus','nameStatus','platformType','throughput','lastSyncedAt','createdAt','updatedAt'];
 export const phoneResponse=item=>pick(fromItem(item),phoneFields);
 export async function graph(path,token,{method='GET',body}={}) {
+  const startedAt=Date.now(),operation=path.includes('/messages')?'messages':path.includes('/phone_numbers')?'phone_numbers':'graph';
   const url=new URL(`https://graph.facebook.com/${process.env.APP_WHATSAPP_META_API_VERSION||'v23.0'}/${path}`);
-  const response=await fetch(url,{method,headers:{Authorization:`Bearer ${token}`,'Content-Type':'application/json'},body:body?JSON.stringify(body):undefined,signal:AbortSignal.timeout(18000)});
-  const data=await response.json();if(!response.ok)throw new HttpError(502,`A Meta recusou a operação (${data.error?.code??response.status}).`);return data;
+  try{
+    const response=await fetch(url,{method,headers:{Authorization:`Bearer ${token}`,'Content-Type':'application/json'},body:body?JSON.stringify(body):undefined,signal:AbortSignal.timeout(18000)});
+    let data;try{data=await response.json();}catch{data={};}
+    const meta=data.error??{};
+    if(!response.ok){
+      console.error(JSON.stringify({service:'whatsapp-graph',event:'request.failed',operation,method,httpStatus:response.status,metaCode:meta.code??null,metaSubcode:meta.error_subcode??null,metaType:meta.type??null,fbtraceId:meta.fbtrace_id??null,durationMs:Date.now()-startedAt}));
+      const error=new HttpError(502,`A Meta recusou a operação (${meta.code??response.status}).`);
+      error.meta={code:meta.code??null,subcode:meta.error_subcode??null,type:meta.type??null,fbtraceId:meta.fbtrace_id??null};throw error;
+    }
+    console.info(JSON.stringify({service:'whatsapp-graph',event:'request.completed',operation,method,httpStatus:response.status,durationMs:Date.now()-startedAt}));return data;
+  }catch(error){
+    if(error instanceof HttpError)throw error;
+    console.error(JSON.stringify({service:'whatsapp-graph',event:'request.transport_failed',operation,method,name:error?.name??'Error',message:error?.message??null,durationMs:Date.now()-startedAt}));throw error;
+  }
 }
 export async function wabaResponse(store,waba) {
   const app=await store.get('whatsapp_apps',{id:waba.app_config_id});

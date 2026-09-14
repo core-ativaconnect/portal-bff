@@ -9,6 +9,7 @@ const action = (type = 'interaction', config = {message: 'Olá'}) => ({id: 'star
 test('publication identifies broken routes, unreachable actions and unsupported content by action', () => {
   assert.deepEqual(validateFlow({entryActionId: 'start', actions: [action()]}), []);
   assert.ok(validateFlow({actions: [action()]}).some(i => i.field === 'entryActionId'));
+  assert.ok(validateFlow({entryActionId: 'start', actions: [action()], testScenarios: [{name: 'Obrigatório', inputs: [], expectedActionIds: ['start'], required: true, lastResult: 'FAILED'}]}).some(i => i.field === 'testScenarios'));
   const issues = validateFlow({entryActionId: 'start', actions: [
     {...action('router', {routes: [{nextActionId: 'missing', condition: {userVariable: 'user.x', operator: 'regex', value: '['}}]}), nextActionId: 'absent'},
     {...action('interaction', {messageType: 'carousel'}), id: 'orphan'},

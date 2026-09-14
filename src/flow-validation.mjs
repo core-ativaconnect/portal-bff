@@ -102,6 +102,13 @@ export function validateFlow(document, {channelTypes = []} = {}) {
   const roots = actions.filter(object).filter(a => a.systemRole === 'global_router');
   const configuredEntry = actions.find(a => a.id === document.entryActionId && a.systemRole !== 'global_router');
   if (!configuredEntry) issue(null, 'entryActionId', 'Configure o ponto de entrada global com uma ação válida.');
+  if (document.testScenarios != null && !Array.isArray(document.testScenarios)) issue(null, 'testScenarios', 'Cenários de teste inválidos.');
+  for (const scenario of Array.isArray(document.testScenarios) ? document.testScenarios : []) {
+    if (!object(scenario) || !present(scenario.name)) { issue(null, 'testScenarios', 'Cenário de teste sem nome.'); continue; }
+    if (!Array.isArray(scenario.inputs) || !scenario.inputs.every(value => typeof value === 'string')) issue(null, 'testScenarios.inputs', `Entradas inválidas no cenário ${scenario.name}.`);
+    if (!Array.isArray(scenario.expectedActionIds) || !scenario.expectedActionIds.every(id => ids.has(id))) issue(null, 'testScenarios.expectedActionIds', `Actions esperadas inválidas no cenário ${scenario.name}.`);
+    if (scenario.required === true && scenario.lastResult !== 'PASSED') issue(null, 'testScenarios', `Execute e aprove o cenário obrigatório "${scenario.name}" antes de publicar.`);
+  }
   const entry = configuredEntry ?? actions.find(a => object(a) && a.systemRole !== 'global_router');
   if (!entry) issue(null, 'actions', 'Adicione uma ação inicial além do roteador global.');
   const seen = new Set(), pending = [...roots.map(a => a.id), ...(entry ? [entry.id] : [])];

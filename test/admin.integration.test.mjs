@@ -33,7 +33,7 @@ test('native administration, settings and approval of a phone transfer', {skip:p
     await assert.rejects(invoke(`/api/v1/public/blog/posts/${post.slug}`),e=>e.status===404);
     post=await invoke('/api/v1/admin/blog/posts','PUT',{...post,published:true});assert.equal((await invoke(`/api/v1/public/blog/posts/${post.slug}`)).content,'Conteúdo');
     page=await invoke('/api/v1/admin/content-pages','PUT',{path:`/test-${suffix}`,title:'Página',content:'Teste'});assert.equal((await invoke(`/api/v1/public/content-pages/resolve?path=${page.path}`)).title,'Página');
-    app=await invoke('/api/v1/admin/whatsapp/apps','POST',{name:`Test app ${suffix}`,appId:suffix,accessToken:'fake-token-never-send',verifyToken:suffix});
+    app=await invoke('/api/v1/admin/whatsapp/apps','POST',{name:`Test app ${suffix}`,appId:suffix,accessToken:'fake-token-never-send',verifyToken:suffix,appSecret:'fake-app-secret-never-send'});
     waba=await invoke('/api/v1/admin/whatsapp/wabas','POST',{name:'WABA test',wabaId:suffix,appConfigId:app.id});
     phone={id:randomUUID(),waba_config_id:waba.id,meta_phone_number_id:suffix,display_phone_number:'5511999999999',created_at:now(),updated_at:now()};await store.put('whatsapp_phone_numbers',phone,{create:true});
     for(const contract of contracts)await invoke(`/api/v1/contracts/${contract.id}/wabas`,'POST',{wabaConfigId:waba.id});
